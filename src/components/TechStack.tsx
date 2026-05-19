@@ -1,4 +1,3 @@
-import React from 'react'
 
 const techs = [
   'Python', 'C++', 'PHP', 'Laravel', 'React', 'TypeScript', 'Arduino', 'Linux', 'MySQL'

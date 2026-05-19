@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { ExternalLink, Cpu, Globe, Bot, Trophy } from 'lucide-react'
 
 interface Project {
@@ -72,7 +72,7 @@ const projects: Project[] = [
   },
 ]
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 60 },
   show: (i: number) => ({
     opacity: 1,
