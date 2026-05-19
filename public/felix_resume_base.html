@@ -1,0 +1,128 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+.resume{font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.6;color:var(--color-text-primary);max-width:680px;padding:2rem 2.5rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg)}
+.name{font-family:'EB Garamond',serif;font-size:30px;font-weight:400;letter-spacing:0.02em;line-height:1.1;margin-bottom:6px}
+.contact{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:11.5px;color:var(--color-text-secondary);margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.contact span{display:flex;align-items:center;gap:4px}
+.section{margin-top:1rem}
+.section-title{font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.summary{font-size:12.5px;line-height:1.7;color:var(--color-text-secondary)}
+.edu-row,.job-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.edu-inst,.job-title{font-weight:500;font-size:13px}
+.edu-date,.job-date{font-size:11.5px;color:var(--color-text-secondary);white-space:nowrap}
+.edu-degree,.job-sub{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.edu-note{font-size:11.5px;color:var(--color-text-secondary);margin-top:2px}
+.edu-block,.proj-block{margin-top:8px}
+.edu-block:first-child,.proj-block:first-child{margin-top:0}
+.skills-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 24px}
+.skill-row{display:flex;gap:6px;font-size:12px}
+.skill-label{font-weight:500;color:var(--color-text-secondary);white-space:nowrap}
+ul{list-style:none;padding:0}
+ul li{font-size:12px;color:var(--color-text-secondary);padding-left:12px;position:relative;line-height:1.6}
+ul li::before{content:"–";position:absolute;left:0;color:var(--color-text-secondary)}
+.proj-title{font-weight:500;font-size:12.5px}
+.proj-sub{font-size:11.5px;color:var(--color-text-secondary);font-style:italic}
+.proj-head{display:flex;align-items:baseline;gap:6px;margin-bottom:2px}
+.award-row{display:flex;justify-content:space-between;align-items:baseline}
+.cert-list{display:flex;flex-direction:column;gap:3px}
+.cert-item{font-size:12px;color:var(--color-text-secondary)}
+.cert-item span{font-weight:500;color:var(--color-text-primary)}
+</style>
+
+<div class="resume" role="main" aria-label="Felix Martinez resume">
+  <h1 class="name">Felix Emmanuel Martinez Flores</h1>
+  <div class="contact">
+    <span><i class="ti ti-map-pin" aria-hidden="true"></i> Matamoros, Tamaulipas</span>
+    <span><i class="ti ti-phone" aria-hidden="true"></i> +52 868 204 0513</span>
+    <span><i class="ti ti-mail" aria-hidden="true"></i> felixmtrzflrs04@gmail.com</span>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Professional Summary</div>
+    <p class="summary">Motivated Computer Science student with a strong foundation in problem-solving and a collaborative mindset. Actively building hands-on experience through hackathons, hardware-software integration, and programming competitions. Eager to bring a strong work ethic, adaptability, and a genuine drive to learn and contribute to a software engineering internship.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Education</div>
+    <div class="edu-block">
+      <div class="edu-row">
+        <div class="edu-inst">University of Texas Rio Grande Valley (UTRGV)</div>
+        <div class="edu-date">Expected Dec 2028</div>
+      </div>
+      <div class="edu-degree">B.S. in Computer Science — Brownsville, Texas</div>
+      <div class="edu-note">GPA: 3.91 · President's List (Fall 2024)</div>
+    </div>
+    <div class="edu-block" style="margin-top:8px">
+      <div class="edu-row">
+        <div class="edu-inst">Preparatoria Ricardo Flores Magón</div>
+        <div class="edu-date">July 2024</div>
+      </div>
+      <div class="edu-degree">High School Diploma — Matamoros, Tamaulipas</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Technical Skills</div>
+    <div class="skills-grid">
+      <div class="skill-row"><span class="skill-label">Languages:</span> C++, Python, HTML, CSS</div>
+      <div class="skill-row"><span class="skill-label">Tools:</span> Git, PythonAnywhere, Arduino</div>
+      <div class="skill-row"><span class="skill-label">Hardware:</span> ESP32, GPIO, Motor Control</div>
+      <div class="skill-row"><span class="skill-label">Spoken:</span> Spanish (Native), English (Intermediate)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Projects &amp; Involvement</div>
+
+    <div class="proj-block">
+      <div class="proj-head">
+        <span class="proj-title">AuraFit Prototype</span>
+        <span class="proj-sub">FronteraHacks 24-Hour Hackathon</span>
+      </div>
+      <ul><li>Co-developed the frontend design and user onboarding flow for a fitness application.</li></ul>
+    </div>
+
+    <div class="proj-block" style="margin-top:8px">
+      <div class="proj-head">
+        <span class="proj-title">Organizing Committee &amp; Workshop Presenter</span>
+        <span class="proj-sub">Build Pa'l Norte Hackathon</span>
+      </div>
+      <ul><li>Collaborating cross-functionally on planning, design, and execution of an upcoming regional tech event; preparing to lead a technical workshop for attendees.</li></ul>
+    </div>
+
+    <div class="proj-block" style="margin-top:8px">
+      <div class="proj-head">
+        <span class="proj-title">Autonomous Robot</span>
+        <span class="proj-sub">IEEE R5 Mining Mayhem Competition</span>
+      </div>
+      <ul><li>Integrated hardware and software using ESP32 microcontrollers; worked with GPIO pins and motor control logic for a competitive robotics challenge.</li></ul>
+    </div>
+
+    <div class="proj-block" style="margin-top:8px">
+      <div class="proj-head">
+        <span class="proj-title">"Family Weather" Telegram Bot</span>
+        <span class="proj-sub">Personal Project</span>
+      </div>
+      <ul><li>Built and deployed an automated Python script hosted on PythonAnywhere to send scheduled daily weather updates to end-users.</li></ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Awards, Competitions &amp; Volunteering</div>
+    <ul style="display:flex;flex-direction:column;gap:3px">
+      <li>Competitor, IEEEXtreme 18 &amp; 19 — Annual global 24-hour competitive programming challenge</li>
+      <li>Volunteer, Sombrero Fest 2025 (IEEE UTRGV) — Managed access control and entry logistics</li>
+      <li>1st Place Regional &amp; 5th Place National, Robotics Fair 2018 (Intermediate Level) — Punto México Conectado</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Certifications</div>
+    <div class="cert-list">
+      <div class="cert-item"><span>Responsive Web Design</span> — freeCodeCamp</div>
+      <div class="cert-item"><span>Arduino Fundamentals</span> — Asociación de Robótica Aplicada (ARACT), 2021</div>
+    </div>
+  </div>
+</div>
