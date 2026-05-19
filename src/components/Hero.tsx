@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { Terminal, ChevronDown, Mail, Download } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
@@ -80,11 +80,11 @@ export default function Hero() {
 
   const typedRef = useTypewriter(t.roles)
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: {},
     show: { transition: { staggerChildren: 0.12 } },
   }
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
   }
