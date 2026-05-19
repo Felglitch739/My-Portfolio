@@ -317,3 +317,15 @@ body::before {
   66%  { transform: scale(0.9) translate(-20px, 30px); opacity: 0.7; }
   100% { transform: scale(1) translate(0, 0); opacity: 0.8; }
 }
+
+/* ── Utilities ── */
+.sticky-desktop {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .sticky-desktop {
+    position: sticky;
+    top: 120px;
+  }
+}

@@ -46,7 +46,7 @@ export default function AboutMe() {
         >
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', alignItems: 'flex-start' }}>
             {/* Title Column */}
-            <div style={{ flex: '1 1 300px', position: 'sticky', top: '120px' }}>
+            <div className="sticky-desktop" style={{ flex: '1 1 300px' }}>
               <span className="tag mono" style={{ marginBottom: '1.2rem', display: 'inline-flex' }}>
                 <UserCircle size={14} /> &nbsp; About Me
               </span>
