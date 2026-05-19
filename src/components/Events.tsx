@@ -16,16 +16,16 @@ const timelineData: TimelineItem[] = [
   {
     id: '2018',
     year: '2018',
-    title: 'Campeón Estatal de Robótica y Finalista Nacional',
-    description: 'Primer Lugar Estatal en Punto México Conectado (Matamoros) y Quinto Lugar Nacional en la competencia. Desarrollo de soluciones de robótica competitiva utilizando la plataforma Lego Mindstorms EV3.',
+    title: 'State Robotics Champion & National Finalist',
+    description: '1st Place at Punto México Conectado (Matamoros) and 5th Place Nationally. Developed competitive robotics solutions using Lego Mindstorms EV3.',
     color: 'var(--cyan)',
     icon: Trophy
   },
   {
     id: '2020',
     year: '2020',
-    title: 'Curso Intensivo de Arquitectura de Arduino',
-    description: 'Finalización de curso certificado centrado en programación y hardware de microcontroladores Arduino.',
+    title: 'Embedded Development Course',
+    description: 'Completed intensive certification on Arduino architecture and microcontroller programming.',
     color: 'var(--violet)',
     icon: Cpu
   },
@@ -33,7 +33,7 @@ const timelineData: TimelineItem[] = [
     id: '2024',
     year: '2024',
     title: 'IEEEXtreme 18.0',
-    description: 'Participación en la competencia global de programación de 24 horas del IEEE.',
+    description: 'Participated in the IEEE 24-hour global programming competition.',
     color: 'var(--emerald)',
     icon: Code2
   },
@@ -41,28 +41,28 @@ const timelineData: TimelineItem[] = [
     id: '2025',
     year: '2025',
     title: 'IEEEXtreme 19.0',
-    description: 'Participación y representación en la competencia global anual del IEEE.',
+    description: 'Participation and representation in the annual IEEE global competition.',
     color: 'var(--pink)',
     icon: Code2
   },
   {
     id: '2026',
     year: '2026',
-    title: 'Proyectos & Competencias Clave',
+    title: 'Key Projects & Competitions',
     items: [
-      { name: 'RobotMayhem (IEEE)', desc: 'Competencia y diseño de sistemas robóticos' },
-      { name: 'Gazpachos Landing Page', desc: 'El proyecto de la base que estamos usando' },
-      { name: 'AuraFit App', desc: 'Proyecto de FronteraHacks' }
+      { name: 'RobotMayhem (IEEE)', desc: 'Robotics systems design and competition' },
+      { name: 'Gazpachos Landing Page', desc: 'The base project we are currently using' },
+      { name: 'AuraFit App', desc: 'FronteraHacks project' }
     ],
     color: 'var(--cyan)',
     icon: Rocket
   },
   {
     id: 'upcoming',
-    year: 'Próximamente',
+    year: 'Upcoming',
     title: "Build Pa'l Norte Hackathon",
-    description: 'Hackathon transfronterizo enfocado en soluciones tecnológicas bilingües y binacionales.',
-    status: 'En Desarrollo / Próximamente',
+    description: 'Cross-border hackathon focused on bilingual and binational tech solutions.',
+    status: 'In Development / Upcoming',
     color: 'var(--amber)',
     icon: Rocket
   }

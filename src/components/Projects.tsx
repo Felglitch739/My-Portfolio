@@ -1,6 +1,12 @@
 import { motion, type Variants } from 'framer-motion'
 import { ExternalLink, Cpu, Globe, Bot, Trophy } from 'lucide-react'
 
+const GithubIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 9 18v4"></path>
+  </svg>
+)
+
 interface Project {
   id: string
   title: string
@@ -10,6 +16,7 @@ interface Project {
   tags: { label: string; color: string }[]
   link?: string
   linkLabel?: string
+  github?: string
   badge?: string
   badgeColor?: string
   icon: React.ReactNode
@@ -22,7 +29,7 @@ const projects: Project[] = [
     title: 'AuraFit App',
     subtitle: 'Hackathon winner — FronteraHacks Edinburg',
     description:
-      'AI-powered fitness tracking application built during FronteraHacks. Features body analysis, personalized workout plans, and real-time progress monitoring with an elegant mobile-first interface.',
+      'AI-powered fitness tracking application built during FronteraHacks. Features body analysis, personalized workout plans, and real-time progress monitoring with an elegant mobile-first interface. Currently in development alongside Eduardo Lorenzo.',
     image: '/aurafit.png',
     tags: [
       { label: 'Hackathon', color: 'var(--amber)'   },
@@ -31,6 +38,7 @@ const projects: Project[] = [
     ],
     link: 'https://aurafit.lrz.app',
     linkLabel: 'Live App',
+    github: 'https://github.com/Felglitch739/AuraFit',
     badge: '🏆 FronteraHacks',
     badgeColor: 'var(--amber)',
     icon: <Cpu size={20} />,
@@ -50,6 +58,7 @@ const projects: Project[] = [
     ],
     link: 'https://gazpachos-lp.vercel.app',
     linkLabel: 'Live Site',
+    github: 'https://github.com/Felglitch739/gazpachos-lp',
     icon: <Globe size={20} />,
     accent: 'var(--violet)',
   },
@@ -263,20 +272,36 @@ export default function Projects() {
                 </div>
 
                 {/* Link */}
-                {proj.link && (
-                  <motion.a
-                    href={proj.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    style={{ width: '100%', justifyContent: 'center' }}
-                  >
-                    <ExternalLink size={15} />
-                    {proj.linkLabel ?? 'View Project'}
-                  </motion.a>
-                )}
+                <div style={{ display: 'flex', gap: '0.75rem', width: '100%' }}>
+                  {proj.link && (
+                    <motion.a
+                      href={proj.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      style={{ flex: 1, justifyContent: 'center' }}
+                    >
+                      <ExternalLink size={15} />
+                      {proj.linkLabel ?? 'View Project'}
+                    </motion.a>
+                  )}
+                  {proj.github && (
+                    <motion.a
+                      href={proj.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-ghost"
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      style={{ flex: 1, justifyContent: 'center' }}
+                    >
+                      <GithubIcon size={15} />
+                      Source Code
+                    </motion.a>
+                  )}
+                </div>
               </div>
             </motion.article>
           ))}

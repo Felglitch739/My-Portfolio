@@ -258,8 +258,8 @@ export default function Hero() {
             {t.getTouch}
           </motion.a>
           <motion.a
-            href="/felix_resume_base.html"
-            download="Felix_Martinez_Resume.html"
+            href="/Felix_Martinez_Resume.pdf"
+            download
             className="btn-ghost"
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}

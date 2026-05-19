@@ -7,6 +7,7 @@ import Contact  from './components/Contact'
 import Footer   from './components/Footer'
 import TechStack from './components/TechStack'
 import AboutMe    from './components/AboutMe'
+import GithubActivity from './components/GithubActivity'
 
 export default function App() {
   const { scrollYProgress } = useScroll()
@@ -46,6 +47,7 @@ export default function App() {
         <AboutMe />
         <TechStack />
         <Projects />
+        <GithubActivity />
         <Events />
         <Contact />
       </main>

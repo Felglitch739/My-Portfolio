@@ -8,19 +8,19 @@ export default function AboutMe() {
     en: {
       title: "My Journey \n & Vision",
       p1: <>
-        <strong style={{ color: 'var(--text-primary)' }}>Hi! I'm Félix Martínez.</strong> To me, programming isn’t just about writing lines of code; it’s an art form. I am deeply driven by solving complex logical puzzles and building things that people can interact with and appreciate. I thrive in team environments, valuing collaborative decision-making where everyone's input shapes the best possible outcome for the whole group.
+        <strong style={{ color: 'var(--text-primary)' }}>Hi! I'm Félix,</strong> a Computer Science student at UTRGV. I thrive at the intersection of software and hardware, building everything from AI-powered web apps to autonomous embedded systems.
       </>,
       p2: <>
-        My path in technology is fueled by genuine curiosity and resilience. Navigating the financial challenges of university life is a demanding journey—one that I face with the immense support of my parents and an unwavering determination. These obstacles have shaped my discipline and fueled my hunger to grow. Looking ahead, I am incredibly excited to expand my horizons and explore how programming shapes the world of video game development, blending my love for logic and interactive design. I am actively looking for internships, freelance projects, or development roles where I can bring immediate value while continuing my academic and professional journey.
+        For me, programming is the art of solving complex logical puzzles. I am highly collaborative, deeply curious, and currently exploring how programming shapes game development. I am actively looking for internships or development roles where I can bring immediate value and keep growing.
       </>
     },
     es: {
       title: "Mi Camino \n y Visión",
       p1: <>
-        <strong style={{ color: 'var(--text-primary)' }}>¡Hola! Soy Félix Martínez.</strong> Para mí, programar no es solo escribir líneas de código; es una forma de arte. Me motiva profundamente resolver acertijos lógicos complejos y construir cosas con las que la gente pueda interactuar y apreciar. Destaco en entornos de equipo, valorando la toma de decisiones colaborativa donde la aportación de todos da forma al mejor resultado posible para el grupo en general.
+        <strong style={{ color: 'var(--text-primary)' }}>¡Hola! Soy Félix,</strong> estudiante de Ciencias de la Computación en UTRGV. Destaco en la intersección del software y el hardware, construyendo de todo, desde aplicaciones web impulsadas por IA hasta sistemas integrados autónomos.
       </>,
       p2: <>
-        Mi camino en la tecnología está impulsado por una curiosidad genuina y resiliencia. Navegar los desafíos financieros de la vida universitaria es un viaje exigente, uno que enfrento con el inmenso apoyo de mis padres y una determinación inquebrantable. Estos obstáculos han moldeado mi disciplina y alimentado mi hambre por crecer. Mirando hacia el futuro, estoy increíblemente emocionado de expandir mis horizontes y explorar cómo la programación da forma al mundo del desarrollo de videojuegos, combinando mi amor por la lógica y el diseño interactivo. Busco activamente pasantías, proyectos independientes o roles de desarrollo donde pueda aportar valor inmediato mientras continúo mi viaje académico y profesional.
+        Para mí, programar es el arte de resolver complejos acertijos lógicos. Soy altamente colaborativo, profundamente curioso y actualmente estoy explorando cómo la programación da forma al desarrollo de videojuegos. Busco activamente pasantías o roles de desarrollo donde pueda aportar valor inmediato y seguir creciendo.
       </>
     }
   }[lang] as any
@@ -47,6 +47,26 @@ export default function AboutMe() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', alignItems: 'flex-start' }}>
             {/* Title Column */}
             <div className="sticky-desktop" style={{ flex: '1 1 300px' }}>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <div style={{ 
+                  width: '120px', 
+                  height: '120px', 
+                  borderRadius: '50%', 
+                  padding: '4px',
+                  background: 'linear-gradient(135deg, var(--cyan), var(--violet))',
+                  display: 'inline-block'
+                }}>
+                  <div style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    borderRadius: '50%', 
+                    overflow: 'hidden',
+                    background: 'var(--bg-dark)'
+                  }}>
+                    <img src="/profile.jpg" alt="Félix" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                </div>
+              </div>
               <span className="tag mono" style={{ marginBottom: '1.2rem', display: 'inline-flex' }}>
                 <UserCircle size={14} /> &nbsp; About Me
               </span>
