@@ -63,7 +63,7 @@ export default function AboutMe() {
                     overflow: 'hidden',
                     background: 'var(--bg-dark)'
                   }}>
-                    <img src="/profile.jpg" alt="Félix" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src="/imagenmia.jpeg" alt="Félix" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 </div>
               </div>

@@ -1,13 +1,12 @@
 import { motion, useScroll, useSpring } from 'framer-motion'
-import Navbar   from './components/Navbar'
-import Hero     from './components/Hero'
+import Navbar from './components/Navbar'
+import Hero from './components/Hero'
 import Projects from './components/Projects'
-import Events   from './components/Events'
-import Contact  from './components/Contact'
-import Footer   from './components/Footer'
+import Events from './components/Events'
+import Contact from './components/Contact'
+import Footer from './components/Footer'
 import TechStack from './components/TechStack'
-import AboutMe    from './components/AboutMe'
-import GithubActivity from './components/GithubActivity'
+import AboutMe from './components/AboutMe'
 
 export default function App() {
   const { scrollYProgress } = useScroll()
@@ -47,7 +46,6 @@ export default function App() {
         <AboutMe />
         <TechStack />
         <Projects />
-        <GithubActivity />
         <Events />
         <Contact />
       </main>
