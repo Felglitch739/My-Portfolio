@@ -3,7 +3,13 @@
     {
       "source": "/:path*",
       "destination": "https://felix-martinez.vercel.app/:path*",
-      "permanent": true
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "my-portfolio-felix-martinez.vercel.app"
+        }
+      ]
     }
   ]
 }
