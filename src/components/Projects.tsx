@@ -151,7 +151,7 @@ export default function Projects() {
               >
                 <img
                   src={proj.image}
-                  alt={proj.title}
+                  alt={`${proj.title} project preview screenshot`}
                   style={{
                     width: '100%',
                     height: '100%',

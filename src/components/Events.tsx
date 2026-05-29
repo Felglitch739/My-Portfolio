@@ -104,7 +104,7 @@ export default function Events() {
           {timelineData.map((item, i) => {
             const isUpcoming = item.id === 'upcoming'
             return (
-              <motion.div
+              <motion.article
                 key={item.id}
                 initial="rest"
                 whileHover="hover"
@@ -249,7 +249,7 @@ export default function Events() {
                   )}
                 </motion.div>
 
-              </motion.div>
+              </motion.article>
             )
           })}
         </div>
