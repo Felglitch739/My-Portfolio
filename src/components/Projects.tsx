@@ -1,5 +1,5 @@
 import { motion, type Variants } from 'framer-motion'
-import { ExternalLink, Cpu, Globe, Bot, Trophy } from 'lucide-react'
+import { ExternalLink, Cpu, Globe, Trophy } from 'lucide-react'
 
 const GithubIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -63,20 +63,23 @@ const projects: Project[] = [
     accent: 'var(--violet)',
   },
   {
-    id: 'familyweather',
-    title: 'FamilyWeather Bot',
-    subtitle: 'Telegram bot — Python / PythonAnywhere',
+    id: 'kronobook',
+    title: 'KronoBook',
+    subtitle: 'SaaS Booking Platform — Live on Production',
     description:
-      'Automated Telegram bot that delivers personalized daily weather forecasts to family members. Built with Python and hosted on PythonAnywhere, it fetches real-time meteorological data and sends formatted reports on schedule.',
-    image: '/familyweather.png',
+      'Plataforma SaaS moderna para la gestión de negocios y reservas diseñada para negocios locales. Cuenta con un panel de administración intuitivo, sincronización en tiempo real y optimización de flujos de trabajo.',
+    image: '/KronoBook_Preview.png',
     tags: [
-      { label: 'Python',          color: 'var(--cyan)'    },
-      { label: 'Telegram API',    color: 'var(--violet)'  },
-      { label: 'PythonAnywhere',  color: 'var(--emerald)' },
+      { label: 'SaaS', color: 'var(--cyan)' },
+      { label: 'React', color: 'var(--violet)' },
+      { label: 'Tailwind CSS', color: 'var(--pink)' },
+      { label: 'node.js', color: 'var(--emerald)' },
+      { label: 'Vite', color: 'var(--amber)' },
     ],
-    link: 'https://github.com/Felglitch739/Family_Weather',
-    linkLabel: 'GitHub Repo',
-    icon: <Bot size={20} />,
+    link: 'https://kronobook.vercel.app',
+    linkLabel: 'Live Site',
+    github: 'https://github.com/Felglitch739/KronoBook',
+    icon: <Globe size={20} />,
     accent: 'var(--emerald)',
   },
 ]
