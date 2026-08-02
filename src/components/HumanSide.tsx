@@ -441,6 +441,7 @@ function BilliardsHardwareCanvas() {
             onClick={resetGame}
             className="mono-tag"
             style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', padding: '0.3rem 0.6rem' }}
+            aria-label="Reiniciar mesa de billar"
             title="Reiniciar mesa"
           >
             <RotateCcw size={12} color="var(--red)" /> RE-RACK

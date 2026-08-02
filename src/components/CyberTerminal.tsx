@@ -205,6 +205,8 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
                 onClick={onClose}
                 className="mono-tag mono-tag-red"
                 style={{ cursor: 'pointer' }}
+                aria-label="Cerrar ventana de terminal"
+                title="Cerrar terminal"
               >
                 <X size={12} />
               </button>

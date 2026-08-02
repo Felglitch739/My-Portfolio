@@ -153,7 +153,8 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
                 transition: 'all 0.2s ease',
                 flexShrink: 0,
               }}
-              aria-label="Toggle menu"
+              aria-label={mobileOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+              title={mobileOpen ? "Cerrar menú" : "Abrir menú"}
             >
               {mobileOpen ? <X size={18} /> : <Menu size={18} />}
             </button>

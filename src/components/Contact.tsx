@@ -128,6 +128,8 @@ export default function Contact({ lang = 'es' }: ContactProps) {
                     onClick={handleCopyEmail}
                     className="mono-tag"
                     style={{ cursor: 'pointer', background: 'transparent' }}
+                    aria-label={copied ? "Correo copiado al portapapeles" : "Copiar correo electrónico"}
+                    title="Copiar correo electrónico"
                   >
                     {copied ? <Check size={12} color="var(--red)" /> : <Copy size={12} />}
                   </button>

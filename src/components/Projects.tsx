@@ -228,6 +228,8 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
                     onClick={() => setSelectedProject(null)}
                     className="mono-tag"
                     style={{ cursor: 'pointer', background: 'transparent' }}
+                    aria-label="Cerrar inspector de proyecto"
+                    title="Cerrar inspector"
                   >
                     [ CLOSE ]
                   </button>
