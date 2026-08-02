@@ -1,32 +1,13 @@
 import { motion, type Variants } from 'framer-motion'
-import { Terminal, ChevronDown, Mail, Download } from 'lucide-react'
+import { Terminal, ChevronDown, Mail, Download, Sparkles, Cpu, Code2, ArrowRight } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
-const GithubIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 9 18v4"></path>
-  </svg>
-)
+interface HeroProps {
+  onOpenTerminal: () => void
+  lang?: 'es' | 'en'
+}
 
-const LinkedinIcon = ({ size = 20 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-    <rect x="2" y="9" width="4" height="12"></rect>
-    <circle cx="4" cy="4" r="2"></circle>
-  </svg>
-)
-
-const skills = [
-  { label: 'Python',         color: 'var(--cyan)'    },
-  { label: 'C++',            color: 'var(--violet)'  },
-  { label: 'PHP',            color: 'var(--pink)'    },
-  { label: 'Laravel',        color: 'var(--emerald)' },
-  { label: 'Robotics',       color: 'var(--amber)'   },
-  { label: 'Embedded Sys.',  color: 'var(--cyan)'    },
-]
-
-// Typewriter hook
-function useTypewriter(words: string[], speed = 80, pause = 1800) {
+function useTypewriter(words: string[], speed = 70, pause = 1800) {
   const el = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     let wi = 0, ci = 0, deleting = false, timer: ReturnType<typeof setTimeout>
@@ -45,38 +26,59 @@ function useTypewriter(words: string[], speed = 80, pause = 1800) {
     }
     tick()
     return () => clearTimeout(timer)
-  }, [])
+  }, [words])
   return el
 }
 
-export default function Hero() {
-  const lang = new URLSearchParams(window.location.search).get('lang') || 'en'
+export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
   const t = {
-    en: {
-      available: "Available for opportunities",
-      roles: ['Software Engineer', 'Hardware Enthusiast', 'Python Developer', 'Robotics Builder', 'CS @ UTRGV'],
-      student: "Computer Science student at",
-      building: "building things at the intersection of",
-      software: "software",
-      and: "and",
-      hardware: "hardware",
-      seeWork: "See my work",
-      getTouch: "Get in touch",
-      download: "Download Resume"
-    },
     es: {
-      available: "Disponible para oportunidades",
-      roles: ['Ingeniero de Software', 'Entusiasta de Hardware', 'Desarrollador Python', 'Robótica', 'CS @ UTRGV'],
-      student: "Estudiante de Ciencias de la Computación en",
-      building: "construyendo en la intersección de",
-      software: "software",
+      status: "🟢 Estudiante CS @ UTRGV | Construyendo AuraFit & KronoBook",
+      roles: [
+        'Full-Stack Software Engineer',
+        'Hardware Hacker & Embedded Builder',
+        'Computer Science @ UTRGV',
+        'Co-Fundador @ Build Pa\'l Norte',
+      ],
+      titlePrefix: "Ingeniería de",
+      software: "Software",
       and: "y",
-      hardware: "hardware",
-      seeWork: "Ver mi trabajo",
-      getTouch: "Contactar",
-      download: "Descargar CV"
+      hardware: "Hardware",
+      desc: "Construyendo soluciones de alto impacto en la intersección del software y el hardware: desde aplicaciones web impulsadas por IA hasta sistemas integrados autónomos.",
+      projectsBtn: "Explorar Proyectos",
+      terminalBtn: "Terminal Interactiva",
+      cvBtn: "Descargar CV",
+      stats: [
+        { label: "Proyectos Clave", val: "5+" },
+        { label: "Universidad", val: "UTRGV CS" },
+        { label: "Hackathon Host", val: "24h Event" },
+        { label: "Comunidad", val: "IEEE & Pa'l Norte" },
+      ]
+    },
+    en: {
+      status: "🟢 CS Student @ UTRGV | Building AuraFit & KronoBook",
+      roles: [
+        'Full-Stack Software Engineer',
+        'Hardware Hacker & Embedded Builder',
+        'Computer Science @ UTRGV',
+        'Co-Founder @ Build Pa\'l Norte',
+      ],
+      titlePrefix: "Engineering at the Edge of",
+      software: "Software",
+      and: "&",
+      hardware: "Hardware",
+      desc: "Crafting high-impact solutions at the intersection of software and hardware: from AI-powered web applications to autonomous embedded systems.",
+      projectsBtn: "Explore Projects",
+      terminalBtn: "Interactive Terminal",
+      cvBtn: "Download Resume",
+      stats: [
+        { label: "Key Projects", val: "5+" },
+        { label: "University", val: "UTRGV CS" },
+        { label: "Hackathon Host", val: "24h Event" },
+        { label: "Community", val: "IEEE & Pa'l Norte" },
+      ]
     }
-  }[lang] as any
+  }[lang]
 
   const typedRef = useTypewriter(t.roles)
 
@@ -86,12 +88,12 @@ export default function Hero() {
   }
   const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
-    show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
   }
 
   return (
     <section
-      id="about"
+      id="hero"
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -100,254 +102,219 @@ export default function Hero() {
         position: 'relative',
         overflow: 'hidden',
         padding: '0 1.5rem',
-        paddingTop: 'var(--nav-height)',
-        paddingBottom: '8rem',
+        paddingTop: 'calc(var(--nav-height) + 2rem)',
+        paddingBottom: '4rem',
       }}
     >
-      {/* Orbs */}
-      <div className="orb orb-cyan"  style={{ width: 600, height: 600, top: '-10%',  left: '-15%'  }} />
-      <div className="orb orb-violet"style={{ width: 500, height: 500, top: '20%',   right: '-20%' }} />
-      <div className="orb orb-pink"  style={{ width: 400, height: 400, bottom: '0',  left: '30%'   }} />
+      {/* Background Ambient Orbs */}
+      <div className="orb orb-cyan" style={{ width: 600, height: 600, top: '-10%', left: '-15%' }} />
+      <div className="orb orb-violet" style={{ width: 500, height: 500, top: '20%', right: '-20%' }} />
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
         style={{
-          maxWidth: 820,
+          maxWidth: 900,
           width: '100%',
           textAlign: 'center',
           position: 'relative',
-          zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem',
+          zIndex: 1,
         }}
       >
-        <motion.div variants={itemVariants} style={{ marginBottom: '0.5rem' }}>
+        {/* Status Pill */}
+        <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
           <span
-            className="tag mono"
-            style={{ fontSize: '0.85rem', padding: '0.4rem 1rem' }}
+            className="mono"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              padding: '0.45rem 1.1rem',
+              borderRadius: '100px',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              background: 'rgba(16, 185, 129, 0.1)',
+              border: '1px solid rgba(16, 185, 129, 0.3)',
+              color: '#34d399',
+              boxShadow: '0 0 20px rgba(16, 185, 129, 0.15)',
+            }}
           >
-            <Terminal size={13} />
-            {'  '}&gt; hello world —{' '}
-            <span style={{ color: 'var(--cyan)' }}>{t.available}</span>
+            {t.status}
           </span>
         </motion.div>
 
         {/* Name */}
-        <motion.h1
+        <motion.h2
           variants={itemVariants}
+          className="mono"
           style={{
-            fontSize: 'clamp(3rem, 9vw, 6.5rem)',
-            fontWeight: 900,
-            lineHeight: 1.05,
-            letterSpacing: '-0.04em',
-            marginBottom: '1rem',
+            color: 'var(--cyan)',
+            fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
+            letterSpacing: '0.2em',
+            textTransform: 'uppercase',
+            marginBottom: '0.5rem',
+            fontWeight: 700,
           }}
         >
-          <span style={{ display: 'block', color: 'var(--text-primary)' }}>
-            Félix
-          </span>
-          <span className="gradient-text" style={{ display: 'block' }}>
-            Martínez
-          </span>
-        </motion.h1>
+          FÉLIX E. MARTINEZ FLORES
+        </motion.h2>
 
-        {/* Typewriter */}
+        {/* Dynamic Role Typewriter */}
         <motion.div
           variants={itemVariants}
           style={{
-            fontSize: 'clamp(1.1rem, 3vw, 1.5rem)',
-            color: 'var(--text-secondary)',
-            marginBottom: '0.5rem',
-            minHeight: '2rem',
-            fontFamily: 'var(--font-mono)',
+            fontSize: 'clamp(1.5rem, 3.5vw, 2.4rem)',
+            fontWeight: 700,
+            color: '#f8fafc',
+            height: '2.8rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            marginBottom: '1rem',
+            fontFamily: "'JetBrains Mono', monospace",
           }}
         >
-          <span ref={typedRef} style={{ color: 'var(--cyan)' }} />
-          <span
-            style={{
-              display: 'inline-block',
-              width: '2px',
-              height: '1.2em',
-              background: 'var(--cyan)',
-              marginLeft: '2px',
-              verticalAlign: 'text-bottom',
-              animation: 'blink 0.9s step-end infinite',
-            }}
-          />
+          <span style={{ color: 'var(--cyan)' }}>&gt;</span>
+          <span ref={typedRef} style={{ borderRight: '2px solid var(--cyan)', paddingRight: '4px' }} />
         </motion.div>
+
+        {/* Main Headline */}
+        <motion.h1
+          variants={itemVariants}
+          style={{
+            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+            fontWeight: 900,
+            lineHeight: 1.08,
+            letterSpacing: '-0.03em',
+            color: '#f8fafc',
+            marginBottom: '1.5rem',
+          }}
+        >
+          {t.titlePrefix}{' '}
+          <span className="gradient-text">{t.software}</span> {t.and}{' '}
+          <span style={{ color: 'var(--cyan)', textShadow: '0 0 30px var(--cyan-glow)' }}>{t.hardware}</span>.
+        </motion.h1>
 
         {/* Description */}
         <motion.p
           variants={itemVariants}
           style={{
-            fontSize: '1.05rem',
-            color: 'var(--text-secondary)',
-            maxWidth: 580,
-            margin: '0 auto 1.5rem',
-            lineHeight: 1.75,
+            fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+            color: '#94a3b8',
+            maxWidth: '720px',
+            margin: '0 auto 2.5rem',
+            lineHeight: 1.7,
           }}
         >
-          {t.student}{' '}
-          <span style={{ color: 'var(--cyan)', fontWeight: 600 }}>UTRGV</span>{' '}
-          {t.building}{' '}
-          <span style={{ color: 'var(--violet)', fontWeight: 600 }}>
-            {t.software}
-          </span>{' '}
-          {t.and}{' '}
-          <span style={{ color: 'var(--emerald)', fontWeight: 600 }}>
-            {t.hardware}
-          </span>
-          .
+          {t.desc}
         </motion.p>
 
-        {/* Skill tags */}
+        {/* Stack Quick Badges */}
         <motion.div
           variants={itemVariants}
           style={{
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '0.6rem',
             justifyContent: 'center',
-            marginBottom: '1.5rem',
+            gap: '0.6rem',
+            marginBottom: '2.5rem',
           }}
         >
-          {skills.map((s) => (
-            <motion.span
-              key={s.label}
-              whileHover={{ scale: 1.08, y: -2 }}
-              style={{
-                padding: '0.35rem 0.9rem',
-                borderRadius: '100px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                color: s.color,
-                background: `${s.color}15`,
-                border: `1px solid ${s.color}40`,
-                cursor: 'default',
-              }}
-            >
-              {s.label}
-            </motion.span>
+          {['C++', 'Python', 'React', 'Vite', 'Tailwind CSS', 'TypeScript', 'SQL', 'Embedded Systems'].map((tech) => (
+            <span key={tech} className="tag mono">
+              {tech}
+            </span>
           ))}
         </motion.div>
 
-        {/* CTA buttons */}
-        <motion.div
-          variants={itemVariants}
-          style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}
-        >
-          <motion.a
-            href="#projects"
-            className="btn-primary"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            {t.seeWork}
-          </motion.a>
-          <motion.a
-            href="#contact"
-            className="btn-ghost"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            {t.getTouch}
-          </motion.a>
-          <motion.a
-            href="/Felix_Martinez_Resume.pdf"
-            download
-            className="btn-ghost"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <Download size={16} style={{ marginRight: '0.4rem' }} /> {t.download}
-          </motion.a>
-        </motion.div>
-
-        {/* Social links */}
+        {/* Action Buttons */}
         <motion.div
           variants={itemVariants}
           style={{
             display: 'flex',
-            gap: '1.25rem',
+            flexWrap: 'wrap',
+            gap: '1rem',
             justifyContent: 'center',
-            marginTop: '1.5rem',
-            flexWrap: 'wrap'
+            alignItems: 'center',
+            marginBottom: '4rem',
           }}
         >
-          {[
-            { icon: <GithubIcon size={20} />,   href: 'https://github.com/Felglitch739',   label: 'GitHub'   },
-            { icon: <LinkedinIcon size={20} />, href: 'https://www.linkedin.com/in/felix-martinez-fls/', label: 'LinkedIn' },
-            { icon: <Mail size={20} />,     href: 'mailto:felixmrtzflrs04@gmail.com', label: 'Email'    },
-          ].map((s) => (
-            <motion.a
-              key={s.label}
-              href={s.href}
-              target={s.href.startsWith('http') ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              whileHover={{ y: -3, scale: 1.1 }}
-              aria-label={s.label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 44,
-                height: 44,
-                borderRadius: '12px',
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-glass)',
-                color: 'var(--text-secondary)',
-                textDecoration: 'none',
-                transition: 'color 0.2s, border-color 0.2s',
-                backdropFilter: 'blur(10px)',
-              }}
-              onMouseEnter={(e) => {
-                ;(e.currentTarget as HTMLElement).style.color = 'var(--cyan)'
-                ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border-glow)'
-              }}
-              onMouseLeave={(e) => {
-                ;(e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
-                ;(e.currentTarget as HTMLElement).style.borderColor = 'var(--border-glass)'
-              }}
-            >
-              {s.icon}
-            </motion.a>
+          <a href="#projects" className="btn-primary">
+            <span>{t.projectsBtn}</span>
+            <ArrowRight size={18} />
+          </a>
+
+          <button onClick={onOpenTerminal} className="btn-ghost" style={{ background: 'rgba(56, 189, 248, 0.08)' }}>
+            <Terminal size={18} />
+            <span>{t.terminalBtn}</span>
+          </button>
+
+          <a
+            href="/Felix_Martinez_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-ghost"
+            style={{ borderColor: 'rgba(255, 255, 255, 0.2)', color: '#f8fafc' }}
+          >
+            <Download size={18} />
+            <span>{t.cvBtn}</span>
+          </a>
+        </motion.div>
+
+        {/* Stats Grid Pill */}
+        <motion.div
+          variants={itemVariants}
+          className="glass-card"
+          style={{
+            padding: '1.2rem 2rem',
+            maxWidth: '800px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: '1.5rem',
+            textAlign: 'center',
+          }}
+        >
+          {t.stats.map((st, i) => (
+            <div key={i}>
+              <div
+                style={{
+                  fontSize: '1.4rem',
+                  fontWeight: 800,
+                  color: i === 0 ? 'var(--cyan)' : i === 1 ? 'var(--violet)' : i === 2 ? 'var(--pink)' : 'var(--emerald)',
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {st.val}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '0.2rem' }}>{st.label}</div>
+            </div>
           ))}
         </motion.div>
       </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
+      {/* Down Scroll Indicator */}
+      <a
+        href="#about-me"
         style={{
           position: 'absolute',
-          bottom: '2rem',
+          bottom: '1.5rem',
           left: '50%',
           transform: 'translateX(-50%)',
+          color: '#64748b',
+          textDecoration: 'none',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '0.4rem',
-          color: 'var(--text-muted)',
+          gap: '0.3rem',
           fontSize: '0.75rem',
-          fontFamily: 'var(--font-mono)',
+          zIndex: 1,
         }}
       >
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 1.8 }}>
-          <ChevronDown size={20} />
-        </motion.div>
-        scroll
-      </motion.div>
-
-      <style>{`
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-      `}</style>
+        <ChevronDown size={20} className="animate-bounce" />
+      </a>
     </section>
   )
 }

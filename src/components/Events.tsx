@@ -1,262 +1,165 @@
 import { motion } from 'framer-motion'
-import { Zap, ArrowRight, Sparkles, Trophy, Cpu, Code2, Rocket } from 'lucide-react'
+import { Trophy, Users, Cpu, Award, Zap, Calendar, MapPin, Sparkles } from 'lucide-react'
 
-interface TimelineItem {
-  id: string
-  year: string
-  title: string
-  description?: string
-  items?: { name: string; desc?: string }[]
-  status?: string
-  color: string
-  icon: any
+interface EventsProps {
+  lang?: 'es' | 'en'
 }
 
-const timelineData: TimelineItem[] = [
-  {
-    id: '2018',
-    year: '2018',
-    title: 'State Robotics Champion & National Finalist',
-    description: '1st Place at Punto México Conectado (Matamoros) and 5th Place Nationally. Developed competitive robotics solutions using Lego Mindstorms EV3.',
-    color: 'var(--cyan)',
-    icon: Trophy
-  },
-  {
-    id: '2020',
-    year: '2020',
-    title: 'Embedded Development Course',
-    description: 'Completed intensive certification on Arduino architecture and microcontroller programming.',
-    color: 'var(--violet)',
-    icon: Cpu
-  },
-  {
-    id: '2024',
-    year: '2024',
-    title: 'IEEEXtreme 18.0',
-    description: 'Participated in the IEEE 24-hour global programming competition.',
-    color: 'var(--emerald)',
-    icon: Code2
-  },
-  {
-    id: '2025',
-    year: '2025',
-    title: 'IEEEXtreme 19.0',
-    description: 'Participation and representation in the annual IEEE global competition.',
-    color: 'var(--pink)',
-    icon: Code2
-  },
-  {
-    id: '2026',
-    year: '2026',
-    title: 'Key Projects & Competitions',
-    items: [
-      { name: 'RobotMayhem (IEEE)', desc: 'Robotics systems design and competition' },
-      { name: 'Gazpachos Landing Page', desc: 'The base project we are currently using' },
-      { name: 'AuraFit App', desc: 'FronteraHacks project' }
-    ],
-    color: 'var(--cyan)',
-    icon: Rocket
-  },
-  {
-    id: 'upcoming',
-    year: 'Upcoming',
-    title: "Build Pa'l Norte Hackathon",
-    description: 'Cross-border hackathon focused on bilingual and binational tech solutions.',
-    status: 'In Development / Upcoming',
-    color: 'var(--amber)',
-    icon: Rocket
-  }
-]
+export default function Events({ lang = 'es' }: EventsProps) {
+  const events = [
+    {
+      id: 'build-pal-norte',
+      title: "Build Pa'l Norte",
+      role: "Cofundador & CMO (Chief Marketing Officer)",
+      location: "Matamoros, Tamaulipas",
+      desc: "Comunidad tecnológica creada para impulsar el talento local en Matamoros. Nuestro evento insignia es un Hackathon de 24 horas continuas para desarrolladores y creativos.",
+      badge: "Comunidad & Hackathon 24h",
+      icon: <Users size={24} />,
+      color: "var(--cyan)",
+    },
+    {
+      id: 'ieee-chapter',
+      title: "Comunidad Estudiantil IEEE",
+      role: "Miembro Activo del Capítulo Estudiantil",
+      location: "UTRGV (University of Texas Rio Grande Valley)",
+      desc: "Participación continua en eventos, talleres técnicos y redes de colaboración con ingenieros del capítulo IEEE.",
+      badge: "IEEE Chapter",
+      icon: <Zap size={24} />,
+      color: "var(--violet)",
+    },
+    {
+      id: 'ieeextreme',
+      title: "IEEEXtreme Programming Competition",
+      role: "Competidor de Programación",
+      location: "Competencia Global IEEE",
+      desc: "Resolución intensiva de problemas de algoritmos y optimización en tiempo real durante 24 horas continuas.",
+      badge: "Competitive Programming",
+      icon: <Trophy size={24} />,
+      color: "var(--amber)",
+    },
+    {
+      id: 'mining-mayhem',
+      title: "IEEE Mining Mayhem Robotics",
+      role: "Competidor de Robótica & Hardware",
+      location: "IEEE Robotics Challenge",
+      desc: "Diseño, prototipado e integración de hardware y sistemas robóticos para minería autónoma y remota.",
+      badge: "Hardware & Robotics",
+      icon: <Cpu size={24} />,
+      color: "var(--emerald)",
+    },
+  ]
 
-export default function Events() {
+  const t = {
+    es: {
+      tag: "COMUNIDAD & LOGROS",
+      title: "Liderazgo, Hackathons & Competencias",
+      subtitle: "Construyendo comunidad tecnológica local y compitiendo a nivel internacional.",
+    },
+    en: {
+      tag: "COMMUNITY & ACHIEVEMENTS",
+      title: "Leadership, Hackathons & Competitions",
+      subtitle: "Fostering local tech ecosystem and competing internationally.",
+    },
+  }[lang]
+
   return (
-    <section id="events" className="section" style={{ position: 'relative', overflow: 'hidden' }}>
-      <div className="container" style={{ maxWidth: 860 }}>
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
-          style={{ marginBottom: '5rem', paddingLeft: '2rem' }}
-        >
-          <span className="tag mono" style={{ marginBottom: '1.5rem', display: 'inline-flex', background: 'transparent', border: 'none', color: 'var(--text-secondary)', padding: 0 }}>
-            <Zap size={14} style={{ color: 'var(--cyan)', marginRight: 8 }} /> Timeline
+    <section id="events" className="section" style={{ position: 'relative' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <span className="tag tag-pink mono" style={{ marginBottom: '0.8rem' }}>
+            <Trophy size={14} /> &nbsp; {t.tag}
           </span>
-          <h2 className="section-title gradient-text" style={{ textAlign: 'left', margin: 0 }}>Experience & Achievements</h2>
-        </motion.div>
+          <h2 className="section-title gradient-text">{t.title}</h2>
+          <p className="section-subtitle">{t.subtitle}</p>
+        </div>
 
-        {/* Timeline Container */}
-        <div style={{ position: 'relative', paddingLeft: '2.5rem', marginLeft: '1rem' }}>
-          {/* Main vertical line */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '8px',
-              bottom: 0,
-              left: '5px',
-              width: '1px',
-              background: 'linear-gradient(to bottom, var(--cyan), var(--violet), transparent)',
-              opacity: 0.4,
-            }}
-          />
-
-          {timelineData.map((item, i) => {
-            const isUpcoming = item.id === 'upcoming'
-            return (
-              <motion.article
-                key={item.id}
-                initial="rest"
-                whileHover="hover"
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
+        {/* Events Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '1.8rem',
+            maxWidth: '1080px',
+            margin: '0 auto',
+          }}
+        >
+          {events.map((event, index) => (
+            <motion.div
+              key={event.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1, duration: 0.6 }}
+              className="glass-card"
+              style={{
+                padding: '2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+              }}
+            >
+              <div
                 style={{
-                  position: 'relative',
-                  marginBottom: i === timelineData.length - 1 ? 0 : '4.5rem',
-                  opacity: 0,
-                  x: -30,
-                  transformOrigin: 'left',
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: event.color,
+                  border: `1px solid ${event.color}`,
+                  marginBottom: '1.2rem',
+                  boxShadow: `0 0 20px rgba(0,0,0,0.3)`,
                 }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
               >
-                {/* Node Dot */}
-                <motion.div
-                  variants={{
-                    rest: { scale: 1, opacity: 0.8 },
-                    hover: { scale: 1.15, opacity: 1 }
-                  }}
-                  style={{
-                    position: 'absolute',
-                    left: '-2.5rem',
-                    top: '0rem',
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    background: 'var(--bg-deep)',
-                    border: `1px solid ${item.color}50`,
-                    boxShadow: isUpcoming ? 'none' : `0 0 15px ${item.color}40`,
-                    zIndex: 2,
-                    marginLeft: '5px',
-                    transform: 'translateX(-50%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                   {isUpcoming && (
-                     <div style={{
-                       position: 'absolute', inset: -4, borderRadius: '50%', border: `1px dashed ${item.color}`, animation: 'spin 4s linear infinite'
-                     }} />
-                   )}
-                   <item.icon size={14} style={{ color: item.color }} />
-                </motion.div>
+                {event.icon}
+              </div>
 
-                {/* Content Container */}
-                <motion.div
-                  variants={{
-                    rest: { x: 0 },
-                    hover: { x: 10 }
-                  }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  style={{ paddingRight: '1rem', cursor: 'default' }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.6rem' }}>
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: '0.9rem',
-                        fontWeight: 700,
-                        color: item.color,
-                        letterSpacing: '0.05em'
-                      }}
-                    >
-                      {item.year}
-                    </span>
-                    {item.status && (
-                      <span
-                        style={{
-                          fontSize: '0.72rem',
-                          fontFamily: 'var(--font-mono)',
-                          padding: '0.2rem 0.6rem',
-                          borderRadius: '100px',
-                          background: `${item.color}15`,
-                          color: item.color,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          border: `1px solid ${item.color}30`
-                        }}
-                      >
-                        <Sparkles size={11} /> {item.status}
-                      </span>
-                    )}
-                  </div>
+              <span
+                className="mono"
+                style={{
+                  alignSelf: 'flex-start',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '100px',
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  color: event.color,
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  marginBottom: '0.8rem',
+                }}
+              >
+                {event.badge}
+              </span>
 
-                  <motion.h3
-                    variants={{
-                      rest: { color: 'var(--text-primary)' },
-                      hover: { color: item.color }
-                    }}
-                    style={{
-                      fontSize: '1.3rem',
-                      fontWeight: 700,
-                      marginBottom: '0.75rem',
-                      letterSpacing: '-0.02em',
-                      transition: 'color 0.3s ease'
-                    }}
-                  >
-                    {item.title}
-                  </motion.h3>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.3rem' }}>
+                {event.title}
+              </h3>
+              <h4 style={{ fontSize: '0.88rem', color: 'var(--cyan)', marginBottom: '0.6rem', fontWeight: 600 }}>
+                {event.role}
+              </h4>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  fontSize: '0.8rem',
+                  color: '#64748b',
+                  marginBottom: '1.2rem',
+                }}
+              >
+                <MapPin size={13} />
+                <span>{event.location}</span>
+              </div>
 
-                  {item.description && (
-                    <p style={{
-                      color: isUpcoming ? 'var(--text-muted)' : 'var(--text-secondary)',
-                      fontSize: '0.95rem',
-                      lineHeight: 1.65,
-                      maxWidth: '680px',
-                      opacity: isUpcoming ? 0.8 : 1
-                    }}>
-                      {item.description}
-                    </p>
-                  )}
-
-                  {item.items && (
-                    <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                      {item.items.map((sub, idx) => (
-                        <motion.div 
-                          key={idx} 
-                          variants={{
-                            rest: { x: 0, opacity: 0.85 },
-                            hover: { x: 6, opacity: 1 }
-                          }}
-                          transition={{ duration: 0.3, delay: idx * 0.05 }}
-                          style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}
-                        >
-                          <ArrowRight size={15} style={{ color: item.color, marginTop: '3px', opacity: 0.8 }} />
-                          <div>
-                            <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem', display: 'block' }}>
-                              {sub.name}
-                            </span>
-                            {sub.desc && (
-                              <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginTop: '0.2rem' }}>
-                                {sub.desc}
-                              </span>
-                            )}
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-
-              </motion.article>
-            )
-          })}
+              <p style={{ color: '#94a3b8', fontSize: '0.92rem', lineHeight: 1.6 }}>
+                {event.desc}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </div>
-      <style>{`
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-      `}</style>
     </section>
   )
 }

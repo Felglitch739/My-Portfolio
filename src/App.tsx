@@ -1,14 +1,21 @@
+import { useState } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
+import CircuitCanvas from './components/CircuitCanvas'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import AboutMe from './components/AboutMe'
+import TechStack from './components/TechStack'
 import Projects from './components/Projects'
 import Events from './components/Events'
+import HumanSide from './components/HumanSide'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
-import TechStack from './components/TechStack'
-import AboutMe from './components/AboutMe'
+import CyberTerminal from './components/CyberTerminal'
 
 export default function App() {
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false)
+  const [lang, setLang] = useState<'es' | 'en'>('es')
+
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -18,7 +25,7 @@ export default function App() {
 
   return (
     <>
-      {/* Progress bar */}
+      {/* Scroll Progress Bar */}
       <motion.div
         style={{
           position: 'fixed',
@@ -29,28 +36,37 @@ export default function App() {
           background: 'linear-gradient(90deg, var(--cyan), var(--violet), var(--pink))',
           transformOrigin: '0%',
           scaleX,
-          zIndex: 999,
+          zIndex: 9999,
           boxShadow: '0 0 10px var(--cyan)',
         }}
       />
 
-      {/* Background elements */}
-      <div className="grid-bg" aria-hidden />
+      {/* Interactive PCB Circuit Canvas Background */}
+      <CircuitCanvas />
 
       {/* Navigation */}
-      <Navbar />
+      <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} setLang={setLang} />
 
-      {/* Main content */}
-      <main>
-        <Hero />
-        <AboutMe />
-        <TechStack />
-        <Projects />
-        <Events />
-        <Contact />
+      {/* Main Content */}
+      <main style={{ position: 'relative', zIndex: 1 }}>
+        <Hero onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} />
+        <AboutMe lang={lang} />
+        <TechStack lang={lang} />
+        <Projects lang={lang} />
+        <Events lang={lang} />
+        <HumanSide lang={lang} />
+        <Contact lang={lang} />
       </main>
 
-      <Footer />
+      {/* Footer */}
+      <Footer lang={lang} />
+
+      {/* Interactive Hacker Console Modal */}
+      <CyberTerminal
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+        lang={lang}
+      />
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Mail, Send, MapPin, GraduationCap, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
+import { Mail, Send, MapPin, GraduationCap, CheckCircle2, XCircle, Loader2, Copy, Check } from 'lucide-react'
 import { useState } from 'react'
 
 const ACCESS_KEY = "1a2bcea0-20e8-4243-855d-bce0531ef148" // Web3Forms API Key
@@ -18,9 +18,22 @@ const LinkedinIcon = ({ size = 20 }: { size?: number }) => (
   </svg>
 )
 
-export default function Contact() {
+interface ContactProps {
+  lang?: 'es' | 'en'
+}
+
+export default function Contact({ lang = 'es' }: ContactProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [copied, setCopied] = useState(false)
+
+  const email = "felix.martinez08@utrgv.edu"
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(email)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -39,7 +52,7 @@ export default function Contact() {
 
       if (data.success) {
         setSubmitStatus('success')
-          ; (e.target as HTMLFormElement).reset()
+        ;(e.target as HTMLFormElement).reset()
       } else {
         console.error("Error", data)
         setSubmitStatus('error')
@@ -52,294 +65,240 @@ export default function Contact() {
     }
   }
 
+  const t = {
+    es: {
+      tag: "CONTACTO & COLABORACIÓN",
+      title: "Conectemos & Hablemos",
+      subtitle: "Abierto a oportunidades de desarrollo, pasantías y colaboraciones en software o hardware.",
+      infoTitle: "Información Directa",
+      eduLabel: "Educación",
+      locationLabel: "Ubicación",
+      emailLabel: "Correo Universitario",
+      socialLabel: "Redes & Código",
+      formTitle: "Enviarme un Mensaje Directo",
+      namePlaceholder: "Tu nombre o empresa",
+      emailPlaceholder: "tu@email.com",
+      msgPlaceholder: "Cuéntame sobre tu idea, proyecto o vacante...",
+      submitBtn: "Enviar Mensaje",
+      successMsg: "¡Mensaje enviado con éxito! Te responderé lo antes posible.",
+      errorMsg: "Ocurrió un error al enviar el mensaje. Por favor intenta enviarme un correo directamente.",
+    },
+    en: {
+      tag: "CONTACT & COLLABORATION",
+      title: "Let's Connect",
+      subtitle: "Open to software engineering roles, hardware collaborations, and new opportunities.",
+      infoTitle: "Direct Info",
+      eduLabel: "Education",
+      locationLabel: "Location",
+      emailLabel: "University Email",
+      socialLabel: "Socials & Code",
+      formTitle: "Send a Direct Message",
+      namePlaceholder: "Your name or company",
+      emailPlaceholder: "you@company.com",
+      msgPlaceholder: "Tell me about your project or opportunity...",
+      submitBtn: "Send Message",
+      successMsg: "Message sent successfully! I'll get back to you shortly.",
+      errorMsg: "Error sending message. Please email me directly.",
+    }
+  }[lang]
+
   return (
-    <section id="contact" className="section">
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          style={{ textAlign: 'center', marginBottom: '3.5rem' }}
-        >
-          <span className="tag mono" style={{ marginBottom: '1rem', display: 'inline-flex' }}>
-            <Send size={13} /> &nbsp; Contact
+    <section id="contact" className="section" style={{ position: 'relative' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+          <span className="tag tag-cyan mono" style={{ marginBottom: '0.8rem' }}>
+            <Send size={13} /> &nbsp; {t.tag}
           </span>
-          <h2 className="section-title gradient-text">Let's Connect</h2>
-          <div className="divider" style={{ marginTop: '0.75rem' }} />
-          <p className="section-subtitle" style={{ marginTop: '1rem', marginBottom: 0 }}>
-            Open to internships, collaborations, and new opportunities.
-          </p>
-        </motion.div>
+          <h2 className="section-title gradient-text">{t.title}</h2>
+          <p className="section-subtitle">{t.subtitle}</p>
+        </div>
 
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1.5rem',
-            maxWidth: 820,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '2rem',
+            maxWidth: '1000px',
             margin: '0 auto',
           }}
         >
-          {/* Info card */}
+          {/* Info Card */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
             className="glass-card"
-            style={{ padding: '2rem' }}
+            style={{ padding: '2.2rem' }}
           >
-            <h3
-              style={{
-                fontSize: '1.15rem',
-                fontWeight: 700,
-                marginBottom: '1.5rem',
-                color: 'var(--text-primary)',
-              }}
-            >
-              Félix Martínez
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1.5rem' }}>
+              {t.infoTitle}
             </h3>
 
-            {[
-              {
-                icon: <GraduationCap size={16} />,
-                label: 'CS @ UTRGV',
-                color: 'var(--cyan)',
-              },
-              {
-                icon: <MapPin size={16} />,
-                label: 'Rio Grande Valley, TX',
-                color: 'var(--violet)',
-              },
-              {
-                icon: <Mail size={16} />,
-                label: 'felixmrtzflrs04@gmail.com',
-                color: 'var(--emerald)',
-              },
-            ].map((item) => (
-              <div
-                key={item.label}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '1rem',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.92rem',
-                }}
-              >
-                <span style={{ color: item.color }}>{item.icon}</span>
-                {item.label}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ padding: '0.6rem', background: 'rgba(56, 189, 248, 0.1)', color: 'var(--cyan)', borderRadius: '10px' }}>
+                  <GraduationCap size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>{t.eduLabel}</div>
+                  <div style={{ color: '#f8fafc', fontWeight: 600, fontSize: '0.95rem' }}>UTRGV (Computer Science)</div>
+                  <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>University of Texas Rio Grande Valley</div>
+                </div>
               </div>
-            ))}
 
-            <div
-              style={{
-                height: '1px',
-                background: 'var(--border-glass)',
-                margin: '1.5rem 0',
-              }}
-            />
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ padding: '0.6rem', background: 'rgba(129, 140, 248, 0.1)', color: 'var(--violet)', borderRadius: '10px' }}>
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>{t.locationLabel}</div>
+                  <div style={{ color: '#f8fafc', fontWeight: 600, fontSize: '0.95rem' }}>Edinburg, TX / Matamoros, Tamps</div>
+                </div>
+              </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              {[
-                { icon: <GithubIcon size={18} />, href: 'https://github.com/Felglitch739', label: 'GitHub' },
-                { icon: <LinkedinIcon size={18} />, href: 'https://www.linkedin.com/in/felix-martinez-fls/', label: 'LinkedIn' },
-                { icon: <Mail size={18} />, href: 'mailto:felixmrtzflrs04@gmail.com', label: 'Email' },
-              ].map((s) => (
-                <motion.a
-                  key={s.label}
-                  href={s.href}
-                  target={s.href.startsWith('http') ? '_blank' : undefined}
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ padding: '0.6rem', background: 'rgba(52, 211, 153, 0.1)', color: 'var(--emerald)', borderRadius: '10px' }}>
+                  <Mail size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>{t.emailLabel}</div>
+                  <div style={{ color: 'var(--cyan)', fontWeight: 600, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>{email}</span>
+                    <button
+                      onClick={handleCopyEmail}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: copied ? '#34d399' : '#94a3b8',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                      }}
+                      title="Copy Email"
+                    >
+                      {copied ? <Check size={14} /> : <Copy size={14} />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Links */}
+            <div style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+              <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, marginBottom: '0.8rem' }}>
+                {t.socialLabel}
+              </div>
+              <div style={{ display: 'flex', gap: '0.8rem' }}>
+                <a
+                  href="https://github.com/Felglitch739"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ y: -3, scale: 1.1 }}
-                  aria-label={s.label}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 42,
-                    height: 42,
-                    borderRadius: '10px',
-                    background: 'rgba(56,189,248,0.08)',
-                    border: '1px solid var(--border-glass)',
-                    color: 'var(--text-secondary)',
-                    textDecoration: 'none',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    ; (e.currentTarget as HTMLElement).style.color = 'var(--cyan)'
-                      ; (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-glow)'
-                      ; (e.currentTarget as HTMLElement).style.background = 'var(--cyan-glow)'
-                  }}
-                  onMouseLeave={(e) => {
-                    ; (e.currentTarget as HTMLElement).style.color = 'var(--text-secondary)'
-                      ; (e.currentTarget as HTMLElement).style.borderColor = 'var(--border-glass)'
-                      ; (e.currentTarget as HTMLElement).style.background = 'rgba(56,189,248,0.08)'
-                  }}
+                  className="btn-ghost"
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
                 >
-                  {s.icon}
-                </motion.a>
-              ))}
+                  <GithubIcon size={16} /> GitHub
+                </a>
+              </div>
             </div>
           </motion.div>
 
-          {/* Message card */}
+          {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
             className="glass-card"
-            style={{ padding: '2rem' }}
+            style={{ padding: '2.2rem' }}
           >
-            <h3
-              style={{
-                fontSize: '1.05rem',
-                fontWeight: 700,
-                marginBottom: '1.5rem',
-                color: 'var(--text-primary)',
-              }}
-            >
-              Send a message
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1.5rem' }}>
+              {t.formTitle}
             </h3>
 
-            <form
-              onSubmit={handleSubmit}
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
-              {[
-                { id: 'name', name: 'name', label: 'Your Name', type: 'text', placeholder: 'John Doe' },
-                { id: 'email', name: 'email', label: 'Your Email', type: 'email', placeholder: 'you@example.com' },
-              ].map((field) => (
-                <div key={field.id}>
-                  <label
-                    htmlFor={field.id}
-                    style={{
-                      display: 'block',
-                      fontSize: '0.82rem',
-                      fontWeight: 600,
-                      color: 'var(--text-secondary)',
-                      marginBottom: '0.4rem',
-                      fontFamily: 'var(--font-mono)',
-                    }}
-                  >
-                    {field.label}
-                  </label>
-                  <input
-                    id={field.id}
-                    name={field.name}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '0.7rem 1rem',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid var(--border-glass)',
-                      borderRadius: '0.65rem',
-                      color: 'var(--text-primary)',
-                      fontFamily: 'var(--font-main)',
-                      fontSize: '0.9rem',
-                      outline: 'none',
-                      transition: 'border-color 0.2s, box-shadow 0.2s',
-                    }}
-                    onFocus={(e) => {
-                      ; (e.target as HTMLInputElement).style.borderColor = 'var(--cyan)'
-                        ; (e.target as HTMLInputElement).style.boxShadow = '0 0 0 3px var(--cyan-glow)'
-                    }}
-                    onBlur={(e) => {
-                      ; (e.target as HTMLInputElement).style.borderColor = 'var(--border-glass)'
-                        ; (e.target as HTMLInputElement).style.boxShadow = 'none'
-                    }}
-                  />
-                </div>
-              ))}
-
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               <div>
-                <label
-                  htmlFor="message"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    color: 'var(--text-secondary)',
-                    marginBottom: '0.4rem',
-                    fontFamily: 'var(--font-mono)',
-                  }}
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={4}
-                  placeholder="Hey Félix, I'd love to talk about..."
+                <input
+                  type="text"
+                  name="name"
                   required
+                  placeholder={t.namePlaceholder}
                   style={{
                     width: '100%',
-                    padding: '0.7rem 1rem',
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid var(--border-glass)',
-                    borderRadius: '0.65rem',
-                    color: 'var(--text-primary)',
-                    fontFamily: 'var(--font-main)',
-                    fontSize: '0.9rem',
+                    padding: '0.85rem 1.2rem',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '0.75rem',
+                    color: '#f8fafc',
                     outline: 'none',
-                    resize: 'vertical',
-                    transition: 'border-color 0.2s, box-shadow 0.2s',
-                  }}
-                  onFocus={(e) => {
-                    ; (e.target as HTMLTextAreaElement).style.borderColor = 'var(--cyan)'
-                      ; (e.target as HTMLTextAreaElement).style.boxShadow = '0 0 0 3px var(--cyan-glow)'
-                  }}
-                  onBlur={(e) => {
-                    ; (e.target as HTMLTextAreaElement).style.borderColor = 'var(--border-glass)'
-                      ; (e.target as HTMLTextAreaElement).style.boxShadow = 'none'
+                    fontSize: '0.95rem',
                   }}
                 />
               </div>
 
-              <motion.button
+              <div>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  placeholder={t.emailPlaceholder}
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem 1.2rem',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '0.75rem',
+                    color: '#f8fafc',
+                    outline: 'none',
+                    fontSize: '0.95rem',
+                  }}
+                />
+              </div>
+
+              <div>
+                <textarea
+                  name="message"
+                  required
+                  rows={4}
+                  placeholder={t.msgPlaceholder}
+                  style={{
+                    width: '100%',
+                    padding: '0.85rem 1.2rem',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '0.75rem',
+                    color: '#f8fafc',
+                    outline: 'none',
+                    fontSize: '0.95rem',
+                    resize: 'none',
+                  }}
+                />
+              </div>
+
+              <button
                 type="submit"
-                className="btn-primary"
                 disabled={isSubmitting}
-                whileHover={!isSubmitting ? { scale: 1.03 } : {}}
-                whileTap={!isSubmitting ? { scale: 0.97 } : {}}
-                style={{
-                  justifyContent: 'center',
-                  marginTop: '0.25rem',
-                  opacity: isSubmitting ? 0.7 : 1,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
-                }}
+                className="btn-primary"
+                style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
               >
                 {isSubmitting ? (
-                  <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} style={{ display: 'flex' }}>
-                    <Loader2 size={15} />
-                  </motion.div>
+                  <>
+                    <Loader2 size={18} className="animate-spin" /> Enviando...
+                  </>
                 ) : (
-                  <Send size={15} />
+                  <>
+                    <Send size={18} /> {t.submitBtn}
+                  </>
                 )}
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-              </motion.button>
+              </button>
 
-              {/* Status messages */}
               {submitStatus === 'success' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--emerald)', fontSize: '0.9rem', marginTop: '0.2rem', padding: '0.75rem', background: 'rgba(52, 211, 153, 0.1)', borderRadius: '0.5rem', border: '1px solid rgba(52, 211, 153, 0.2)' }}
-                >
-                  <CheckCircle2 size={16} /> Message sent successfully! I'll get back to you soon.
-                </motion.div>
+                <div style={{ color: '#34d399', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
+                  <CheckCircle2 size={16} /> {t.successMsg}
+                </div>
               )}
               {submitStatus === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--pink)', fontSize: '0.9rem', marginTop: '0.2rem', padding: '0.75rem', background: 'rgba(244, 114, 182, 0.1)', borderRadius: '0.5rem', border: '1px solid rgba(244, 114, 182, 0.2)' }}
-                >
-                  <XCircle size={16} /> Something went wrong. Please check your API key or try again.
-                </motion.div>
+                <div style={{ color: '#f87171', fontSize: '0.88rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
+                  <XCircle size={16} /> {t.errorMsg}
+                </div>
               )}
             </form>
           </motion.div>

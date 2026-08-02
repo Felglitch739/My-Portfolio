@@ -1,40 +1,36 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Code2 } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Terminal, Globe, Menu, X, Sparkles } from 'lucide-react'
 
-const links = [
-  { href: '#about',    label: 'About'    },
-  { href: '#projects', label: 'Projects' },
-  { href: '#events',   label: 'Events'   },
-]
+interface NavbarProps {
+  onOpenTerminal: () => void
+  lang: 'es' | 'en'
+  setLang: (lang: 'es' | 'en') => void
+}
 
-export default function Navbar() {
-  const [scrolled, setScrolled]   = useState(false)
-  const [menuOpen, setMenuOpen]   = useState(false)
-  const [active, setActive]       = useState('')
+export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const handleNav = (href: string) => {
-    setActive(href)
-    setMenuOpen(false)
-  }
-
-  const currentLang = new URLSearchParams(window.location.search).get('lang') || 'en'
-  const toggleLang = () => {
-    const newLang = currentLang === 'en' ? 'es' : 'en'
-    window.location.search = `?lang=${newLang}`
-  }
+  const navLinks = [
+    { href: '#about-me', label: lang === 'es' ? 'Sobre Mí' : 'About' },
+    { href: '#skills', label: lang === 'es' ? 'Tech Vault' : 'Skills' },
+    { href: '#projects', label: lang === 'es' ? 'Proyectos' : 'Projects' },
+    { href: '#events', label: lang === 'es' ? 'Comunidad & Logros' : 'Achievements' },
+    { href: '#human-side', label: lang === 'es' ? 'Lado Humano' : 'Personal' },
+    { href: '#contact', label: lang === 'es' ? 'Contacto' : 'Contact' },
+  ]
 
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+    <header
       style={{
         position: 'fixed',
         top: 0,
@@ -44,194 +40,176 @@ export default function Navbar() {
         zIndex: 100,
         display: 'flex',
         alignItems: 'center',
-        padding: '0 2rem',
-        background: scrolled
-          ? 'rgba(2, 8, 23, 0.85)'
-          : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border-glass)' : 'none',
-        transition: 'all 0.4s ease',
+        transition: 'all 0.3s ease',
+        background: scrolled ? 'rgba(2, 8, 23, 0.85)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
       }}
     >
-      {/* Logo */}
-      <motion.a
-        href="#"
-        whileHover={{ scale: 1.05 }}
+      <div
+        className="container"
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
-          textDecoration: 'none',
-          marginRight: 'auto',
+          justifyContent: 'space-between',
+          width: '100%',
+          padding: '0 1.5rem',
         }}
       >
-        <div style={{
-          width: 36,
-          height: 36,
-          borderRadius: '10px',
-          background: 'linear-gradient(135deg, var(--cyan-dim), var(--violet-dim))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 0 20px var(--cyan-glow)',
-        }}>
-          <Code2 size={18} color="white" />
-        </div>
-        <span style={{
-          fontFamily: 'var(--font-mono)',
-          fontWeight: 700,
-          fontSize: '1.05rem',
-          color: 'var(--text-primary)',
-          letterSpacing: '-0.02em',
-        }}>
-          fm<span style={{ color: 'var(--cyan)' }}>.</span>dev
-        </span>
-      </motion.a>
+        {/* Brand Logo */}
+        <a
+          href="#"
+          style={{
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontWeight: 700,
+            fontSize: '1rem',
+            color: '#f8fafc',
+          }}
+        >
+          <div
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, var(--cyan-dim), var(--violet-dim))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              boxShadow: '0 0 12px var(--cyan-glow)',
+            }}
+          >
+            F
+          </div>
+          <span>
+            FÉLIX_MARTÍNEZ <span style={{ color: 'var(--cyan)', fontSize: '0.8rem' }}>// CS_UTRGV</span>
+          </span>
+        </a>
 
-      {/* Desktop links */}
-      <ul style={{
-        display: 'flex',
-        listStyle: 'none',
-        gap: '2rem',
-        alignItems: 'center',
-      }}
-        className="desktop-nav"
-      >
-        {links.map((link) => (
-          <li key={link.href}>
-            <motion.a
+        {/* Desktop Nav Links */}
+        <nav className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '1.8rem' }}>
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
               href={link.href}
               className="hover-underline"
-              whileHover={{ y: -1 }}
-              onClick={() => handleNav(link.href)}
               style={{
-                textDecoration: 'none',
-                color: active === link.href ? 'var(--cyan)' : 'var(--text-secondary)',
+                color: '#94a3b8',
+                fontSize: '0.9rem',
                 fontWeight: 500,
-                fontSize: '0.95rem',
                 transition: 'color 0.2s',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#f8fafc')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        {/* Right Action Bar */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          {/* Terminal Launcher */}
+          <button
+            onClick={onOpenTerminal}
+            style={{
+              background: 'rgba(56, 189, 248, 0.1)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              color: 'var(--cyan)',
+              padding: '0.45rem 0.9rem',
+              borderRadius: '8px',
+              fontSize: '0.82rem',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              transition: 'all 0.2s',
+            }}
+            title="Open Interactive Cyber-Terminal"
+          >
+            <Terminal size={15} />
+            <span className="desktop-only">Console</span>
+          </button>
+
+          {/* Language Switcher */}
+          <button
+            onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+            style={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              color: '#f8fafc',
+              padding: '0.45rem 0.75rem',
+              borderRadius: '8px',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              fontFamily: 'monospace',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+            }}
+          >
+            <Globe size={14} />
+            {lang.toUpperCase()}
+          </button>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className="mobile-toggle"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#f8fafc',
+              cursor: 'pointer',
+              padding: '0.4rem',
+            }}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 'var(--nav-height)',
+            left: 0,
+            right: 0,
+            background: 'rgba(2, 8, 23, 0.95)',
+            backdropFilter: 'blur(20px)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '1.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+          }}
+        >
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                color: '#f8fafc',
+                textDecoration: 'none',
+                fontSize: '1.1rem',
+                fontWeight: 600,
               }}
             >
               {link.label}
-            </motion.a>
-          </li>
-        ))}
-        <li>
-          <motion.a
-            href="#contact"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            className="btn-primary"
-            style={{ padding: '0.55rem 1.3rem', fontSize: '0.9rem' }}
-          >
-            Hire me
-          </motion.a>
-        </li>
-        <li>
-          <motion.button
-            onClick={toggleLang}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              padding: '0.55rem 0.8rem',
-              fontSize: '0.9rem',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--border-glass)',
-              borderRadius: '0.75rem',
-              color: 'var(--text-primary)',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 600,
-            }}
-          >
-            {currentLang === 'en' ? 'ES' : 'EN'}
-          </motion.button>
-        </li>
-      </ul>
-
-      <div style={{ display: 'none' }} className="mobile-burger">
-        <motion.button
-          onClick={toggleLang}
-          whileTap={{ scale: 0.9 }}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--text-primary)',
-            padding: '0.5rem',
-            fontFamily: 'var(--font-mono)',
-            fontWeight: 700,
-          }}
-          aria-label="Toggle language"
-        >
-          {currentLang === 'en' ? 'ES' : 'EN'}
-        </motion.button>
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setMenuOpen((v) => !v)}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--text-primary)',
-            padding: '0.5rem',
-          }}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
-        </motion.button>
-      </div>
-
-      {/* Mobile drawer */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25 }}
-            style={{
-              position: 'absolute',
-              top: 'var(--nav-height)',
-              left: 0,
-              right: 0,
-              background: 'rgba(2, 8, 23, 0.97)',
-              backdropFilter: 'blur(20px)',
-              borderBottom: '1px solid var(--border-glass)',
-              padding: '1.5rem 2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.25rem',
-            }}
-          >
-            {links.map((link, i) => (
-              <motion.a
-                key={link.href}
-                href={link.href}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.07 }}
-                onClick={() => handleNav(link.href)}
-                style={{
-                  textDecoration: 'none',
-                  color: 'var(--text-primary)',
-                  fontWeight: 600,
-                  fontSize: '1.1rem',
-                }}
-              >
-                {link.label}
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .desktop-nav { display: none !important; }
-          .mobile-burger { display: flex !important; }
-        }
-      `}</style>
-    </motion.nav>
+            </a>
+          ))}
+        </div>
+      )}
+    </header>
   )
 }
