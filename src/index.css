@@ -3,7 +3,7 @@
    Monochrome + #FF0000 Pure Red Accent
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=DotGothic16&display=swap');
 
 @font-face {
   font-family: 'NDot';
@@ -40,6 +40,7 @@
 
   /* Typography */
   --font-ndot:    'NDot', 'Courier New', monospace;
+  --font-bit:     'DotGothic16', monospace;
   --font-mono:    'Space Mono', 'Courier New', monospace;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 
@@ -203,7 +204,7 @@ body {
 }
 
 .card-title {
-  font-family: var(--font-body);
+  font-family: var(--font-bit);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--white);
@@ -327,12 +328,14 @@ body {
 
 .col-span-12 { grid-column: span 12; }
 .col-span-8  { grid-column: span 8; }
+.col-span-7  { grid-column: span 7; }
 .col-span-6  { grid-column: span 6; }
+.col-span-5  { grid-column: span 5; }
 .col-span-4  { grid-column: span 4; }
 .col-span-3  { grid-column: span 3; }
 
 @media (max-width: 900px) {
-  .col-span-8, .col-span-6, .col-span-4, .col-span-3 {
+  .col-span-8, .col-span-7, .col-span-6, .col-span-5, .col-span-4, .col-span-3 {
     grid-column: span 12;
   }
   .bento-card {
