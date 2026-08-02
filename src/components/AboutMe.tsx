@@ -1,201 +1,118 @@
 import { motion } from 'framer-motion'
-import { UserCircle, Cpu, Code2, Users, Sparkles, BookOpen } from 'lucide-react'
+import { Cpu, Code2, Users } from 'lucide-react'
 
 interface AboutMeProps {
   lang?: 'es' | 'en'
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
+}
+
 export default function AboutMe({ lang = 'es' }: AboutMeProps) {
-  const t = {
+  const T = {
     es: {
-      tag: "PERFIL & FILOSOFÍA",
-      title: "Construyendo Sistemas, \n No Solo Código",
-      p1: (
-        <>
-          <strong style={{ color: '#f8fafc' }}>¡Hola! Soy Félix E. Martinez Flores,</strong> estudiante de Ciencias de la Computación (Computer Science) en <strong style={{ color: 'var(--cyan)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. Destaco en la intersección entre el software y el hardware, creando soluciones desde aplicaciones web impulsadas por Inteligencia Artificial hasta sistemas integrados autónomos (embedded systems).
-        </>
-      ),
-      p2: (
-        <>
-          Para mí, <strong style={{ color: 'var(--violet)' }}>la programación es el arte de resolver rompecabezas lógicos complejos</strong>. No se trata solo de escribir sintaxis, sino de diseñar sistemas robustos y colaborativos. Trabajo constantemente en proyectos de alto impacto junto a mi círculo de desarrolladores y amigos.
-        </>
-      ),
+      sysLabel:  '02 — Perfil',
+      heading:   'Construyo\nsistemas,\nno líneas.',
+      p1: 'Félix E. Martinez Flores. Estudiante de Computer Science en UTRGV, trabajando en la frontera entre software y hardware — desde aplicaciones web con IA hasta sistemas embebidos autónomos.',
+      p2: 'Para mí, programar es el arte de resolver rompecabezas lógicos complejos. Me gusta construir arquitecturas que duren, no solo código que funcione.',
       pillars: [
-        {
-          icon: <Code2 size={24} />,
-          title: "Full-Stack Software",
-          desc: "Desarrollo web y móvil con React, Vite, TypeScript, Tailwind CSS y Supabase.",
-          color: "var(--cyan)",
-        },
-        {
-          icon: <Cpu size={24} />,
-          title: "Hardware Hacker",
-          desc: "Sistemas embebidos y lógica de bajo nivel con C++, microcontroladores y robótica.",
-          color: "var(--violet)",
-        },
-        {
-          icon: <Users size={24} />,
-          title: "Comunidad & Liderazgo",
-          desc: "Cofundador y CMO de Build Pa'l Norte en Matamoros. Eventos y Hackathons de 24 horas.",
-          color: "var(--emerald)",
-        },
+        { icon: <Code2 size={18} />, title: 'Full-Stack', sub: 'React · Vite · Supabase · TS' },
+        { icon: <Cpu size={18} />,   title: 'Hardware',   sub: 'C++ · Embedded · Robótica' },
+        { icon: <Users size={18} />, title: "Pa'l Norte",  sub: 'Co-Fundador · CMO · Hackathon 24h' },
       ],
+      imageAlt: 'Félix E. Martinez Flores',
     },
     en: {
-      tag: "PROFILE & PHILOSOPHY",
-      title: "Building Systems, \n Not Just Code",
-      p1: (
-        <>
-          <strong style={{ color: '#f8fafc' }}>Hi! I'm Félix E. Martinez Flores,</strong> a Computer Science student at <strong style={{ color: 'var(--cyan)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. I thrive at the intersection of software and hardware, building everything from AI-powered web applications to autonomous embedded systems.
-        </>
-      ),
-      p2: (
-        <>
-          For me, <strong style={{ color: 'var(--violet)' }}>programming is the art of solving complex logical puzzles</strong>. It is not just writing syntax, but crafting robust, long-lasting systems. I constantly collaborate on high-impact projects alongside great friends and developers.
-        </>
-      ),
+      sysLabel:  '02 — Profile',
+      heading:   'I build\nsystems,\nnot lines.',
+      p1: 'Félix E. Martinez Flores. Computer Science student at UTRGV, operating at the boundary of software and hardware — from AI-powered web apps to autonomous embedded systems.',
+      p2: 'For me, programming is the art of solving complex logical puzzles. I like to build architectures that last, not just code that works.',
       pillars: [
-        {
-          icon: <Code2 size={24} />,
-          title: "Full-Stack Software",
-          desc: "Web & mobile engineering with React, Vite, TypeScript, Tailwind CSS, and Supabase.",
-          color: "var(--cyan)",
-        },
-        {
-          icon: <Cpu size={24} />,
-          title: "Hardware Hacker",
-          desc: "Embedded systems and low-level logic with C++, microcontrollers, and robotics.",
-          color: "var(--violet)",
-        },
-        {
-          icon: <Users size={24} />,
-          title: "Community & Leadership",
-          desc: "Co-founder & CMO of Build Pa'l Norte in Matamoros. Organizers of 24h Hackathons.",
-          color: "var(--emerald)",
-        },
+        { icon: <Code2 size={18} />, title: 'Full-Stack', sub: 'React · Vite · Supabase · TS' },
+        { icon: <Cpu size={18} />,   title: 'Hardware',   sub: 'C++ · Embedded · Robotics' },
+        { icon: <Users size={18} />, title: "Pa'l Norte",  sub: 'Co-Founder · CMO · 24h Hackathon' },
       ],
+      imageAlt: 'Félix E. Martinez Flores',
     },
   }[lang]
 
   return (
-    <section id="about-me" className="section" style={{ position: 'relative' }}>
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+    <section id="about-me" className="section">
+      <div className="container">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="glass-card"
-          style={{
-            padding: 'clamp(2rem, 5vw, 4rem)',
-            maxWidth: '1080px',
-            margin: '0 auto',
-          }}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-80px' }}
+          variants={{ show: { transition: { staggerChildren: 0.12 } } }}
         >
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', alignItems: 'flex-start' }}>
-            {/* Left Photo & Profile Summary Column */}
-            <div className="sticky-desktop" style={{ flex: '1 1 300px' }}>
-              <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
-                <div
-                  style={{
-                    width: '150px',
-                    height: '150px',
-                    borderRadius: '50%',
-                    padding: '4px',
-                    background: 'linear-gradient(135deg, var(--cyan), var(--violet), var(--pink))',
-                    display: 'inline-block',
-                    boxShadow: '0 0 35px var(--cyan-glow)',
-                    position: 'relative',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '50%',
-                      overflow: 'hidden',
-                      background: 'var(--bg-dark)',
-                    }}
-                  >
-                    <img
-                      src="/imagenmia.jpeg"
-                      alt="Félix E. Martinez Flores"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '5px',
-                      right: '5px',
-                      background: '#10b981',
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '50%',
-                      border: '3px solid #080d1a',
-                    }}
-                    title="Active CS @ UTRGV"
-                  />
-                </div>
+          {/* Row: label + divider */}
+          <motion.div variants={fadeUp} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
+            <span className="sys-label">{T.sysLabel}</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--gray-800)' }} />
+          </motion.div>
+
+          {/* Main two-col layout */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+            gap: '5rem',
+            alignItems: 'start',
+          }}>
+            {/* Left: photo + pillars */}
+            <motion.div variants={fadeUp} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+              {/* Photo */}
+              <div style={{
+                width: '220px',
+                aspectRatio: '1',
+                overflow: 'hidden',
+                border: 'var(--border-strong)',
+                position: 'relative',
+              }}>
+                <img
+                  src="/imagenmia.jpeg"
+                  alt={T.imageAlt}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'grayscale(100%) contrast(1.08)' }}
+                />
+                {/* Red corner accent */}
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0, right: 0,
+                  width: '28px', height: '28px',
+                  background: 'var(--red)',
+                }} />
               </div>
 
-              <span className="tag mono" style={{ marginBottom: '1rem', display: 'inline-flex' }}>
-                <UserCircle size={14} /> &nbsp; {t.tag}
-              </span>
-
-              <h2
-                className="gradient-text"
-                style={{
-                  textAlign: 'left',
-                  fontSize: 'clamp(2.2rem, 4.5vw, 3rem)',
-                  fontWeight: 800,
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.02em',
-                  marginBottom: '1rem',
-                  whiteSpace: 'pre-line',
-                }}
-              >
-                {t.title}
-              </h2>
-
-              <div className="divider" style={{ margin: '0 0 1.2rem' }} />
-
-              <p style={{ color: '#94a3b8', fontSize: '0.92rem', lineHeight: 1.6 }}>
-                UTRGV Computer Science Student • Matamoros / RGV Tech Advocate
-              </p>
-            </div>
-
-            {/* Right Narrative & Pillars Column */}
-            <div style={{ flex: '2 1 420px' }}>
-              <div style={{ color: '#cbd5e1', fontSize: '1.08rem', lineHeight: 1.8, marginBottom: '2.5rem' }}>
-                <p style={{ marginBottom: '1.5rem' }}>{t.p1}</p>
-                <p>{t.p2}</p>
-              </div>
-
-              {/* 3 Pillar Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.2rem' }}>
-                {t.pillars.map((p, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '1rem',
-                      padding: '1.4rem',
-                      transition: 'transform 0.3s ease, border-color 0.3s ease',
-                    }}
-                  >
-                    <div style={{ color: p.color, marginBottom: '0.8rem' }}>{p.icon}</div>
-                    <h3 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.4rem' }}>
-                      {p.title}
-                    </h3>
-                    <p style={{ color: '#94a3b8', fontSize: '0.88rem', lineHeight: 1.5 }}>
-                      {p.desc}
-                    </p>
+              {/* Pillars */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                {T.pillars.map((p, i) => (
+                  <div key={i} style={{
+                    padding: '1rem 1.2rem',
+                    borderTop: i === 0 ? 'var(--border)' : 'none',
+                    border: 'var(--border)',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.8rem',
+                  }}>
+                    <span style={{ color: 'var(--red)', marginTop: '2px', flexShrink: 0 }}>{p.icon}</span>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: '0.92rem', color: 'var(--white)', marginBottom: '0.15rem' }}>{p.title}</div>
+                      <div style={{ fontFamily: 'var(--font-dot)', fontSize: '0.65rem', letterSpacing: '0.08em', color: 'var(--gray-500)' }}>{p.sub}</div>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
+
+            {/* Right: headline + text */}
+            <motion.div variants={fadeUp}>
+              <h2 className="display-lg" style={{ whiteSpace: 'pre-line', marginBottom: '2.5rem' }}>
+                {T.heading}
+              </h2>
+              <p className="text-body" style={{ marginBottom: '1.5rem' }}>{T.p1}</p>
+              <p className="text-body">{T.p2}</p>
+            </motion.div>
           </div>
         </motion.div>
       </div>

@@ -1,458 +1,299 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, Cpu, Globe, Trophy, Smartphone, CloudSun, Users, ArrowUpRight, Sparkles, Code2 } from 'lucide-react'
+import { ExternalLink, X } from 'lucide-react'
 
-const GithubIcon = ({ size = 18 }: { size?: number }) => (
+const GH = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 9 18v4"></path>
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 9 18v4" />
   </svg>
 )
 
 interface Project {
   id: string
+  num: string
   title: string
   subtitle: string
-  description: string
-  detailedCaseStudy?: string
-  image?: string
-  tags: { label: string; color: string }[]
-  link?: string
-  linkLabel?: string
+  desc: string
+  detail: string
+  tags: string[]
+  href?: string
+  hrefLabel?: string
   github?: string
   badge?: string
-  badgeColor?: string
-  icon: React.ReactNode
-  accent: string
-  category: 'saas' | 'mobile' | 'community' | 'web' | 'automation'
+  cat: 'saas' | 'mobile' | 'community' | 'web' | 'automation'
+  image?: string
 }
 
 interface ProjectsProps {
   lang?: 'es' | 'en'
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
+}
+
 export default function Projects({ lang = 'es' }: ProjectsProps) {
-  const [activeFilter, setActiveFilter] = useState<string>('all')
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [filter, setFilter] = useState<string>('all')
+  const [modal, setModal] = useState<Project | null>(null)
+
+  const T = {
+    es: {
+      label: '04 — Proyectos',
+      heading: 'Lo que\nhe\nconstruido.',
+      filters: { all: 'Todos', saas: 'SaaS', mobile: 'Mobile AI', community: 'Comunidad', web: 'Web', automation: 'Automation' },
+      details: 'Ver Arquitectura',
+      close: 'Cerrar',
+    },
+    en: {
+      label: '04 — Projects',
+      heading: 'What I\nhave\nbuilt.',
+      filters: { all: 'All', saas: 'SaaS', mobile: 'Mobile AI', community: 'Community', web: 'Web', automation: 'Automation' },
+      details: 'View Architecture',
+      close: 'Close',
+    },
+  }[lang]
 
   const projects: Project[] = [
     {
       id: 'kronobook',
+      num: '001',
       title: 'KronoBook & DualFX',
-      subtitle: 'Plataforma SaaS Multi-Tenant & Caso de Éxito DualFX',
-      description:
-        'SaaS completo para agendamiento de citas y gestión de clientes con Supabase. Integra como caso de éxito la página operativa real de "DualFX" (autolavado y detallado automotriz local).',
-      detailedCaseStudy:
-        'KronoBook fue diseñado con arquitectura multi-tenant en Supabase para permitir a negocios locales gestionar reservas y clientes. DualFX se integró como el primer caso de éxito operativo en vivo, optimizando el flujo de trabajo de citas y notificaciones moviles.',
-      image: '/KronoBook_Preview.png',
-      tags: [
-        { label: 'SaaS Multi-Tenant', color: 'var(--cyan)' },
-        { label: 'Supabase', color: 'var(--emerald)' },
-        { label: 'React / Vite', color: 'var(--violet)' },
-        { label: 'Tailwind CSS', color: 'var(--pink)' },
-      ],
-      link: 'https://kronobook.vercel.app',
-      linkLabel: 'Sitio KronoBook',
+      subtitle: 'SaaS Multi-Tenant · Plataforma de Agendamiento',
+      desc: 'Plataforma SaaS completa para gestión de citas y clientes. Arquitectura multi-tenant con Supabase. DualFX es el primer caso de éxito operativo: un negocio de autolavado y detallado automotriz local integrado en vivo.',
+      detail: 'KronoBook fue diseñado con row-level security (RLS) en Supabase para aislamiento perfecto entre tenants. DualFX demuestra la plataforma en producción real: clientes reservan citas, reciben notificaciones y el negocio gestiona su calendario desde un panel admin intuitivo optimizado para móvil.',
+      tags: ['SaaS', 'Supabase', 'React', 'Vite', 'Tailwind'],
+      href: 'https://kronobook.vercel.app',
+      hrefLabel: 'kronobook.vercel.app',
       github: 'https://github.com/Felglitch739/KronoBook',
-      badge: '🚀 SaaS & Case Study',
-      badgeColor: 'var(--emerald)',
-      icon: <Globe size={20} />,
-      accent: 'var(--emerald)',
-      category: 'saas',
+      badge: 'PRODUCTION',
+      cat: 'saas',
+      image: '/KronoBook_Preview.png',
     },
     {
       id: 'aurafit',
-      title: 'AuraFit Mobile App',
-      subtitle: 'App de Fitness con IA — Frontera Devs Winner',
-      description:
-        'Aplicación móvil de fitness impulsada por IA para análisis corporal y rutinas personalizadas. Nacida en el Hackathon de Frontera Devs, actualmente en migración completa a React Native para iOS y Android.',
-      detailedCaseStudy:
-        'Tras ganar reconocimiento en Frontera Devs Edinburg, AuraFit se está reescribiendo desde cero usando React Native y TypeScript. Permite a los usuarios realizar seguimiento inteligente de entrenamientos con algoritmos de sugerencia personalizada.',
-      image: '/aurafit.png',
-      tags: [
-        { label: 'React Native', color: 'var(--cyan)' },
-        { label: 'AI/ML Fitness', color: 'var(--amber)' },
-        { label: 'iOS & Android', color: 'var(--violet)' },
-      ],
-      link: 'https://aurafit.lrz.app',
-      linkLabel: 'App AuraFit',
+      num: '002',
+      title: 'AuraFit',
+      subtitle: 'AI Fitness App · React Native',
+      desc: 'App de fitness impulsada por IA nacida en el Hackathon de Frontera Devs Edinburg. Actualmente en migración completa a React Native + TypeScript para lanzamiento nativo en iOS y Android.',
+      detail: 'Ganadora de reconocimiento en Frontera Devs, AuraFit se está reescribiendo desde cero en React Native. El core de IA analiza datos corporales y genera planes de entrenamiento adaptativos. Arquitectura mobile-first con sincronización en tiempo real.',
+      tags: ['React Native', 'TypeScript', 'AI/ML', 'iOS', 'Android'],
+      href: 'https://aurafit.lrz.app',
+      hrefLabel: 'aurafit.lrz.app',
       github: 'https://github.com/Felglitch739/AuraFit',
-      badge: '🏆 Frontera Devs Winner',
-      badgeColor: 'var(--amber)',
-      icon: <Smartphone size={20} />,
-      accent: 'var(--cyan)',
-      category: 'mobile',
+      badge: 'HACKATHON WINNER',
+      cat: 'mobile',
+      image: '/aurafit.png',
     },
     {
       id: 'build-pal-norte',
+      num: '003',
       title: "Build Pa'l Norte",
-      subtitle: 'Comunidad Tech & Hackathon de 24h en Matamoros',
-      description:
-        'Cofundador y CMO de esta comunidad tecnológica en Matamoros, Tamaulipas. Impulsamos la innovación local con eventos colaborativos, talleres y nuestro hackathon de 24 horas.',
-      detailedCaseStudy:
-        'Build Pa\'l Norte es un esfuerzo 100% colaborativo enfocado en empoderar a estudiantes y desarrolladores del norte de México. Organizado por jóvenes locales para fortalecer el ecosistema de tecnología y programación.',
-      tags: [
-        { label: 'Comunidad Tech', color: 'var(--emerald)' },
-        { label: '24h Hackathon', color: 'var(--amber)' },
-        { label: 'Matamoros, Tamps', color: 'var(--cyan)' },
-      ],
-      badge: '⚡ Co-Founder & CMO',
-      badgeColor: 'var(--cyan)',
-      icon: <Users size={20} />,
-      accent: 'var(--violet)',
-      category: 'community',
+      subtitle: 'Comunidad Tech · Matamoros, Tamps.',
+      desc: "Cofundador y CMO de esta comunidad tecnológica en Matamoros. Organizamos el ecosistema local de desarrolladores con talleres, networking y nuestro evento insignia: un Hackathon de 24 horas continuas.",
+      detail: "Build Pa'l Norte es 100% colaborativo — nacido del deseo de llevar la cultura de software y hardware al norte de México. Como CMO diseño la estrategia de comunicación, identidad de marca y captación de participantes para cada evento. Evento Hackathon 24h para desarrolladores locales.",
+      tags: ['Comunidad', 'Hackathon 24h', 'Marketing', 'Matamoros'],
+      badge: 'CO-FOUNDER & CMO',
+      cat: 'community',
     },
     {
       id: 'gazpachos',
-      title: "Gazpacho's SPA",
-      subtitle: 'Prototipo Web Moderno & Glassmorphism',
-      description:
-        'Single Page Application (SPA) para restaurante y bar local con estética glassmorphism, menú interactivo y experiencia visual moderna.',
-      image: "/Gazpacho's.png",
-      tags: [
-        { label: 'React', color: 'var(--cyan)' },
-        { label: 'Glassmorphism UI', color: 'var(--pink)' },
-        { label: 'Framer Motion', color: 'var(--violet)' },
-      ],
-      link: 'https://gazpachos-lp.vercel.app',
-      linkLabel: 'Sitio En Vivo',
+      num: '004',
+      title: "Gazpacho's",
+      subtitle: 'Web SPA · Restaurante & Bar',
+      desc: 'Prototipo de rediseño web completo para restaurante y bar local. Single Page Application con estética glassmorphism, menú interactivo e integración de redes sociales.',
+      detail: 'Diseñado con React y Framer Motion, el sitio prioriza la experiencia visual del cliente con animaciones fluidas y una jerarquía de navegación intuitiva. La estética glassmorphism fue elegida deliberadamente para reflejar la atmósfera del bar.',
+      tags: ['React', 'Framer Motion', 'Glassmorphism', 'SPA'],
+      href: 'https://gazpachos-lp.vercel.app',
+      hrefLabel: 'gazpachos-lp.vercel.app',
       github: 'https://github.com/Felglitch739/gazpachos-lp',
-      icon: <Globe size={20} />,
-      accent: 'var(--pink)',
-      category: 'web',
+      cat: 'web',
+      image: "/Gazpacho's.png",
     },
     {
       id: 'familyweather',
-      title: 'Family Weather Alert Bot',
-      subtitle: 'Automatización con Python & Messaging APIs',
-      description:
-        'Sistema de notificaciones meteorológicas automatizadas construido en Python, integrado con APIs de clima y mensajería, desplegado en PythonAnywhere.',
+      num: '005',
+      title: 'Family Weather',
+      subtitle: 'Automatización Python · Notificaciones',
+      desc: 'Sistema automatizado de alertas meteorológicas construido en Python. Integra APIs de clima y mensajería, ejecutándose continuamente en PythonAnywhere sin intervención manual.',
+      detail: 'Desplegado en PythonAnywhere con cron jobs para ejecución automatizada. Consume APIs meteorológicas y envía notificaciones customizadas al grupo familiar. Primer proyecto Python en producción real.',
+      tags: ['Python', 'API', 'PythonAnywhere', 'Automation'],
+      cat: 'automation',
       image: '/familyweather.png',
-      tags: [
-        { label: 'Python', color: 'var(--cyan)' },
-        { label: 'PythonAnywhere', color: 'var(--emerald)' },
-        { label: 'Messaging APIs', color: 'var(--amber)' },
-      ],
-      icon: <CloudSun size={20} />,
-      accent: 'var(--amber)',
-      category: 'automation',
     },
   ]
 
-  const filteredProjects =
-    activeFilter === 'all'
-      ? projects
-      : projects.filter((p) => p.category === activeFilter)
-
-  const t = {
-    es: {
-      tag: "PROYECTOS DESTACADOS",
-      title: "Soluciones & Casos de Éxito",
-      subtitle: "Proyectos reales construidos con rigor técnico, enfoque en el usuario y alto impacto.",
-      filters: {
-        all: "Todos",
-        saas: "SaaS & Cloud",
-        mobile: "AI & Mobile",
-        community: "Comunidad",
-        web: "Web SPA",
-        automation: "Automatización",
-      },
-      viewDetails: "Ver Arquitectura",
-    },
-    en: {
-      tag: "FEATURED PROJECTS",
-      title: "Solutions & Case Studies",
-      subtitle: "Real-world projects built with engineering rigor and user-centered focus.",
-      filters: {
-        all: "All",
-        saas: "SaaS & Cloud",
-        mobile: "AI & Mobile",
-        community: "Community",
-        web: "Web SPA",
-        automation: "Automation",
-      },
-      viewDetails: "View Architecture",
-    },
-  }[lang]
+  const filtered = filter === 'all' ? projects : projects.filter(p => p.cat === filter)
 
   return (
-    <section id="projects" className="section" style={{ position: 'relative' }}>
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <span className="tag tag-emerald mono" style={{ marginBottom: '0.8rem' }}>
-            <Code2 size={14} /> &nbsp; {t.tag}
-          </span>
-          <h2 className="section-title gradient-text">{t.title}</h2>
-          <p className="section-subtitle">{t.subtitle}</p>
+    <section id="projects" className="section">
+      <div className="container">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+        >
+          {/* Label row */}
+          <motion.div variants={fadeUp} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
+            <span className="sys-label">{T.label}</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--gray-800)' }} />
+          </motion.div>
 
-          {/* Category Filter Pills */}
-          <div
-            style={{
-              display: 'inline-flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              background: 'rgba(15, 23, 42, 0.8)',
-              padding: '0.4rem',
-              borderRadius: '100px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            {Object.entries(t.filters).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setActiveFilter(key)}
+          {/* Top: heading + filters */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '3rem', alignItems: 'flex-start', marginBottom: '4rem' }}>
+            <motion.h2 variants={fadeUp} className="display-lg" style={{ whiteSpace: 'pre-line' }}>
+              {T.heading}
+            </motion.h2>
+
+            {/* Filter pills */}
+            <motion.div variants={fadeUp} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', alignItems: 'flex-end' }}>
+              {Object.entries(T.filters).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    padding: '0.2rem 0',
+                    fontFamily: 'var(--font-dot)',
+                    fontSize: '0.68rem',
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    color: filter === key ? 'var(--red)' : 'var(--gray-600)',
+                    textAlign: 'right',
+                    transition: 'color 0.15s',
+                  }}
+                >
+                  {filter === key && '→ '}{label}
+                </button>
+              ))}
+            </motion.div>
+          </div>
+
+          {/* Projects list — horizontal rule separated */}
+          <div>
+            {filtered.map((p, i) => (
+              <motion.div
+                key={p.id}
+                variants={fadeUp}
                 style={{
-                  padding: '0.5rem 1.2rem',
-                  borderRadius: '100px',
-                  border: 'none',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.25s ease',
-                  background: activeFilter === key ? 'linear-gradient(135deg, var(--cyan-dim), var(--violet-dim))' : 'transparent',
-                  color: activeFilter === key ? '#ffffff' : '#94a3b8',
+                  borderTop: 'var(--border)',
+                  padding: '2rem 0',
+                  display: 'grid',
+                  gridTemplateColumns: '60px 1fr auto',
+                  gap: '2rem',
+                  alignItems: 'center',
                 }}
               >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
+                {/* Number */}
+                <div className="idx" style={{ fontSize: '0.8rem' }}>{p.num}</div>
 
-        {/* Projects Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '2rem',
-            maxWidth: '1100px',
-            margin: '0 auto',
-          }}
-        >
-          {filteredProjects.map((project, i) => (
+                {/* Title + desc */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+                    <h3 style={{ fontWeight: 700, fontSize: '1.25rem', color: 'var(--white)' }}>{p.title}</h3>
+                    {p.badge && (
+                      <span className="tag tag-active">{p.badge}</span>
+                    )}
+                  </div>
+                  <p className="text-sm" style={{ marginBottom: '0.8rem', color: 'var(--gray-500)' }}>{p.subtitle}</p>
+                  <p className="text-body" style={{ maxWidth: '600px', fontSize: '0.92rem' }}>{p.desc}</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '1rem' }}>
+                    {p.tags.map(t => <span key={t} className="tag">{t}</span>)}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-end', flexShrink: 0 }}>
+                  <button
+                    onClick={() => setModal(p)}
+                    className="btn btn-outline"
+                    style={{ fontSize: '0.65rem', padding: '0.5rem 0.9rem' }}
+                  >
+                    {T.details}
+                  </button>
+                  {p.href && (
+                    <a href={p.href} target="_blank" rel="noreferrer" className="btn-ghost btn" style={{ fontSize: '0.65rem', color: 'var(--gray-600)' }}>
+                      <ExternalLink size={12} /> Live
+                    </a>
+                  )}
+                  {p.github && (
+                    <a href={p.github} target="_blank" rel="noreferrer" className="btn-ghost btn" style={{ fontSize: '0.65rem', color: 'var(--gray-600)' }}>
+                      <GH size={12} /> GitHub
+                    </a>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+            <div style={{ borderTop: 'var(--border)' }} />
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {modal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setModal(null)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200,
+              background: 'rgba(0,0,0,0.88)',
+              backdropFilter: 'blur(4px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: '1.5rem',
+            }}
+          >
             <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.6 }}
-              className="glass-card"
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 30, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              onClick={e => e.stopPropagation()}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'hidden',
+                background: 'var(--gray-950)',
+                border: 'var(--border-strong)',
+                maxWidth: '660px',
+                width: '100%',
+                padding: '2.5rem',
                 position: 'relative',
               }}
             >
-              {/* Image Banner */}
-              {project.image ? (
-                <div style={{ width: '100%', height: '200px', overflow: 'hidden', position: 'relative' }}>
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      transition: 'transform 0.5s ease',
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'linear-gradient(to top, var(--bg-deep) 0%, transparent 80%)',
-                    }}
-                  />
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: '100%',
-                    height: '160px',
-                    background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1))',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: project.accent,
-                  }}
-                >
-                  <Users size={48} opacity={0.6} />
+              <button
+                onClick={() => setModal(null)}
+                style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', background: 'transparent', border: 'none', color: 'var(--gray-600)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem', fontFamily: 'var(--font-dot)', fontSize: '0.65rem', letterSpacing: '0.15em' }}
+              >
+                <X size={14} /> {T.close}
+              </button>
+
+              <div className="idx" style={{ marginBottom: '0.5rem' }}>{modal.num}</div>
+              <h3 className="display-md" style={{ marginBottom: '0.4rem' }}>{modal.title}</h3>
+              <p className="text-sm" style={{ marginBottom: '1.5rem' }}>{modal.subtitle}</p>
+              <div style={{ height: '1px', background: 'var(--gray-800)', marginBottom: '1.5rem' }} />
+              <p className="text-body">{modal.detail}</p>
+
+              {(modal.href || modal.github) && (
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem' }}>
+                  {modal.href && (
+                    <a href={modal.href} target="_blank" rel="noreferrer" className="btn btn-primary" style={{ fontSize: '0.7rem' }}>
+                      <ExternalLink size={12} /> {modal.hrefLabel}
+                    </a>
+                  )}
+                  {modal.github && (
+                    <a href={modal.github} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ fontSize: '0.7rem' }}>
+                      <GH size={12} /> GitHub
+                    </a>
+                  )}
                 </div>
               )}
-
-              {/* Card Body */}
-              <div style={{ padding: '1.8rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                {project.badge && (
-                  <span
-                    className="mono"
-                    style={{
-                      alignSelf: 'flex-start',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      padding: '0.25rem 0.7rem',
-                      borderRadius: '100px',
-                      background: 'rgba(255, 255, 255, 0.06)',
-                      color: project.badgeColor || 'var(--cyan)',
-                      border: `1px solid ${project.badgeColor || 'var(--cyan)'}`,
-                      marginBottom: '0.8rem',
-                    }}
-                  >
-                    {project.badge}
-                  </span>
-                )}
-
-                <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.3rem' }}>
-                  {project.title}
-                </h3>
-                <h4 style={{ fontSize: '0.88rem', color: project.accent, marginBottom: '1rem', fontWeight: 600 }}>
-                  {project.subtitle}
-                </h4>
-                <p style={{ color: '#94a3b8', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  {project.description}
-                </p>
-
-                {/* Tech Tags */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.5rem' }}>
-                  {project.tags.map((t, idx) => (
-                    <span
-                      key={idx}
-                      style={{
-                        fontSize: '0.72rem',
-                        fontFamily: 'monospace',
-                        padding: '0.2rem 0.6rem',
-                        borderRadius: '4px',
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        color: t.color,
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                      }}
-                    >
-                      {t.label}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Action Footer */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <div style={{ display: 'flex', gap: '0.8rem' }}>
-                    {project.link && (
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          color: '#f8fafc',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.3rem',
-                        }}
-                      >
-                        <ExternalLink size={15} color="var(--cyan)" />
-                        {project.linkLabel || 'Live'}
-                      </a>
-                    )}
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          color: '#94a3b8',
-                          fontSize: '0.85rem',
-                          textDecoration: 'none',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.3rem',
-                        }}
-                      >
-                        <GithubIcon size={15} />
-                        GitHub
-                      </a>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => setSelectedProject(project)}
-                    style={{
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--cyan)',
-                      fontSize: '0.82rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.2rem',
-                    }}
-                  >
-                    {t.viewDetails} <ArrowUpRight size={14} />
-                  </button>
-                </div>
-              </div>
             </motion.div>
-          ))}
-        </div>
-
-        {/* Modal for Deep Case Study */}
-        <AnimatePresence>
-          {selectedProject && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedProject(null)}
-              style={{
-                position: 'fixed',
-                inset: 0,
-                zIndex: 1000,
-                background: 'rgba(2, 8, 23, 0.85)',
-                backdropFilter: 'blur(16px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1.5rem',
-              }}
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                onClick={(e) => e.stopPropagation()}
-                className="glass-card"
-                style={{
-                  maxWidth: '700px',
-                  width: '100%',
-                  padding: '2.5rem',
-                  background: '#080d1a',
-                  borderColor: selectedProject.accent,
-                }}
-              >
-                <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.5rem' }}>
-                  {selectedProject.title}
-                </h3>
-                <h4 style={{ fontSize: '0.95rem', color: selectedProject.accent, marginBottom: '1.5rem', fontWeight: 600 }}>
-                  {selectedProject.subtitle}
-                </h4>
-                <p style={{ color: '#cbd5e1', fontSize: '1rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                  {selectedProject.detailedCaseStudy || selectedProject.description}
-                </p>
-                <div style={{ textAlign: 'right' }}>
-                  <button
-                    onClick={() => setSelectedProject(null)}
-                    className="btn-ghost"
-                    style={{ fontSize: '0.85rem', padding: '0.5rem 1.2rem' }}
-                  >
-                    Cerrar / Close
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }

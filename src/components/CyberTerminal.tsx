@@ -1,12 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Terminal as TerminalIcon, X, Play, CornerDownLeft, Sparkles, RefreshCw } from 'lucide-react'
-
-interface OutputLine {
-  id: string
-  type: 'input' | 'output' | 'error' | 'success' | 'system'
-  text: string
-}
+import { Terminal as TerminalIcon, X, CornerDownLeft } from 'lucide-react'
 
 interface CyberTerminalProps {
   isOpen: boolean
@@ -14,141 +8,89 @@ interface CyberTerminalProps {
   lang?: 'es' | 'en'
 }
 
+interface Line {
+  id: string
+  type: 'in' | 'out' | 'sys' | 'err'
+  text: string
+}
+
 export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTerminalProps) {
-  const [input, setInput] = useState('')
-  const [history, setHistory] = useState<OutputLine[]>([
-    { id: '1', type: 'system', text: '⚡ FELIX_OS v2.4 (x86_64-embedded-utrgv)' },
-    { id: '2', type: 'system', text: 'Type "help" or click quick commands below to explore.' },
+  const [input,   setInput]   = useState('')
+  const [history, setHistory] = useState<Line[]>([
+    { id: '0', type: 'sys', text: 'FMF_OS v1.0.0 — type "help" for commands' },
   ])
-  const [isMatrixMode, setIsMatrixMode] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [history])
-
-  const handleCommand = (cmdStr: string) => {
-    const trimmed = cmdStr.trim().toLowerCase()
+  const run = (cmd: string) => {
+    const trimmed = cmd.trim().toLowerCase()
     if (!trimmed) return
 
-    const newHistory: OutputLine[] = [
+    const next: Line[] = [
       ...history,
-      { id: Date.now().toString(), type: 'input', text: `$ ${cmdStr}` },
+      { id: Date.now() + 'i', type: 'in', text: `$ ${cmd}` },
     ]
+
+    const add = (text: string, type: Line['type'] = 'out') =>
+      next.push({ id: Date.now() + 'o', type, text })
 
     switch (trimmed) {
       case 'help':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'output',
-          text: `Available commands:
-  • whoami    - Profile summary & education at UTRGV
-  • skills    - Technical stack (C++, Python, React, Vite, Tailwind, TS, SQL)
-  • projects  - Overview of KronoBook, AuraFit, Build Pa'l Norte & more
-  • hobbies   - Fitness (PPL), Music, Gaming (Rust/Minecraft), Pool with friends
-  • matrix    - Toggle Cyber Matrix Digital Rain
-  • billiards - Jump to 8-Ball Billiards simulator
-  • contact   - Get in touch & social links
-  • clear     - Clear terminal logs`,
-        })
+        add(
+          `whoami  — Identidad y perfil
+skills  — Stack técnico
+projects — Proyectos y casos de éxito
+hobbies — Fitness, guitarra, gaming, billar
+contact — Formas de contacto
+clear   — Limpiar terminal`
+        )
         break
-
       case 'whoami':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'success',
-          text: `[IDENTITY]: Félix E. Martinez Flores
-[ROLE]: Full-Stack Software Engineer & Hardware Hacker
-[EDU]: Computer Science Student @ UTRGV
-[PHILOSOPHY]: Programming is the art of solving complex logical puzzles. I build systems, not just code.`,
-        })
+        add(
+          `NAME:    Félix E. Martinez Flores
+ROLE:    Full-Stack Software Engineer & Hardware Hacker
+EDU:     Computer Science @ UTRGV
+LOC:     Matamoros, Tamps. / RGV, TX
+MOTTO:   I build systems, not just lines of code.`
+        )
         break
-
       case 'skills':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'output',
-          text: `⚡ TECH VAULT:
-• Systems & Low-Level: C++, Python, Embedded Systems
-• Web & Frontend: React, Vite, Tailwind CSS, TypeScript
-• Database & Cloud: SQL, Supabase, PythonAnywhere`,
-        })
+        add('C++ · Python · React · Vite · Tailwind CSS · TypeScript · SQL\nEmbedded Systems · Supabase · React Native')
         break
-
       case 'projects':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'output',
-          text: `🚀 FEATURED PROJECTS:
-1. KronoBook & DualFX [SaaS]: Multi-tenant booking platform + DualFX auto detailing site integration.
-2. AuraFit [AI Mobile]: AI fitness tracking app (Frontera Devs winner, React Native rewrite).
-3. Build Pa'l Norte [Community]: Matamoros tech community co-founder & 24h Hackathon host.
-4. Gazpacho's [Web SPA]: High-end restaurant redesign with glassmorphism aesthetics.
-5. Family Weather [Automation]: Python weather alert bot deployed on PythonAnywhere.`,
-        })
+        add(
+          `001 KronoBook & DualFX  — SaaS Multi-Tenant (Supabase)
+002 AuraFit             — AI Fitness App (React Native) · Hackathon Winner
+003 Build Pa'l Norte    — Comunidad Tech & Hackathon 24h · Matamoros
+004 Gazpacho's          — Web SPA Glassmorphism
+005 Family Weather      — Python Automation Bot`
+        )
         break
-
       case 'hobbies':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'output',
-          text: `🎸 EL TOQUE HUMANO (THE HUMAN SIDE):
-• Fitness: Dedicated weightlifting (Push-Pull-Legs & Upper-Lower splits).
-• Music: Acoustic guitar, writing chord progressions, and AI music generation tools.
-• Gaming: Rust & Minecraft server optimization, modding & tactical gameplay.
-• Social: Playing 8-ball billiards at local pool halls with Eduardo, Wicho & Orlando.`,
-        })
+        add(
+          `🏋️  PESAS   — Push-Pull-Legs & Upper-Lower splits
+🎸  MÚSICA  — Guitarra acústica, progresiones & AI music gen
+🎮  GAMING  — Rust, Minecraft: server tuning & modding
+🎱  BILLAR  — Eduardo, Wicho, Orlando & yo`
+        )
         break
-
-      case 'matrix':
-        setIsMatrixMode(!isMatrixMode)
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'success',
-          text: isMatrixMode ? '[MATRIX]: Disengaged.' : '[MATRIX]: Cyber Matrix protocol engaged! 🟢010101',
-        })
-        break
-
-      case 'billiards':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'success',
-          text: '[BILLIARDS]: Scrolling to 8-ball billiards canvas...',
-        })
-        setTimeout(() => {
-          onClose()
-          document.getElementById('human-side')?.scrollIntoView({ behavior: 'smooth' })
-        }, 500)
-        break
-
       case 'contact':
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'output',
-          text: `📫 CONTACT & SOCIAL:
-• Email: felix.martinez@utrgv.edu
-• GitHub: https://github.com/Felglitch739
-• LinkedIn / IEEE: Active UTRGV Student Chapter Member`,
-        })
+        add(
+          `EMAIL:   felix.martinez08@utrgv.edu
+GITHUB:  github.com/Felglitch739`
+        )
         break
-
       case 'clear':
-        setHistory([])
+        setHistory([{ id: '0', type: 'sys', text: 'FMF_OS v1.0.0 — cleared' }])
         setInput('')
         return
-
       default:
-        newHistory.push({
-          id: (Date.now() + 1).toString(),
-          type: 'error',
-          text: `Command not recognized: "${trimmed}". Type "help" for a list of commands.`,
-        })
-        break
+        add(`Command not found: "${trimmed}". Type "help".`, 'err')
     }
 
-    setHistory(newHistory)
+    setHistory(next)
     setInput('')
   }
+
+  const quickCmds = ['help', 'whoami', 'skills', 'projects', 'hobbies', 'contact', 'clear']
 
   return (
     <AnimatePresence>
@@ -157,211 +99,115 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          onClick={onClose}
           style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            background: 'rgba(2, 8, 23, 0.85)',
-            backdropFilter: 'blur(16px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            position: 'fixed', inset: 0, zIndex: 500,
+            background: 'rgba(0,0,0,0.9)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '1rem',
           }}
-          onClick={onClose}
         >
           <motion.div
-            initial={{ scale: 0.9, y: 20 }}
+            initial={{ scale: 0.96, y: 16 }}
             animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            onClick={(e) => e.stopPropagation()}
+            exit={{ scale: 0.96, y: 16 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            onClick={e => e.stopPropagation()}
             style={{
-              width: '100%',
-              maxWidth: '850px',
-              height: '560px',
+              width: '100%', maxWidth: '740px',
+              background: 'var(--gray-950)',
+              border: 'var(--border-strong)',
+              display: 'flex', flexDirection: 'column',
+              fontFamily: 'var(--font-dot)',
+              fontSize: '0.82rem',
               maxHeight: '85vh',
-              background: isMatrixMode ? '#021206' : '#080d1a',
-              border: isMatrixMode ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(56, 189, 248, 0.3)',
-              borderRadius: '1rem',
-              boxShadow: isMatrixMode
-                ? '0 0 50px rgba(16, 185, 129, 0.25)'
-                : '0 0 50px rgba(56, 189, 248, 0.2)',
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
             }}
           >
-            {/* Terminal Header */}
-            <div
-              style={{
-                padding: '0.8rem 1.2rem',
-                background: 'rgba(255, 255, 255, 0.03)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <TerminalIcon size={16} color={isMatrixMode ? '#10b981' : '#38bdf8'} />
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: isMatrixMode ? '#10b981' : '#f0f4ff' }}>
-                  felix@utrgv-workstation:~ (bash)
-                </span>
+            {/* Titlebar */}
+            <div style={{
+              padding: '0.7rem 1.2rem',
+              borderBottom: 'var(--border)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--gray-400)', letterSpacing: '0.12em', fontSize: '0.68rem', textTransform: 'uppercase' }}>
+                <TerminalIcon size={13} />
+                felix@fmf-os:~
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--gray-600)', cursor: 'pointer', display: 'flex' }}>
+                <X size={15} />
+              </button>
+            </div>
+
+            {/* Quick buttons */}
+            <div style={{
+              padding: '0.5rem 1.2rem',
+              borderBottom: 'var(--border)',
+              display: 'flex', flexWrap: 'wrap', gap: '0.4rem',
+              alignItems: 'center',
+            }}>
+              <span style={{ color: 'var(--gray-700)', fontSize: '0.62rem', letterSpacing: '0.12em' }}>QUICK →</span>
+              {quickCmds.map(c => (
                 <button
-                  onClick={() => handleCommand('matrix')}
+                  key={c}
+                  onClick={() => run(c)}
                   style={{
                     background: 'transparent',
-                    border: 'none',
-                    color: isMatrixMode ? '#10b981' : '#94a3b8',
+                    border: '1px solid var(--gray-800)',
+                    color: 'var(--gray-500)',
+                    padding: '0.18rem 0.55rem',
+                    fontSize: '0.62rem',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
                     cursor: 'pointer',
-                    fontSize: '0.75rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.3rem',
-                    marginRight: '0.5rem',
+                    fontFamily: 'var(--font-dot)',
+                    transition: 'all 0.12s',
                   }}
-                  title="Toggle Matrix Mode"
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--white)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--gray-600)' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--gray-500)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--gray-800)' }}
                 >
-                  <Sparkles size={13} /> {isMatrixMode ? 'Matrix ON' : 'Matrix'}
-                </button>
-                <button
-                  onClick={onClose}
-                  style={{
-                    background: 'rgba(239, 68, 68, 0.2)',
-                    border: '1px solid rgba(239, 68, 68, 0.4)',
-                    color: '#f87171',
-                    borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            </div>
-
-            {/* Quick Command Buttons */}
-            <div
-              style={{
-                padding: '0.6rem 1rem',
-                background: 'rgba(0, 0, 0, 0.2)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
-                display: 'flex',
-                gap: '0.5rem',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-              }}
-            >
-              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Quick:</span>
-              {['whoami', 'skills', 'projects', 'hobbies', 'billiards', 'contact', 'clear'].map((cmd) => (
-                <button
-                  key={cmd}
-                  onClick={() => handleCommand(cmd)}
-                  style={{
-                    background: 'rgba(56, 189, 248, 0.08)',
-                    border: '1px solid rgba(56, 189, 248, 0.2)',
-                    color: '#38bdf8',
-                    fontSize: '0.75rem',
-                    padding: '0.2rem 0.6rem',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {cmd}
+                  {c}
                 </button>
               ))}
             </div>
 
-            {/* Terminal Body */}
-            <div
-              style={{
-                flex: 1,
-                padding: '1.2rem',
-                overflowY: 'auto',
-                fontSize: '0.85rem',
-                lineHeight: 1.6,
-                color: isMatrixMode ? '#10b981' : '#e2e8f0',
-              }}
-            >
-              {history.map((line) => (
-                <div key={line.id} style={{ marginBottom: '0.6rem', whiteSpace: 'pre-wrap' }}>
-                  {line.type === 'input' && (
-                    <span style={{ color: isMatrixMode ? '#34d399' : '#38bdf8', fontWeight: 600 }}>
-                      {line.text}
-                    </span>
-                  )}
-                  {line.type === 'system' && (
-                    <span style={{ color: '#94a3b8', fontStyle: 'italic' }}>{line.text}</span>
-                  )}
-                  {line.type === 'success' && (
-                    <span style={{ color: '#34d399', fontWeight: 500 }}>{line.text}</span>
-                  )}
-                  {line.type === 'error' && <span style={{ color: '#f87171' }}>{line.text}</span>}
-                  {line.type === 'output' && (
-                    <span style={{ color: isMatrixMode ? '#10b981' : '#cbd5e1' }}>{line.text}</span>
-                  )}
+            {/* Output */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {history.map(line => (
+                <div key={line.id} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+                  {line.type === 'in'  && <span style={{ color: 'var(--white)' }}>{line.text}</span>}
+                  {line.type === 'out' && <span style={{ color: 'var(--gray-400)' }}>{line.text}</span>}
+                  {line.type === 'sys' && <span style={{ color: 'var(--gray-600)' }}>{line.text}</span>}
+                  {line.type === 'err' && <span style={{ color: 'var(--red)' }}>{line.text}</span>}
                 </div>
               ))}
-              <div ref={bottomRef} />
             </div>
 
-            {/* Input Bar */}
+            {/* Input */}
             <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                handleCommand(input)
-              }}
+              onSubmit={e => { e.preventDefault(); run(input) }}
               style={{
-                padding: '0.8rem 1.2rem',
-                background: 'rgba(0, 0, 0, 0.3)',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.8rem',
+                borderTop: 'var(--border)',
+                padding: '0.6rem 1.2rem',
+                display: 'flex', alignItems: 'center', gap: '0.8rem',
               }}
             >
-              <span style={{ color: isMatrixMode ? '#10b981' : '#38bdf8', fontWeight: 'bold' }}>$</span>
+              <span style={{ color: 'var(--red)' }}>$</span>
               <input
                 type="text"
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type command ('help', 'whoami', 'skills')..."
-                style={{
-                  flex: 1,
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  color: isMatrixMode ? '#34d399' : '#f8fafc',
-                  fontFamily: 'inherit',
-                  fontSize: '0.9rem',
-                }}
+                onChange={e => setInput(e.target.value)}
+                placeholder={lang === 'es' ? "escribe un comando..." : "type a command..."}
                 autoFocus
-              />
-              <button
-                type="submit"
                 style={{
-                  background: 'rgba(56, 189, 248, 0.15)',
-                  border: '1px solid rgba(56, 189, 248, 0.3)',
-                  color: '#38bdf8',
-                  padding: '0.3rem 0.8rem',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                  fontSize: '0.75rem',
+                  flex: 1, background: 'transparent', border: 'none',
+                  outline: 'none', color: 'var(--white)',
+                  fontFamily: 'var(--font-dot)', fontSize: '0.82rem',
+                  letterSpacing: '0.04em', padding: '0',
                 }}
-              >
-                Run <CornerDownLeft size={12} />
+              />
+              <button type="submit" style={{ background: 'transparent', border: 'none', color: 'var(--gray-600)', cursor: 'pointer', display: 'flex' }}>
+                <CornerDownLeft size={14} />
               </button>
             </form>
           </motion.div>

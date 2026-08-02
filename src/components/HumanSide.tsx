@@ -1,550 +1,304 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Dumbbell, Music, Gamepad2, CircleDot, Play, Pause, Sparkles, RefreshCw, Trophy, Users } from 'lucide-react'
+import { Dumbbell, Music, Gamepad2, CircleDot } from 'lucide-react'
 
 interface HumanSideProps {
   lang?: 'es' | 'en'
 }
 
-export default function HumanSide({ lang = 'es' }: HumanSideProps) {
-  const [activeTab, setActiveTab] = useState<'fitness' | 'music' | 'gaming' | 'pool'>('fitness')
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
+}
 
-  // Music Player simulation state
-  const [isPlayingMusic, setIsPlayingMusic] = useState(false)
-  const [activeSong, setActiveSong] = useState(0)
-
-  const songs = [
-    { title: 'Acoustic Progression #4 in Dm', duration: '2:45', tag: 'Guitar & Audio AI' },
-    { title: 'Cyber-Billiards Ambient Lofi', duration: '3:12', tag: 'Acoustic + Synth' },
-    { title: 'Matamoros Sunset Riff', duration: '1:58', tag: 'Acoustic Solo' },
-  ]
-
-  // Billiards interactive canvas ref & state
-  const poolCanvasRef = useRef<HTMLCanvasElement>(null)
-  const [cueAngle, setCueAngle] = useState(0)
+/* ── Billiards physics mini-game ── */
+function BilliardsCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    if (activeTab !== 'pool') return
-    const canvas = poolCanvasRef.current
+    const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    let animationId: number
-    const width = (canvas.width = Math.min(650, window.innerWidth - 60))
-    const height = (canvas.height = 360)
-
-    // Table parameters
-    const pocketRadius = 18
-    const pockets = [
-      { x: 25, y: 25 },
-      { x: width / 2, y: 20 },
-      { x: width - 25, y: 25 },
-      { x: 25, y: height - 25 },
-      { x: width / 2, y: height - 20 },
-      { x: width - 25, y: height - 25 },
-    ]
-
-    // Balls definition
+    const W = (canvas.width  = canvas.offsetWidth)
+    const H = (canvas.height = canvas.offsetHeight)
+    const R = 11
     const balls = [
-      { id: 0, x: width * 0.28, y: height * 0.5, vx: 0, vy: 0, color: '#ffffff', isCue: true }, // Cue ball
-      { id: 1, x: width * 0.65, y: height * 0.5, vx: 0, vy: 0, color: '#fbbf24', num: 1 },
-      { id: 2, x: width * 0.70, y: height * 0.44, vx: 0, vy: 0, color: '#38bdf8', num: 2 },
-      { id: 3, x: width * 0.70, y: height * 0.56, vx: 0, vy: 0, color: '#f472b6', num: 3 },
-      { id: 4, x: width * 0.75, y: height * 0.38, vx: 0, vy: 0, color: '#10b981', num: 4 },
-      { id: 5, x: width * 0.75, y: height * 0.5, vx: 0, vy: 0, color: '#09090b', num: 8 }, // 8 ball
-      { id: 6, x: width * 0.75, y: height * 0.62, vx: 0, vy: 0, color: '#a855f7', num: 6 },
+      { x: W * 0.28, y: H * 0.5,  vx: 0, vy: 0, col: '#f5f5f5', num: 0 },
+      { x: W * 0.64, y: H * 0.5,  vx: 0, vy: 0, col: '#f5f5f5', num: 1 },
+      { x: W * 0.69, y: H * 0.44, vx: 0, vy: 0, col: '#888888', num: 2 },
+      { x: W * 0.69, y: H * 0.56, vx: 0, vy: 0, col: '#555555', num: 3 },
+      { x: W * 0.74, y: H * 0.38, vx: 0, vy: 0, col: '#aaaaaa', num: 4 },
+      { x: W * 0.74, y: H * 0.5,  vx: 0, vy: 0, col: '#ff2d20', num: 8 }, // 8-ball = red
+      { x: W * 0.74, y: H * 0.62, vx: 0, vy: 0, col: '#3a3a3a', num: 6 },
     ]
 
-    const radius = 12
-    let isAiming = true
-
-    const handleCanvasClick = (e: MouseEvent) => {
+    const shoot = (e: MouseEvent | TouchEvent) => {
       const rect = canvas.getBoundingClientRect()
-      const clickX = e.clientX - rect.left
-      const clickY = e.clientY - rect.top
-
-      const cueBall = balls[0]
-      const dx = clickX - cueBall.x
-      const dy = clickY - cueBall.y
-      const angle = Math.atan2(dy, dx)
-
-      // Shoot cue ball!
-      const power = 14
-      cueBall.vx = Math.cos(angle) * power
-      cueBall.vy = Math.sin(angle) * power
-      isAiming = false
+      const cx = 'touches' in e ? e.touches[0].clientX : (e as MouseEvent).clientX
+      const cy = 'touches' in e ? e.touches[0].clientY : (e as MouseEvent).clientY
+      const mx = cx - rect.left, my = cy - rect.top
+      const cue = balls[0]
+      const dx = mx - cue.x, dy = my - cue.y
+      const d  = Math.hypot(dx, dy)
+      const power = 15
+      cue.vx = (dx / d) * power
+      cue.vy = (dy / d) * power
     }
 
-    canvas.addEventListener('click', handleCanvasClick)
+    canvas.addEventListener('click', shoot)
 
-    const updateAndDraw = () => {
-      ctx.clearRect(0, 0, width, height)
+    let raf: number
+    const loop = () => {
+      ctx.clearRect(0, 0, W, H)
 
-      // Draw Pool Table Felt & Rails
-      ctx.fillStyle = '#064e3b' // Emerald felt
-      ctx.fillRect(0, 0, width, height)
+      // Felt
+      ctx.fillStyle = '#0a0a0a'
+      ctx.fillRect(0, 0, W, H)
 
-      // Table Border Rail
-      ctx.strokeStyle = '#78350f' // Wood border
-      ctx.lineWidth = 14
-      ctx.strokeRect(7, 7, width - 14, height - 14)
-
-      ctx.strokeStyle = '#fbbf24'
-      ctx.lineWidth = 2
-      ctx.strokeRect(14, 14, width - 28, height - 28)
+      // Rail
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)'
+      ctx.lineWidth = 1
+      ctx.strokeRect(18, 18, W - 36, H - 36)
 
       // Pockets
-      pockets.forEach((p) => {
+      const pockets = [
+        { x: 18, y: 18 }, { x: W / 2, y: 15 }, { x: W - 18, y: 18 },
+        { x: 18, y: H - 18 }, { x: W / 2, y: H - 15 }, { x: W - 18, y: H - 18 },
+      ]
+      pockets.forEach(p => {
         ctx.beginPath()
-        ctx.arc(p.x, p.y, pocketRadius, 0, Math.PI * 2)
-        ctx.fillStyle = '#09090b'
+        ctx.arc(p.x, p.y, 14, 0, Math.PI * 2)
+        ctx.fillStyle = '#000000'
         ctx.fill()
-        ctx.strokeStyle = '#451a03'
-        ctx.lineWidth = 2
-        ctx.stroke()
       })
 
-      // Physics update
+      // Update + draw balls
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i]
-        b.x += b.vx
-        b.y += b.vy
+        b.x += b.vx; b.y += b.vy
+        b.vx *= 0.984; b.vy *= 0.984
+        if (Math.abs(b.vx) < 0.04) b.vx = 0
+        if (Math.abs(b.vy) < 0.04) b.vy = 0
 
-        // Friction
-        b.vx *= 0.985
-        b.vy *= 0.985
+        const mx = 22, Mx = W - 22, my2 = 22, My = H - 22
+        if (b.x - R < mx) { b.x = mx + R; b.vx *= -0.88 }
+        if (b.x + R > Mx) { b.x = Mx - R; b.vx *= -0.88 }
+        if (b.y - R < my2) { b.y = my2 + R; b.vy *= -0.88 }
+        if (b.y + R > My) { b.y = My - R; b.vy *= -0.88 }
 
-        if (Math.abs(b.vx) < 0.05) b.vx = 0
-        if (Math.abs(b.vy) < 0.05) b.vy = 0
-
-        // Rail Collisions
-        const minX = 22, maxX = width - 22
-        const minY = 22, maxY = height - 22
-
-        if (b.x - radius < minX) { b.x = minX + radius; b.vx *= -0.9 }
-        if (b.x + radius > maxX) { b.x = maxX - radius; b.vx *= -0.9 }
-        if (b.y - radius < minY) { b.y = minY + radius; b.vy *= -0.9 }
-        if (b.y + radius > maxY) { b.y = maxY - radius; b.vy *= -0.9 }
-
-        // Ball vs Ball Collisions
         for (let j = i + 1; j < balls.length; j++) {
           const b2 = balls[j]
-          const dx = b2.x - b.x
-          const dy = b2.y - b.y
-          const dist = Math.hypot(dx, dy)
-
-          if (dist < radius * 2) {
-            const angle = Math.atan2(dy, dx)
-            const sin = Math.sin(angle)
-            const cos = Math.cos(angle)
-
-            // Overlap resolution
-            const overlap = radius * 2 - dist
-            b.x -= cos * (overlap / 2)
-            b.y -= sin * (overlap / 2)
-            b2.x += cos * (overlap / 2)
-            b2.y += sin * (overlap / 2)
-
-            // Velocity exchange
-            const vx1 = b.vx * cos + b.vy * sin
-            const vy1 = b.vy * cos - b.vx * sin
-            const vx2 = b2.vx * cos + b2.vy * sin
-            const vy2 = b2.vy * cos - b2.vx * sin
-
-            b.vx = vx2 * cos - vy1 * sin
-            b.vy = vy1 * cos + vx2 * sin
-            b2.vx = vx1 * cos - vy2 * sin
-            b2.vy = vy2 * cos + vx1 * sin
+          const dx = b2.x - b.x, dy = b2.y - b.y, dist = Math.hypot(dx, dy)
+          if (dist < R * 2) {
+            const ang = Math.atan2(dy, dx), s = Math.sin(ang), c = Math.cos(ang)
+            const ov = R * 2 - dist
+            b.x -= c * (ov / 2); b.y -= s * (ov / 2)
+            b2.x += c * (ov / 2); b2.y += s * (ov / 2)
+            const v1x = b.vx * c + b.vy * s, v1y = b.vy * c - b.vx * s
+            const v2x = b2.vx * c + b2.vy * s, v2y = b2.vy * c - b2.vx * s
+            b.vx = v2x * c - v1y * s; b.vy = v1y * c + v2x * s
+            b2.vx = v1x * c - v2y * s; b2.vy = v2y * c + v1x * s
           }
         }
-      }
 
-      // Draw Aim Line if cue ball stopped
-      const cueBall = balls[0]
-      if (cueBall.vx === 0 && cueBall.vy === 0) {
-        isAiming = true
         ctx.beginPath()
-        ctx.arc(cueBall.x, cueBall.y, radius + 4, 0, Math.PI * 2)
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
-        ctx.lineWidth = 1
-        ctx.stroke()
-      }
-
-      // Draw Balls
-      balls.forEach((b) => {
-        ctx.beginPath()
-        ctx.arc(b.x, b.y, radius, 0, Math.PI * 2)
-        ctx.fillStyle = b.color
+        ctx.arc(b.x, b.y, R, 0, Math.PI * 2)
+        ctx.fillStyle = b.col
         ctx.fill()
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)'
-        ctx.lineWidth = 1.5
-        ctx.stroke()
-
-        if (b.num) {
-          ctx.fillStyle = b.num === 8 ? '#ffffff' : '#09090b'
-          ctx.font = 'bold 9px monospace'
+        if (b.num !== 0) {
+          ctx.fillStyle = b.num === 8 ? '#000' : 'rgba(255,255,255,0.5)'
+          ctx.font = `bold 7px monospace`
           ctx.textAlign = 'center'
           ctx.textBaseline = 'middle'
-          ctx.fillText(b.num.toString(), b.x, b.y)
+          ctx.fillText(String(b.num), b.x, b.y)
         }
-      })
+      }
 
-      animationId = requestAnimationFrame(updateAndDraw)
+      raf = requestAnimationFrame(loop)
     }
-
-    updateAndDraw()
-
-    return () => {
-      canvas.removeEventListener('click', handleCanvasClick)
-      cancelAnimationFrame(animationId)
-    }
-  }, [activeTab])
-
-  const t = {
-    es: {
-      tag: "EL TOQUE HUMANO",
-      title: "Filosofía, Hábitos & Personalidad",
-      subtitle: "Construir sistemas requiere disciplina, equilibrio creativo y buena compañía. Aquí está mi lado más humano.",
-      tabs: {
-        fitness: "Fitness & Pesas",
-        music: "Música & Audio AI",
-        gaming: "Gaming & Modding",
-        pool: "Billar con Amigos",
-      },
-      philosophyTitle: "La Programación como Arte Lógico",
-      philosophyDesc: "Veo la programación como el arte de resolver rompecabezas lógicos complejos. No se trata solo de picar código, sino de diseñar arquitecturas elegantes que perduren.",
-    },
-    en: {
-      tag: "THE HUMAN SIDE",
-      title: "Philosophy, Habits & Personality",
-      subtitle: "Building great systems requires discipline, creative balance, and awesome friends. Here is my personal side.",
-      tabs: {
-        fitness: "Fitness & Lifting",
-        music: "Music & AI Audio",
-        gaming: "Gaming & Modding",
-        pool: "8-Ball Billiards",
-      },
-      philosophyTitle: "Programming as Logical Art",
-      philosophyDesc: "I view programming as the art of solving complex logical puzzles. It is not just writing lines of code, but crafting elegant systems that last.",
-    }
-  }[lang]
+    loop()
+    return () => { cancelAnimationFrame(raf); canvas.removeEventListener('click', shoot) }
+  }, [])
 
   return (
-    <section id="human-side" className="section" style={{ position: 'relative' }}>
-      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <span className="tag tag-pink mono" style={{ marginBottom: '0.8rem' }}>
-            <Sparkles size={14} /> &nbsp; {t.tag}
-          </span>
-          <h2 className="section-title gradient-text">{t.title}</h2>
-          <p className="section-subtitle" style={{ maxWidth: '650px', margin: '0 auto 1.5rem' }}>
-            {t.subtitle}
-          </p>
+    <canvas
+      ref={canvasRef}
+      style={{ width: '100%', height: '300px', display: 'block', cursor: 'crosshair' }}
+    />
+  )
+}
 
-          {/* Philosophy Banner */}
-          <div
-            style={{
-              maxWidth: '850px',
-              margin: '0 auto 2.5rem',
-              padding: '1.2rem 1.8rem',
-              background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.06), rgba(129, 140, 248, 0.06))',
-              border: '1px solid rgba(56, 189, 248, 0.2)',
-              borderRadius: '1rem',
-              textAlign: 'left',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1.2rem',
-            }}
-          >
-            <div
-              style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                background: 'rgba(56, 189, 248, 0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--cyan)',
-                flexShrink: 0,
-              }}
-            >
-              <Sparkles size={24} />
-            </div>
-            <div>
-              <h4 style={{ color: '#f8fafc', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.2rem' }}>
-                {t.philosophyTitle}
-              </h4>
-              <p style={{ color: '#94a3b8', fontSize: '0.92rem', lineHeight: 1.5 }}>
-                "{t.philosophyDesc}"
-              </p>
-            </div>
-          </div>
+export default function HumanSide({ lang = 'es' }: HumanSideProps) {
+  const [tab, setTab] = useState<'fitness' | 'music' | 'gaming' | 'pool'>('fitness')
 
-          {/* Tabs Selector */}
-          <div
-            style={{
-              display: 'inline-flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              gap: '0.5rem',
-              background: 'rgba(15, 23, 42, 0.8)',
-              padding: '0.4rem',
-              borderRadius: '100px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-            }}
-          >
-            {[
-              { id: 'fitness', label: t.tabs.fitness, icon: <Dumbbell size={16} /> },
-              { id: 'music', label: t.tabs.music, icon: <Music size={16} /> },
-              { id: 'gaming', label: t.tabs.gaming, icon: <Gamepad2 size={16} /> },
-              { id: 'pool', label: t.tabs.pool, icon: <CircleDot size={16} /> },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.6rem 1.4rem',
-                  borderRadius: '100px',
-                  border: 'none',
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  background: activeTab === tab.id ? 'linear-gradient(135deg, var(--cyan-dim), var(--violet-dim))' : 'transparent',
-                  color: activeTab === tab.id ? '#ffffff' : '#94a3b8',
-                  boxShadow: activeTab === tab.id ? '0 4px 20px var(--cyan-glow)' : 'none',
-                }}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
+  const T = {
+    es: {
+      label: '06 — El Lado Humano',
+      heading: 'No solo\ncódigo.',
+      sub: 'La disciplina, la creatividad y la buena compañía también construyen ingenieros.',
+      tabs: { fitness: 'Pesas & PPL', music: 'Guitarra & IA', gaming: 'Gaming', pool: 'Billar' },
+    },
+    en: {
+      label: '06 — The Human Side',
+      heading: 'Not just\ncode.',
+      sub: 'Discipline, creativity, and good company also build engineers.',
+      tabs: { fitness: 'Lifting & PPL', music: 'Guitar & AI', gaming: 'Gaming', pool: 'Billiards' },
+    },
+  }[lang]
 
-        {/* Tab Content Display */}
-        <AnimatePresence mode="wait">
-          {activeTab === 'fitness' && (
-            <motion.div
-              key="fitness"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card"
-              style={{ padding: '2.5rem', maxWidth: '900px', margin: '0 auto' }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem' }}>
-                    <div style={{ padding: '0.6rem', borderRadius: '12px', background: 'rgba(56, 189, 248, 0.15)', color: 'var(--cyan)' }}>
-                      <Dumbbell size={24} />
-                    </div>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>Entrenamiento & Pesas</h3>
-                  </div>
-                  <p style={{ color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.2rem', fontSize: '0.95rem' }}>
-                    Mantengo una disciplina rigurosa de gimnasio con división de rutinas calculadas. El esfuerzo físico constante complementa perfectamente el enfoque mental que exige la ingeniería de software.
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span className="tag">Push-Pull-Legs (PPL)</span>
-                    <span className="tag tag-violet">Upper-Lower Split</span>
-                    <span className="tag tag-emerald">Constancia Diaria</span>
-                  </div>
-                </div>
+  const tabDefs: { id: 'fitness' | 'music' | 'gaming' | 'pool'; icon: React.ReactNode; label: string }[] = [
+    { id: 'fitness', icon: <Dumbbell size={14} />, label: T.tabs.fitness },
+    { id: 'music',   icon: <Music size={14} />,    label: T.tabs.music   },
+    { id: 'gaming',  icon: <Gamepad2 size={14} />, label: T.tabs.gaming  },
+    { id: 'pool',    icon: <CircleDot size={14} />,label: T.tabs.pool    },
+  ]
 
-                {/* Workout Routine Visualizer Card */}
-                <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <h4 style={{ color: '#f8fafc', fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
-                    <span>Estructura de Rutina</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--cyan)', fontFamily: 'monospace' }}>5-6 Días/Semana</span>
-                  </h4>
+  const content = {
+    fitness: {
+      title: lang === 'es' ? 'Pesas & Rutina PPL' : 'Lifting & PPL Routine',
+      body:   lang === 'es'
+        ? 'Entrenamiento de pesas consistente siguiendo división Push-Pull-Legs y Upper-Lower. La misma disciplina que aplico al código: progresión planificada, sin días que se salten.'
+        : 'Consistent weightlifting following Push-Pull-Legs and Upper-Lower splits. Same discipline I apply to code: planned progression, no missed days.',
+      rows: [
+        { day: lang === 'es' ? 'Día 1 & 4 — Push'  : 'Day 1 & 4 — Push',  sub: lang === 'es' ? 'Pecho, Hombro, Tríceps' : 'Chest, Shoulder, Triceps' },
+        { day: lang === 'es' ? 'Día 2 & 5 — Pull'  : 'Day 2 & 5 — Pull',  sub: lang === 'es' ? 'Espalda, Bíceps, Trapecios' : 'Back, Biceps, Traps' },
+        { day: lang === 'es' ? 'Día 3 & 6 — Legs'  : 'Day 3 & 6 — Legs',  sub: lang === 'es' ? 'Cuádriceps, Femorales, Gemelos' : 'Quads, Hamstrings, Calves' },
+      ],
+    },
+    music: {
+      title: lang === 'es' ? 'Guitarra & Generación Musical IA' : 'Guitar & AI Music Generation',
+      body:   lang === 'es'
+        ? 'Toco guitarra acústica y escribo progresiones armónicas de letras. Experimento fusionando composición tradicional con herramientas de IA para generar y producir audio nuevo.'
+        : 'I play acoustic guitar and write harmonic chord progressions and lyrics. I experiment fusing traditional composition with AI tools for audio generation and music production.',
+    },
+    gaming: {
+      title: lang === 'es' ? 'Gaming & Modding Técnico' : 'Technical Gaming & Modding',
+      body:   lang === 'es'
+        ? 'Mi interés en los videojuegos es técnico: optimización de motores, tuning de servidores Java/C++, modding y tácticas en Rust y Minecraft. Los juegos son sistemas complejos — me gusta entender qué hay detrás.'
+        : "My gaming interest is technical: engine optimization, Java/C++ server tuning, modding, and tactics in Rust and Minecraft. Games are complex systems — I enjoy understanding what's underneath.",
+    },
+    pool: {
+      title: lang === 'es' ? 'Billar con Eduardo, Wicho & Orlando' : 'Billiards with Eduardo, Wicho & Orlando',
+      body:   lang === 'es'
+        ? 'En el tiempo libre me gusta ir a jugar billar a salas locales con mi círculo de amigos. Aquí hay un simulador de física interactivo — haz clic en la mesa para disparar la bola blanca.'
+        : 'In free time I enjoy playing 8-ball pool at local halls with my friend group. Here is an interactive physics simulator — click the table to aim and shoot the cue ball.',
+    },
+  }
 
-                  {[
-                    { day: 'Día 1 & 4', split: 'Push (Pecho, Hombro, Tríceps)', pct: 95, color: 'var(--cyan)' },
-                    { day: 'Día 2 & 5', split: 'Pull (Espalda, Bíceps, Trapecios)', pct: 90, color: 'var(--violet)' },
-                    { day: 'Día 3 & 6', split: 'Legs / Lower (Cuádriceps, Femorales)', pct: 88, color: 'var(--emerald)' },
-                  ].map((item, idx) => (
-                    <div key={idx} style={{ marginBottom: '1rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem', marginBottom: '0.3rem', color: '#cbd5e1' }}>
-                        <span>{item.day}: <strong>{item.split}</strong></span>
-                      </div>
-                      <div style={{ height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${item.pct}%`, background: item.color, borderRadius: '3px' }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+  const c = content[tab]
+
+  return (
+    <section id="human-side" className="section">
+      <div className="container">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+        >
+          <motion.div variants={fadeUp} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
+            <span className="sys-label">{T.label}</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--gray-800)' }} />
+          </motion.div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'start' }}>
+            {/* Left — heading + tabs */}
+            <motion.div variants={fadeUp}>
+              <h2 className="display-lg" style={{ whiteSpace: 'pre-line', marginBottom: '1.5rem' }}>{T.heading}</h2>
+              <p className="text-body" style={{ marginBottom: '3rem' }}>{T.sub}</p>
+
+              {/* Tab selector */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+                {tabDefs.map((t, i) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    style={{
+                      background: tab === t.id ? 'var(--gray-950)' : 'transparent',
+                      border: 'none',
+                      borderTop: i === 0 ? 'var(--border)' : 'none',
+                      borderBottom: 'var(--border)',
+                      borderLeft: tab === t.id ? '2px solid var(--red)' : '2px solid transparent',
+                      padding: '0.85rem 1rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.7rem',
+                      cursor: 'pointer',
+                      color: tab === t.id ? 'var(--white)' : 'var(--gray-600)',
+                      fontFamily: 'var(--font-dot)',
+                      fontSize: '0.7rem',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      textAlign: 'left',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    <span style={{ color: tab === t.id ? 'var(--red)' : 'var(--gray-700)' }}>{t.icon}</span>
+                    {t.label}
+                  </button>
+                ))}
               </div>
             </motion.div>
-          )}
 
-          {activeTab === 'music' && (
-            <motion.div
-              key="music"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card"
-              style={{ padding: '2.5rem', maxWidth: '900px', margin: '0 auto' }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem', alignItems: 'center' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem' }}>
-                    <div style={{ padding: '0.6rem', borderRadius: '12px', background: 'rgba(244, 114, 182, 0.15)', color: 'var(--pink)' }}>
-                      <Music size={24} />
+            {/* Right — content panel */}
+            <motion.div variants={fadeUp}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={tab}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <h3 className="display-md" style={{ marginBottom: '1.5rem' }}>{c.title}</h3>
+                  <p className="text-body" style={{ marginBottom: '2rem' }}>{c.body}</p>
+
+                  {/* Fitness rows */}
+                  {tab === 'fitness' && 'rows' in c && c.rows && (
+                    <div>
+                      {c.rows.map((row, i) => (
+                        <div key={i} style={{
+                          borderTop: i === 0 ? 'var(--border)' : 'none',
+                          borderBottom: 'var(--border)',
+                          padding: '0.85rem 0',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}>
+                          <span style={{ fontFamily: 'var(--font-dot)', fontSize: '0.72rem', color: 'var(--white)', letterSpacing: '0.05em' }}>{row.day}</span>
+                          <span className="text-sm" style={{ textAlign: 'right' }}>{row.sub}</span>
+                        </div>
+                      ))}
                     </div>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>Guitarra & Generación Musical IA</h3>
-                  </div>
-                  <p style={{ color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.2rem', fontSize: '0.95rem' }}>
-                    Toco la guitarra y disfruto componer progresiones armónicas de letras e instrumentación acústica. Además, experimento fusionando composición tradicional con modelos de IA para generación y producción de audio.
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span className="tag tag-pink">Guitarra Acústica</span>
-                    <span className="tag tag-violet">Progresiones de Letras</span>
-                    <span className="tag tag-emerald">IA Musical</span>
-                  </div>
-                </div>
+                  )}
 
-                {/* Audio Player Simulated Widget */}
-                <div style={{ background: 'rgba(0, 0, 0, 0.4)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(244, 114, 182, 0.2)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.2rem' }}>
-                    <button
-                      onClick={() => setIsPlayingMusic(!isPlayingMusic)}
-                      style={{
-                        width: '48px',
-                        height: '48px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, var(--pink), var(--violet))',
-                        border: 'none',
-                        color: 'white',
+                  {/* Pool canvas */}
+                  {tab === 'pool' && (
+                    <div style={{ border: 'var(--border)', overflow: 'hidden' }}>
+                      <div style={{
+                        padding: '0.5rem 0.8rem',
+                        borderBottom: 'var(--border)',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        boxShadow: '0 0 20px rgba(244, 114, 182, 0.4)',
-                      }}
-                    >
-                      {isPlayingMusic ? <Pause size={20} /> : <Play size={20} style={{ marginLeft: '2px' }} />}
-                    </button>
-                    <div>
-                      <h4 style={{ color: '#f8fafc', fontSize: '0.95rem', fontWeight: 600 }}>
-                        {songs[activeSong].title}
-                      </h4>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--pink)', fontFamily: 'monospace' }}>
-                        {songs[activeSong].tag} • {songs[activeSong].duration}
-                      </span>
+                        gap: '0.5rem',
+                        fontFamily: 'var(--font-dot)',
+                        fontSize: '0.62rem',
+                        letterSpacing: '0.12em',
+                        color: 'var(--gray-600)',
+                      }}>
+                        <span className="rdot" style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--red)' }} />
+                        8-BALL PHYSICS — Click to aim & shoot
+                      </div>
+                      <BilliardsCanvas />
                     </div>
-                  </div>
-
-                  {/* Equalizer Visualizer simulation */}
-                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '32px', padding: '0 0.5rem' }}>
-                    {[40, 75, 30, 90, 60, 100, 45, 80, 65, 35, 95, 50, 70, 40].map((h, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          flex: 1,
-                          height: isPlayingMusic ? `${(h * Math.random() + 20)}%` : '20%',
-                          background: 'linear-gradient(to top, var(--violet), var(--pink))',
-                          borderRadius: '2px',
-                          transition: 'height 0.15s ease',
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
-          )}
-
-          {activeTab === 'gaming' && (
-            <motion.div
-              key="gaming"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card"
-              style={{ padding: '2.5rem', maxWidth: '900px', margin: '0 auto' }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1rem' }}>
-                    <div style={{ padding: '0.6rem', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--emerald)' }}>
-                      <Gamepad2 size={24} />
-                    </div>
-                    <h3 style={{ fontSize: '1.4rem', fontWeight: 700 }}>Gaming & Modding Técnico</h3>
-                  </div>
-                  <p style={{ color: '#94a3b8', lineHeight: 1.6, marginBottom: '1.2rem', fontSize: '0.95rem' }}>
-                    Mi interés en los videojuegos va más allá de jugar: me apasiona la optimización de rendimiento de motores, modding de servidores y tácticas en tiempo real en títulos como Rust y Minecraft.
-                  </p>
-                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span className="tag tag-emerald">Rust Performance</span>
-                    <span className="tag tag-violet">Minecraft Modding</span>
-                    <span className="tag">Server Optimization</span>
-                  </div>
-                </div>
-
-                <div style={{ background: 'rgba(0, 0, 0, 0.3)', padding: '1.5rem', borderRadius: '1rem', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                  <h4 style={{ color: '#f8fafc', fontSize: '0.95rem', fontWeight: 600, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Sparkles size={16} color="var(--emerald)" /> Enfoque en Optimización & Mods
-                  </h4>
-                  <ul style={{ color: '#94a3b8', fontSize: '0.88rem', lineHeight: 1.7, paddingLeft: '1.2rem' }}>
-                    <li>Configuración de Servidores Dedicados y Tuning de Java JVM / C++ engine limits.</li>
-                    <li>Modding de mecánicas de juego y scripts de automatización.</li>
-                    <li>Estrategias tácticas avanzadas de recursos y supervivencia en equipo.</li>
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === 'pool' && (
-            <motion.div
-              key="pool"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="glass-card"
-              style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto' }}
-            >
-              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(251, 191, 36, 0.15)', color: 'var(--amber)', padding: '0.3rem 0.8rem', borderRadius: '100px', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem' }}>
-                  <Users size={14} /> Eduardo, Wicho, Orlando & Félix
-                </div>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#f8fafc' }}>
-                  Simulador de Billar / 8-Ball Physics
-                </h3>
-                <p style={{ color: '#94a3b8', fontSize: '0.88rem', maxWidth: '550px', margin: '0.2rem auto 0' }}>
-                  En mi tiempo libre me encanta ir a jugar billar a salas locales con mi grupo de amigos. ¡Haz clic en la mesa para apuntar y tirar la bola blanca!
-                </p>
-              </div>
-
-              {/* Billiards Canvas Container */}
-              <div style={{ display: 'flex', justifyContent: 'center', overflowX: 'auto', padding: '0.5rem 0' }}>
-                <canvas
-                  ref={poolCanvasRef}
-                  style={{
-                    borderRadius: '1rem',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5)',
-                    cursor: 'crosshair',
-                    maxWidth: '100%',
-                  }}
-                />
-              </div>
-
-              <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: '#64748b' }}>
-                💡 Tip: Haz clic en cualquier parte de la mesa para disparar la bola blanca en esa dirección.
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

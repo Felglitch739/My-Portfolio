@@ -1,215 +1,150 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Terminal, Globe, Menu, X, Sparkles } from 'lucide-react'
+import { Terminal, Globe, Menu, X } from 'lucide-react'
 
 interface NavbarProps {
   onOpenTerminal: () => void
   lang: 'es' | 'en'
-  setLang: (lang: 'es' | 'en') => void
+  setLang: (l: 'es' | 'en') => void
 }
 
 export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
+  const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const navLinks = [
-    { href: '#about-me', label: lang === 'es' ? 'Sobre Mí' : 'About' },
-    { href: '#skills', label: lang === 'es' ? 'Tech Vault' : 'Skills' },
-    { href: '#projects', label: lang === 'es' ? 'Proyectos' : 'Projects' },
-    { href: '#events', label: lang === 'es' ? 'Comunidad & Logros' : 'Achievements' },
-    { href: '#human-side', label: lang === 'es' ? 'Lado Humano' : 'Personal' },
-    { href: '#contact', label: lang === 'es' ? 'Contacto' : 'Contact' },
+  const links = [
+    { href: '#about-me', label: lang === 'es' ? 'Perfil' : 'Profile' },
+    { href: '#skills',   label: lang === 'es' ? 'Stack'  : 'Stack'   },
+    { href: '#projects', label: lang === 'es' ? 'Obras'  : 'Work'    },
+    { href: '#events',   label: lang === 'es' ? 'Logros' : 'Achievements' },
+    { href: '#human-side', label: lang === 'es' ? 'Human' : 'Human'  },
+    { href: '#contact',  label: lang === 'es' ? 'Contacto' : 'Contact' },
   ]
 
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: 'var(--nav-height)',
-        zIndex: 100,
-        display: 'flex',
-        alignItems: 'center',
-        transition: 'all 0.3s ease',
-        background: scrolled ? 'rgba(2, 8, 23, 0.85)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(16px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid transparent',
-      }}
-    >
-      <div
-        className="container"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          padding: '0 1.5rem',
-        }}
-      >
-        {/* Brand Logo */}
-        <a
-          href="#"
-          style={{
-            textDecoration: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            fontFamily: "'JetBrains Mono', monospace",
-            fontWeight: 700,
-            fontSize: '1rem',
-            color: '#f8fafc',
-          }}
-        >
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, var(--cyan-dim), var(--violet-dim))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              boxShadow: '0 0 12px var(--cyan-glow)',
-            }}
-          >
-            F
+    <>
+      <nav className="nav" style={{ opacity: scrolled ? 1 : 0.95 }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%' }}>
+          {/* Logo */}
+          <a href="#" className="nav-logo">
+            <span className="nav-logo-dot" />
+            FMF
+            <span style={{ color: 'var(--gray-600)', fontWeight: 400 }}>.dev</span>
+          </a>
+
+          {/* Desktop Nav */}
+          <ul className="nav-links hide-mobile">
+            {links.map(link => (
+              <li key={link.href}>
+                <a href={link.href} className="nav-link">{link.label}</a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Right Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {/* Lang toggle */}
+            <button
+              onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+              style={{
+                background: 'transparent',
+                border: 'var(--border)',
+                color: 'var(--gray-400)',
+                padding: '0.35rem 0.7rem',
+                fontFamily: 'var(--font-dot)',
+                fontSize: '0.65rem',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+              }}
+              className="hide-mobile"
+            >
+              {lang === 'es' ? 'EN' : 'ES'}
+            </button>
+
+            {/* Console button */}
+            <button
+              onClick={onOpenTerminal}
+              style={{
+                background: 'transparent',
+                border: 'var(--border)',
+                color: 'var(--gray-400)',
+                padding: '0.35rem 0.9rem',
+                fontFamily: 'var(--font-dot)',
+                fontSize: '0.65rem',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+              className="hide-mobile"
+            >
+              <Terminal size={12} />
+              Console
+            </button>
+
+            {/* Mobile toggle */}
+            <button
+              className="hide-desktop"
+              onClick={() => setOpen(!open)}
+              style={{ background: 'transparent', border: 'none', color: 'var(--white)', cursor: 'pointer', padding: '0.3rem' }}
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
           </div>
-          <span>
-            FÉLIX_MARTÍNEZ <span style={{ color: 'var(--cyan)', fontSize: '0.8rem' }}>// CS_UTRGV</span>
-          </span>
-        </a>
-
-        {/* Desktop Nav Links */}
-        <nav className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '1.8rem' }}>
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="hover-underline"
-              style={{
-                color: '#94a3b8',
-                fontSize: '0.9rem',
-                fontWeight: 500,
-                transition: 'color 0.2s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#f8fafc')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-
-        {/* Right Action Bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-          {/* Terminal Launcher */}
-          <button
-            onClick={onOpenTerminal}
-            style={{
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: 'var(--cyan)',
-              padding: '0.45rem 0.9rem',
-              borderRadius: '8px',
-              fontSize: '0.82rem',
-              fontFamily: "'JetBrains Mono', monospace",
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              transition: 'all 0.2s',
-            }}
-            title="Open Interactive Cyber-Terminal"
-          >
-            <Terminal size={15} />
-            <span className="desktop-only">Console</span>
-          </button>
-
-          {/* Language Switcher */}
-          <button
-            onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#f8fafc',
-              padding: '0.45rem 0.75rem',
-              borderRadius: '8px',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              fontFamily: 'monospace',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-            }}
-          >
-            <Globe size={14} />
-            {lang.toUpperCase()}
-          </button>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            className="mobile-toggle"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#f8fafc',
-              cursor: 'pointer',
-              padding: '0.4rem',
-            }}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 'var(--nav-height)',
-            left: 0,
-            right: 0,
-            background: 'rgba(2, 8, 23, 0.95)',
-            backdropFilter: 'blur(20px)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '1.5rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1rem',
-          }}
-        >
-          {navLinks.map((link) => (
+      {/* Mobile drawer */}
+      {open && (
+        <div style={{
+          position: 'fixed',
+          top: 'var(--nav-height)',
+          left: 0, right: 0,
+          background: 'var(--black)',
+          borderBottom: 'var(--border-strong)',
+          zIndex: 99,
+          padding: '2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+        }}>
+          {links.map(link => (
             <a
               key={link.href}
               href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                color: '#f8fafc',
-                textDecoration: 'none',
-                fontSize: '1.1rem',
-                fontWeight: 600,
-              }}
+              onClick={() => setOpen(false)}
+              className="nav-link"
+              style={{ fontSize: '1.1rem' }}
             >
               {link.label}
             </a>
           ))}
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+            <button
+              onClick={() => { setLang(lang === 'es' ? 'en' : 'es'); setOpen(false) }}
+              style={{ background: 'transparent', border: 'var(--border)', color: 'var(--gray-400)', padding: '0.4rem 0.8rem', fontFamily: 'var(--font-dot)', fontSize: '0.65rem', letterSpacing: '0.15em', cursor: 'pointer' }}
+            >
+              {lang === 'es' ? 'EN' : 'ES'}
+            </button>
+            <button
+              onClick={() => { onOpenTerminal(); setOpen(false) }}
+              style={{ background: 'transparent', border: 'var(--border)', color: 'var(--gray-400)', padding: '0.4rem 0.8rem', fontFamily: 'var(--font-dot)', fontSize: '0.65rem', letterSpacing: '0.15em', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Terminal size={12} /> Console
+            </button>
+          </div>
         </div>
       )}
-    </header>
+    </>
   )
 }

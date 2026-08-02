@@ -1,320 +1,252 @@
-import { motion, type Variants } from 'framer-motion'
-import { Terminal, ChevronDown, Mail, Download, Sparkles, Cpu, Code2, ArrowRight } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { ArrowDown, Terminal, Download } from 'lucide-react'
 
 interface HeroProps {
   onOpenTerminal: () => void
   lang?: 'es' | 'en'
 }
 
-function useTypewriter(words: string[], speed = 70, pause = 1800) {
+function useTypewriter(words: string[], speed = 65, pause = 2200) {
   const el = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     let wi = 0, ci = 0, deleting = false, timer: ReturnType<typeof setTimeout>
     const tick = () => {
       const word = words[wi]
-      if (el.current) {
-        el.current.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++)
-      }
+      if (el.current) el.current.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++)
       let delay = deleting ? speed / 2 : speed
-      if (!deleting && ci > word.length) {
-        delay = pause; deleting = true
-      } else if (deleting && ci < 0) {
-        deleting = false; wi = (wi + 1) % words.length; ci = 0
-      }
+      if (!deleting && ci > word.length) { delay = pause; deleting = true }
+      else if (deleting && ci < 0) { deleting = false; wi = (wi + 1) % words.length; ci = 0 }
       timer = setTimeout(tick, delay)
     }
     tick()
     return () => clearTimeout(timer)
-  }, [words])
+  }, [])
   return el
 }
 
 export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
-  const t = {
+  const T = {
     es: {
-      status: "🟢 Estudiante CS @ UTRGV | Construyendo AuraFit & KronoBook",
-      roles: [
-        'Full-Stack Software Engineer',
-        'Hardware Hacker & Embedded Builder',
-        'Computer Science @ UTRGV',
-        'Co-Fundador @ Build Pa\'l Norte',
-      ],
-      titlePrefix: "Ingeniería de",
-      software: "Software",
-      and: "y",
-      hardware: "Hardware",
-      desc: "Construyendo soluciones de alto impacto en la intersección del software y el hardware: desde aplicaciones web impulsadas por IA hasta sistemas integrados autónomos.",
-      projectsBtn: "Explorar Proyectos",
-      terminalBtn: "Terminal Interactiva",
-      cvBtn: "Descargar CV",
-      stats: [
-        { label: "Proyectos Clave", val: "5+" },
-        { label: "Universidad", val: "UTRGV CS" },
-        { label: "Hackathon Host", val: "24h Event" },
-        { label: "Comunidad", val: "IEEE & Pa'l Norte" },
-      ]
+      available:   'Disponible para oportunidades',
+      roles:       ['Software Engineer', 'Hardware Hacker', 'Embedded Systems', 'CS @ UTRGV', "Co-Fundador Pa'l Norte"],
+      line1:       'Ingeniería',
+      line2:       'de Software',
+      line3:       '& Hardware.',
+      sub:         'Construyendo soluciones de alto impacto donde el software se funde con el silicio.',
+      cta1:        'Ver Proyectos',
+      cta2:        'Abrir Terminal',
+      cv:          'Descargar CV',
+      status:      '01 — EN VIVO',
+      tagline:     'Computer Science · UTRGV · Matamoros, Tamps.',
     },
     en: {
-      status: "🟢 CS Student @ UTRGV | Building AuraFit & KronoBook",
-      roles: [
-        'Full-Stack Software Engineer',
-        'Hardware Hacker & Embedded Builder',
-        'Computer Science @ UTRGV',
-        'Co-Founder @ Build Pa\'l Norte',
-      ],
-      titlePrefix: "Engineering at the Edge of",
-      software: "Software",
-      and: "&",
-      hardware: "Hardware",
-      desc: "Crafting high-impact solutions at the intersection of software and hardware: from AI-powered web applications to autonomous embedded systems.",
-      projectsBtn: "Explore Projects",
-      terminalBtn: "Interactive Terminal",
-      cvBtn: "Download Resume",
-      stats: [
-        { label: "Key Projects", val: "5+" },
-        { label: "University", val: "UTRGV CS" },
-        { label: "Hackathon Host", val: "24h Event" },
-        { label: "Community", val: "IEEE & Pa'l Norte" },
-      ]
-    }
+      available:   'Open to opportunities',
+      roles:       ['Software Engineer', 'Hardware Hacker', 'Embedded Systems', 'CS @ UTRGV', "Co-Founder Pa'l Norte"],
+      line1:       'Engineering',
+      line2:       'Software',
+      line3:       '& Hardware.',
+      sub:         'Building high-impact solutions where software meets silicon.',
+      cta1:        'See Projects',
+      cta2:        'Open Terminal',
+      cv:          'Download CV',
+      status:      '01 — LIVE',
+      tagline:     'Computer Science · UTRGV · Matamoros, Tamps.',
+    },
   }[lang]
 
-  const typedRef = useTypewriter(t.roles)
+  const typedRef = useTypewriter(T.roles)
 
-  const containerVariants: Variants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.12 } },
-  }
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
-  }
+  const tickerItems = [
+    'C++', 'Python', 'React', 'TypeScript', 'Vite', 'Tailwind CSS', 'SQL', 'Supabase',
+    'Embedded Systems', 'React Native', 'Build Pa\'l Norte', 'IEEE Member',
+  ]
 
   return (
-    <section
-      id="hero"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-        padding: '0 1.5rem',
-        paddingTop: 'calc(var(--nav-height) + 2rem)',
-        paddingBottom: '4rem',
-      }}
-    >
-      {/* Background Ambient Orbs */}
-      <div className="orb orb-cyan" style={{ width: 600, height: 600, top: '-10%', left: '-15%' }} />
-      <div className="orb orb-violet" style={{ width: 500, height: 500, top: '20%', right: '-20%' }} />
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
+    <>
+      <section
+        id="hero"
         style={{
-          maxWidth: 900,
-          width: '100%',
-          textAlign: 'center',
+          minHeight: '100vh',
+          paddingTop: 'var(--nav-height)',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
           position: 'relative',
           zIndex: 1,
+          borderBottom: 'var(--border)',
         }}
       >
-        {/* Status Pill */}
-        <motion.div variants={itemVariants} style={{ marginBottom: '1.5rem' }}>
-          <span
-            className="mono"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-              padding: '0.45rem 1.1rem',
-              borderRadius: '100px',
-              fontSize: '0.82rem',
-              fontWeight: 600,
-              background: 'rgba(16, 185, 129, 0.1)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              color: '#34d399',
-              boxShadow: '0 0 20px rgba(16, 185, 129, 0.15)',
-            }}
-          >
-            {t.status}
-          </span>
-        </motion.div>
-
-        {/* Name */}
-        <motion.h2
-          variants={itemVariants}
-          className="mono"
-          style={{
-            color: 'var(--cyan)',
-            fontSize: 'clamp(1rem, 2.5vw, 1.3rem)',
-            letterSpacing: '0.2em',
-            textTransform: 'uppercase',
-            marginBottom: '0.5rem',
-            fontWeight: 700,
-          }}
-        >
-          FÉLIX E. MARTINEZ FLORES
-        </motion.h2>
-
-        {/* Dynamic Role Typewriter */}
-        <motion.div
-          variants={itemVariants}
-          style={{
-            fontSize: 'clamp(1.5rem, 3.5vw, 2.4rem)',
-            fontWeight: 700,
-            color: '#f8fafc',
-            height: '2.8rem',
+        <div className="container" style={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
+          {/* Top status row */}
+          <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-            marginBottom: '1rem',
-            fontFamily: "'JetBrains Mono', monospace",
-          }}
-        >
-          <span style={{ color: 'var(--cyan)' }}>&gt;</span>
-          <span ref={typedRef} style={{ borderRight: '2px solid var(--cyan)', paddingRight: '4px' }} />
-        </motion.div>
-
-        {/* Main Headline */}
-        <motion.h1
-          variants={itemVariants}
-          style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-            fontWeight: 900,
-            lineHeight: 1.08,
-            letterSpacing: '-0.03em',
-            color: '#f8fafc',
-            marginBottom: '1.5rem',
-          }}
-        >
-          {t.titlePrefix}{' '}
-          <span className="gradient-text">{t.software}</span> {t.and}{' '}
-          <span style={{ color: 'var(--cyan)', textShadow: '0 0 30px var(--cyan-glow)' }}>{t.hardware}</span>.
-        </motion.h1>
-
-        {/* Description */}
-        <motion.p
-          variants={itemVariants}
-          style={{
-            fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-            color: '#94a3b8',
-            maxWidth: '720px',
-            margin: '0 auto 2.5rem',
-            lineHeight: 1.7,
-          }}
-        >
-          {t.desc}
-        </motion.p>
-
-        {/* Stack Quick Badges */}
-        <motion.div
-          variants={itemVariants}
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            gap: '0.6rem',
-            marginBottom: '2.5rem',
-          }}
-        >
-          {['C++', 'Python', 'React', 'Vite', 'Tailwind CSS', 'TypeScript', 'SQL', 'Embedded Systems'].map((tech) => (
-            <span key={tech} className="tag mono">
-              {tech}
-            </span>
-          ))}
-        </motion.div>
-
-        {/* Action Buttons */}
-        <motion.div
-          variants={itemVariants}
-          style={{
-            display: 'flex',
+            justifyContent: 'space-between',
+            marginBottom: '3rem',
             flexWrap: 'wrap',
             gap: '1rem',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: '4rem',
-          }}
-        >
-          <a href="#projects" className="btn-primary">
-            <span>{t.projectsBtn}</span>
-            <ArrowRight size={18} />
-          </a>
+          }}>
+            <span className="sys-label">{T.status}</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              fontFamily: 'var(--font-dot)',
+              fontSize: '0.65rem',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'var(--gray-600)',
+            }}>
+              {/* Live status pulse */}
+              <span style={{
+                width: '6px', height: '6px', borderRadius: '50%',
+                background: 'var(--red)',
+                animation: 'pulse 2s ease-in-out infinite',
+              }} />
+              {T.available}
+            </div>
+          </div>
 
-          <button onClick={onOpenTerminal} className="btn-ghost" style={{ background: 'rgba(56, 189, 248, 0.08)' }}>
-            <Terminal size={18} />
-            <span>{t.terminalBtn}</span>
-          </button>
-
-          <a
-            href="/Felix_Martinez_Resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ghost"
-            style={{ borderColor: 'rgba(255, 255, 255, 0.2)', color: '#f8fafc' }}
-          >
-            <Download size={18} />
-            <span>{t.cvBtn}</span>
-          </a>
-        </motion.div>
-
-        {/* Stats Grid Pill */}
-        <motion.div
-          variants={itemVariants}
-          className="glass-card"
-          style={{
-            padding: '1.2rem 2rem',
-            maxWidth: '800px',
-            margin: '0 auto',
+          {/* Main layout: two columns */}
+          <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-            gap: '1.5rem',
-            textAlign: 'center',
-          }}
-        >
-          {t.stats.map((st, i) => (
-            <div key={i}>
-              <div
+            gridTemplateColumns: '1fr auto',
+            gap: '2rem',
+            alignItems: 'flex-end',
+          }}>
+            {/* Left — headline */}
+            <div>
+              <motion.h1
+                className="display-xl"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {T.line1}<br />
+                {T.line2}<br />
+                <span style={{ color: 'var(--gray-600)' }}>{T.line3}</span>
+              </motion.h1>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
                 style={{
-                  fontSize: '1.4rem',
-                  fontWeight: 800,
-                  color: i === 0 ? 'var(--cyan)' : i === 1 ? 'var(--violet)' : i === 2 ? 'var(--pink)' : 'var(--emerald)',
-                  fontFamily: "'JetBrains Mono', monospace",
+                  marginTop: '2rem',
+                  fontFamily: 'var(--font-dot)',
+                  fontSize: '0.85rem',
+                  letterSpacing: '0.05em',
+                  color: 'var(--gray-600)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
                 }}
               >
-                {st.val}
-              </div>
-              <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '0.2rem' }}>{st.label}</div>
+                <span style={{ color: 'var(--red)' }}>&gt;</span>
+                <span ref={typedRef} style={{ borderRight: '1px solid var(--gray-500)', paddingRight: '3px' }} />
+              </motion.div>
             </div>
-          ))}
-        </motion.div>
-      </motion.div>
 
-      {/* Down Scroll Indicator */}
-      <a
-        href="#about-me"
-        style={{
+            {/* Right — vertical info column */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="hide-mobile"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.5rem',
+                alignItems: 'flex-end',
+                paddingBottom: '0.5rem',
+              }}
+            >
+              <div style={{ textAlign: 'right' }}>
+                <div className="idx" style={{ marginBottom: '0.3rem' }}>IDENTIDAD</div>
+                <div style={{ fontFamily: 'var(--font-dot)', fontSize: '0.78rem', color: 'var(--gray-300)', lineHeight: 1.6 }}>
+                  Félix E. Martinez Flores<br />
+                  <span style={{ color: 'var(--gray-600)' }}>Matamoros / RGV, MX-TX</span>
+                </div>
+              </div>
+              <div style={{ width: '1px', height: '40px', background: 'var(--gray-800)' }} />
+              <div style={{ textAlign: 'right' }}>
+                <div className="idx" style={{ marginBottom: '0.3rem' }}>EDUCACIÓN</div>
+                <div style={{ fontFamily: 'var(--font-dot)', fontSize: '0.78rem', color: 'var(--gray-300)', lineHeight: 1.6 }}>
+                  CS @ UTRGV<br />
+                  <span style={{ color: 'var(--gray-600)' }}>Universidad de Texas RGV</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Description + CTA row */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+            style={{
+              marginTop: '3.5rem',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '2rem',
+              paddingTop: '2rem',
+              borderTop: 'var(--border)',
+            }}
+          >
+            <p style={{ maxWidth: '480px', color: 'var(--gray-400)', fontSize: '1.05rem', lineHeight: 1.65 }}>
+              {T.sub}
+            </p>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <a href="#projects" className="btn btn-primary">{T.cta1}</a>
+              <button onClick={onOpenTerminal} className="btn btn-outline">
+                <Terminal size={14} /> {T.cta2}
+              </button>
+              <a href="/Felix_Martinez_Resume.pdf" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ color: 'var(--gray-500)' }}>
+                <Download size={14} /> {T.cv}
+              </a>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Bottom scroll indicator */}
+        <div style={{
           position: 'absolute',
           bottom: '1.5rem',
           left: '50%',
           transform: 'translateX(-50%)',
-          color: '#64748b',
-          textDecoration: 'none',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '0.3rem',
-          fontSize: '0.75rem',
-          zIndex: 1,
-        }}
-      >
-        <ChevronDown size={20} className="animate-bounce" />
-      </a>
-    </section>
+          gap: '0.4rem',
+          color: 'var(--gray-700)',
+        }}>
+          <ArrowDown size={16} />
+          <span className="idx">scroll</span>
+        </div>
+      </section>
+
+      {/* ── Ticker beneath hero ── */}
+      <div className="ticker-wrap" style={{ position: 'relative', zIndex: 1 }}>
+        <div className="ticker-inner">
+          {[...tickerItems, ...tickerItems].map((item, i) => (
+            <span key={i} className="ticker-item">
+              <span className="rdot" />
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.25; }
+        }
+      `}</style>
+    </>
   )
 }
