@@ -67,6 +67,7 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
       desc: 'Cofundador y CMO de esta comunidad tecnológica en Matamoros, Tamaulipas. Impulsamos el talento local con eventos colaborativos y nuestro hackathon de 24 horas.',
       detail: "Build Pa'l Norte es un esfuerzo 100% colaborativo enfocado en empoderar desarrolladores del norte de México con eventos técnicos y competencias intensivas de programación.",
       tags: ['COMUNIDAD TECH', 'HACKATHON 24H', 'MATAMOROS'],
+      link: 'https://linktr.ee/buildpalnorte',
       github: 'https://github.com/BuildPalNorte',
       badge: 'CO-FOUNDER & CMO',
       badgeRed: false,

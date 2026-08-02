@@ -15,6 +15,7 @@ export default function Events({ lang = 'es' }: EventsProps) {
       desc: "Comunidad tecnológica en Matamoros enfocada en empoderar desarrolladores locales. Evento insignia: Hackathon de 24 horas continuas.",
       badge: "COMMUNITY / HACKATHON",
       icon: <Users size={20} color="var(--red)" />,
+      link: "https://linktr.ee/buildpalnorte",
     },
     {
       num: '02',
@@ -91,6 +92,20 @@ export default function Events({ lang = 'es' }: EventsProps) {
                 <p className="body-text" style={{ fontSize: '0.9rem' }}>
                   {ev.desc}
                 </p>
+
+                {ev.link && (
+                  <div style={{ marginTop: '1.2rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <a
+                      href={ev.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mono-tag mono-tag-red"
+                      style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+                    >
+                      SITIO EN VIVO ↗
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           ))}
