@@ -1,6 +1,12 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Terminal as TerminalIcon, X, CornerDownLeft } from 'lucide-react'
+import { Terminal as TerminalIcon, X, CornerDownLeft, Move } from 'lucide-react'
+
+interface OutputLine {
+  id: string
+  type: 'input' | 'output' | 'error' | 'success' | 'system'
+  text: string
+}
 
 interface CyberTerminalProps {
   isOpen: boolean
@@ -8,210 +14,290 @@ interface CyberTerminalProps {
   lang?: 'es' | 'en'
 }
 
-interface Line {
-  id: string
-  type: 'in' | 'out' | 'sys' | 'err'
-  text: string
-}
-
 export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTerminalProps) {
-  const [input,   setInput]   = useState('')
-  const [history, setHistory] = useState<Line[]>([
-    { id: '0', type: 'sys', text: 'FMF_OS v1.0.0 — type "help" for commands' },
+  const [input, setInput] = useState('')
+  const [history, setHistory] = useState<OutputLine[]>([
+    { id: '1', type: 'system', text: 'FMF_HARDWARE_TERMINAL v3.0 (x86_64-utrgv-hardware)' },
+    { id: '2', type: 'system', text: 'Type "help" or click command pills below.' },
   ])
+  const bottomRef = useRef<HTMLDivElement>(null)
+  const dragConstraintsRef = useRef(null)
 
-  const run = (cmd: string) => {
-    const trimmed = cmd.trim().toLowerCase()
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [history])
+
+  const handleCommand = (cmdStr: string) => {
+    const trimmed = cmdStr.trim().toLowerCase()
     if (!trimmed) return
 
-    const next: Line[] = [
+    const newHistory: OutputLine[] = [
       ...history,
-      { id: Date.now() + 'i', type: 'in', text: `$ ${cmd}` },
+      { id: Date.now().toString(), type: 'input', text: `$ ${cmdStr}` },
     ]
-
-    const add = (text: string, type: Line['type'] = 'out') =>
-      next.push({ id: Date.now() + 'o', type, text })
 
     switch (trimmed) {
       case 'help':
-        add(
-          `whoami  — Identidad y perfil
-skills  — Stack técnico
-projects — Proyectos y casos de éxito
-hobbies — Fitness, guitarra, gaming, billar
-contact — Formas de contacto
-clear   — Limpiar terminal`
-        )
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'output',
+          text: `COMMAND LIST:
+  • whoami    - Profile summary & UTRGV CS status
+  • skills    - Technical modules (C++, Python, React, Vite, Tailwind, TS, SQL)
+  • projects  - Overview of KronoBook, AuraFit, Build Pa'l Norte & more
+  • hobbies   - Fitness (PPL), Guitar & AI, Gaming (Rust/Minecraft), Billiards
+  • billiards - Jump to 8-Ball Billiards simulator
+  • contact   - Direct info & social links
+  • clear     - Clear terminal logs`,
+        })
         break
+
       case 'whoami':
-        add(
-          `NAME:    Félix E. Martinez Flores
-ROLE:    Full-Stack Software Engineer & Hardware Hacker
-EDU:     Computer Science @ UTRGV
-LOC:     Matamoros, Tamps. / RGV, TX
-MOTTO:   I build systems, not just lines of code.`
-        )
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'success',
+          text: `[IDENTITY]: Félix E. Martinez Flores
+[ROLE]: Full-Stack Software Engineer & Hardware Hacker
+[EDU]: Computer Science Student @ UTRGV
+[PHILOSOPHY]: Programming is the art of solving complex logical puzzles. I build systems, not just code.`,
+        })
         break
+
       case 'skills':
-        add('C++ · Python · React · Vite · Tailwind CSS · TypeScript · SQL\nEmbedded Systems · Supabase · React Native')
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'output',
+          text: `HARDWARE & SOFTWARE MODULES:
+• C++ (Systems & Low-Level)
+• Python (APIs & Automation)
+• React / Vite / Tailwind CSS / TypeScript
+• SQL & Supabase (Multi-Tenant Architecture)
+• Embedded Systems & Robotics`,
+        })
         break
+
       case 'projects':
-        add(
-          `001 KronoBook & DualFX  — SaaS Multi-Tenant (Supabase)
-002 AuraFit             — AI Fitness App (React Native) · Hackathon Winner
-003 Build Pa'l Norte    — Comunidad Tech & Hackathon 24h · Matamoros
-004 Gazpacho's          — Web SPA Glassmorphism
-005 Family Weather      — Python Automation Bot`
-        )
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'output',
+          text: `FEATURED PROJECTS:
+1. KronoBook & DualFX [SaaS]: Multi-tenant booking platform + DualFX auto detailing integration.
+2. AuraFit [AI Mobile]: AI fitness tracking app (Frontera Devs winner, React Native rewrite).
+3. Build Pa'l Norte [Community]: Matamoros tech community co-founder & 24h Hackathon host.
+4. Gazpacho's [Web SPA]: High-end restaurant redesign prototype.
+5. Family Weather [Automation]: Python weather alert bot deployed on PythonAnywhere.`,
+        })
         break
+
       case 'hobbies':
-        add(
-          `🏋️  PESAS   — Push-Pull-Legs & Upper-Lower splits
-🎸  MÚSICA  — Guitarra acústica, progresiones & AI music gen
-🎮  GAMING  — Rust, Minecraft: server tuning & modding
-🎱  BILLAR  — Eduardo, Wicho, Orlando & yo`
-        )
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'output',
+          text: `THE HUMAN ELEMENT:
+• Weightlifting (Push-Pull-Legs & Upper-Lower splits).
+• Acoustic Guitar progressions, lyric writing & AI audio generation.
+• Gaming: Rust & Minecraft server tuning, modding & tactics.
+• Billiards: Playing 8-ball pool with Eduardo, Wicho & Orlando.`,
+        })
         break
+
+      case 'billiards':
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'success',
+          text: '[BILLIARDS]: Scrolling to 8-ball dot-matrix simulator...',
+        })
+        setTimeout(() => {
+          onClose()
+          document.getElementById('human-side')?.scrollIntoView({ behavior: 'smooth' })
+        }, 400)
+        break
+
       case 'contact':
-        add(
-          `EMAIL:   felix.martinez08@utrgv.edu
-GITHUB:  github.com/Felglitch739`
-        )
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'output',
+          text: `CONTACT & SOCIAL:
+• Email: felix.martinez08@utrgv.edu
+• GitHub: https://github.com/Felglitch739`,
+        })
         break
+
       case 'clear':
-        setHistory([{ id: '0', type: 'sys', text: 'FMF_OS v1.0.0 — cleared' }])
+        setHistory([])
         setInput('')
         return
+
       default:
-        add(`Command not found: "${trimmed}". Type "help".`, 'err')
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'error',
+          text: `Command not recognized: "${trimmed}". Type "help".`,
+        })
+        break
     }
 
-    setHistory(next)
+    setHistory(newHistory)
     setInput('')
   }
-
-  const quickCmds = ['help', 'whoami', 'skills', 'projects', 'hobbies', 'contact', 'clear']
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onClose}
+        <div
+          ref={dragConstraintsRef}
           style={{
-            position: 'fixed', inset: 0, zIndex: 500,
-            background: 'rgba(0,0,0,0.9)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             padding: '1rem',
           }}
+          onClick={onClose}
         >
+          {/* Draggable Hardware Screen Window */}
           <motion.div
-            initial={{ scale: 0.96, y: 16 }}
+            drag
+            dragConstraints={dragConstraintsRef}
+            initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.96, y: 16 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            onClick={e => e.stopPropagation()}
+            exit={{ scale: 0.9, y: 20 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bento-card"
             style={{
-              width: '100%', maxWidth: '740px',
-              background: 'var(--gray-950)',
-              border: 'var(--border-strong)',
-              display: 'flex', flexDirection: 'column',
-              fontFamily: 'var(--font-dot)',
-              fontSize: '0.82rem',
+              width: '100%',
+              maxWidth: '800px',
+              height: '540px',
               maxHeight: '85vh',
+              background: '#09090b',
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '20px',
+              padding: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8)',
             }}
           >
-            {/* Titlebar */}
-            <div style={{
-              padding: '0.7rem 1.2rem',
-              borderBottom: 'var(--border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--gray-400)', letterSpacing: '0.12em', fontSize: '0.68rem', textTransform: 'uppercase' }}>
-                <TerminalIcon size={13} />
-                felix@fmf-os:~
+            {/* Draggable Window Header */}
+            <div
+              style={{
+                padding: '0.8rem 1.2rem',
+                background: 'rgba(255, 255, 255, 0.04)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'grab',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <Move size={14} color="var(--gray-400)" />
+                <TerminalIcon size={16} color="var(--red)" />
+                <span className="ndot" style={{ fontSize: '0.8rem', color: 'var(--white)' }}>
+                  HARDWARE_SCREEN // FMF_OS
+                </span>
               </div>
-              <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--gray-600)', cursor: 'pointer', display: 'flex' }}>
-                <X size={15} />
+              <button
+                onClick={onClose}
+                className="mono-tag mono-tag-red"
+                style={{ cursor: 'pointer' }}
+              >
+                <X size={12} />
               </button>
             </div>
 
-            {/* Quick buttons */}
-            <div style={{
-              padding: '0.5rem 1.2rem',
-              borderBottom: 'var(--border)',
-              display: 'flex', flexWrap: 'wrap', gap: '0.4rem',
-              alignItems: 'center',
-            }}>
-              <span style={{ color: 'var(--gray-700)', fontSize: '0.62rem', letterSpacing: '0.12em' }}>QUICK →</span>
-              {quickCmds.map(c => (
+            {/* Quick Command Pills */}
+            <div
+              style={{
+                padding: '0.6rem 1rem',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                display: 'flex',
+                gap: '0.5rem',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+              }}
+            >
+              <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-500)' }}>CMD:</span>
+              {['whoami', 'skills', 'projects', 'hobbies', 'billiards', 'contact', 'clear'].map((cmd) => (
                 <button
-                  key={c}
-                  onClick={() => run(c)}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid var(--gray-800)',
-                    color: 'var(--gray-500)',
-                    padding: '0.18rem 0.55rem',
-                    fontSize: '0.62rem',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    cursor: 'pointer',
-                    fontFamily: 'var(--font-dot)',
-                    transition: 'all 0.12s',
-                  }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--white)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--gray-600)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--gray-500)'; (e.currentTarget as HTMLElement).style.borderColor = 'var(--gray-800)' }}
+                  key={cmd}
+                  onClick={() => handleCommand(cmd)}
+                  className="mono-tag"
+                  style={{ cursor: 'pointer' }}
                 >
-                  {c}
+                  {cmd}
                 </button>
               ))}
             </div>
 
-            {/* Output */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {history.map(line => (
-                <div key={line.id} style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
-                  {line.type === 'in'  && <span style={{ color: 'var(--white)' }}>{line.text}</span>}
-                  {line.type === 'out' && <span style={{ color: 'var(--gray-400)' }}>{line.text}</span>}
-                  {line.type === 'sys' && <span style={{ color: 'var(--gray-600)' }}>{line.text}</span>}
-                  {line.type === 'err' && <span style={{ color: 'var(--red)' }}>{line.text}</span>}
-                </div>
-              ))}
-            </div>
-
-            {/* Input */}
-            <form
-              onSubmit={e => { e.preventDefault(); run(input) }}
+            {/* Terminal Log View */}
+            <div
               style={{
-                borderTop: 'var(--border)',
-                padding: '0.6rem 1.2rem',
-                display: 'flex', alignItems: 'center', gap: '0.8rem',
+                flex: 1,
+                padding: '1.2rem',
+                overflowY: 'auto',
+                fontSize: '0.88rem',
+                lineHeight: 1.6,
+                fontFamily: 'var(--font-ndot)',
               }}
             >
-              <span style={{ color: 'var(--red)' }}>$</span>
+              {history.map((line) => (
+                <div key={line.id} style={{ marginBottom: '0.6rem', whiteSpace: 'pre-wrap' }}>
+                  {line.type === 'input' && <span style={{ color: 'var(--red)', fontWeight: 600 }}>{line.text}</span>}
+                  {line.type === 'system' && <span style={{ color: 'var(--gray-500)' }}>{line.text}</span>}
+                  {line.type === 'success' && <span style={{ color: 'var(--white)' }}>{line.text}</span>}
+                  {line.type === 'error' && <span style={{ color: 'var(--red)' }}>{line.text}</span>}
+                  {line.type === 'output' && <span style={{ color: 'var(--gray-300)' }}>{line.text}</span>}
+                </div>
+              ))}
+              <div ref={bottomRef} />
+            </div>
+
+            {/* Input Bar */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleCommand(input)
+              }}
+              style={{
+                padding: '0.8rem 1.2rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.8rem',
+              }}
+            >
+              <span className="ndot" style={{ color: 'var(--red)' }}>$</span>
               <input
                 type="text"
                 value={input}
-                onChange={e => setInput(e.target.value)}
-                placeholder={lang === 'es' ? "escribe un comando..." : "type a command..."}
-                autoFocus
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type command ('help', 'whoami', 'skills')..."
                 style={{
-                  flex: 1, background: 'transparent', border: 'none',
-                  outline: 'none', color: 'var(--white)',
-                  fontFamily: 'var(--font-dot)', fontSize: '0.82rem',
-                  letterSpacing: '0.04em', padding: '0',
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  color: 'var(--white)',
+                  fontFamily: 'var(--font-ndot)',
+                  fontSize: '0.88rem',
                 }}
+                autoFocus
               />
-              <button type="submit" style={{ background: 'transparent', border: 'none', color: 'var(--gray-600)', cursor: 'pointer', display: 'flex' }}>
-                <CornerDownLeft size={14} />
+              <button
+                type="submit"
+                className="mono-tag mono-tag-red"
+                style={{ cursor: 'pointer' }}
+              >
+                EXECUTE <CornerDownLeft size={12} />
               </button>
             </form>
           </motion.div>
-        </motion.div>
+        </div>
       )}
     </AnimatePresence>
   )

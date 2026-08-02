@@ -1,120 +1,140 @@
 import { motion } from 'framer-motion'
-import { Cpu, Code2, Users } from 'lucide-react'
+import { User, Cpu, Code2, Users } from 'lucide-react'
 
 interface AboutMeProps {
   lang?: 'es' | 'en'
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
-}
-
 export default function AboutMe({ lang = 'es' }: AboutMeProps) {
-  const T = {
+  const t = {
     es: {
-      sysLabel:  '02 — Perfil',
-      heading:   'Construyo\nsistemas,\nno líneas.',
-      p1: 'Félix E. Martinez Flores. Estudiante de Computer Science en UTRGV, trabajando en la frontera entre software y hardware — desde aplicaciones web con IA hasta sistemas embebidos autónomos.',
-      p2: 'Para mí, programar es el arte de resolver rompecabezas lógicos complejos. Me gusta construir arquitecturas que duren, no solo código que funcione.',
+      label: "03 // PERFIL & ARQUITECTURA",
+      title: "CONSTRUYENDO SISTEMAS, NO SOLO CÓDIGO",
+      p1: (
+        <>
+          <strong style={{ color: 'var(--white)' }}>Soy Félix E. Martinez Flores,</strong> estudiante de Ciencias de la Computación (Computer Science) en <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. Trabajo en la frontera donde el software se funde con el hardware, desde aplicaciones web impulsadas por IA hasta sistemas embebidos autónomos.
+        </>
+      ),
+      p2: (
+        <>
+          Para mí, <strong style={{ color: 'var(--white)' }}>la programación es el arte de resolver rompecabezas lógicos complejos</strong>. Me apasiona diseñar arquitecturas robustas y escalables, colaborando constantemente con un equipo cercano de desarrolladores y amigos.
+        </>
+      ),
       pillars: [
-        { icon: <Code2 size={18} />, title: 'Full-Stack', sub: 'React · Vite · Supabase · TS' },
-        { icon: <Cpu size={18} />,   title: 'Hardware',   sub: 'C++ · Embedded · Robótica' },
-        { icon: <Users size={18} />, title: "Pa'l Norte",  sub: 'Co-Fundador · CMO · Hackathon 24h' },
+        {
+          icon: <Code2 size={20} color="var(--white)" />,
+          title: "FULL-STACK SOFTWARE",
+          desc: "Desarrollo web y móvil avanzado con React, Vite, TypeScript, Tailwind CSS y Supabase.",
+        },
+        {
+          icon: <Cpu size={20} color="var(--red)" />,
+          title: "HARDWARE HACKER",
+          desc: "Sistemas embebidos y programación de bajo nivel con C++, microcontroladores y robótica.",
+        },
+        {
+          icon: <Users size={20} color="var(--white)" />,
+          title: "BUILD PA'L NORTE",
+          desc: "Cofundador y CMO de esta comunidad tecnológica en Matamoros. Hackathons de 24h.",
+        },
       ],
-      imageAlt: 'Félix E. Martinez Flores',
     },
     en: {
-      sysLabel:  '02 — Profile',
-      heading:   'I build\nsystems,\nnot lines.',
-      p1: 'Félix E. Martinez Flores. Computer Science student at UTRGV, operating at the boundary of software and hardware — from AI-powered web apps to autonomous embedded systems.',
-      p2: 'For me, programming is the art of solving complex logical puzzles. I like to build architectures that last, not just code that works.',
+      label: "03 // PROFILE & ARCHITECTURE",
+      title: "BUILDING SYSTEMS, NOT JUST CODE",
+      p1: (
+        <>
+          <strong style={{ color: 'var(--white)' }}>I'm Félix E. Martinez Flores,</strong> a Computer Science student at <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. I operate at the boundary where software meets hardware, from AI web apps to autonomous embedded systems.
+        </>
+      ),
+      p2: (
+        <>
+          For me, <strong style={{ color: 'var(--white)' }}>programming is the art of solving complex logical puzzles</strong>. I am passionate about designing robust, long-lasting system architectures.
+        </>
+      ),
       pillars: [
-        { icon: <Code2 size={18} />, title: 'Full-Stack', sub: 'React · Vite · Supabase · TS' },
-        { icon: <Cpu size={18} />,   title: 'Hardware',   sub: 'C++ · Embedded · Robotics' },
-        { icon: <Users size={18} />, title: "Pa'l Norte",  sub: 'Co-Founder · CMO · 24h Hackathon' },
+        {
+          icon: <Code2 size={20} color="var(--white)" />,
+          title: "FULL-STACK SOFTWARE",
+          desc: "Web & mobile engineering with React, Vite, TypeScript, Tailwind CSS, and Supabase.",
+        },
+        {
+          icon: <Cpu size={20} color="var(--red)" />,
+          title: "HARDWARE HACKER",
+          desc: "Embedded systems and low-level C++ programming, microcontrollers, and robotics.",
+        },
+        {
+          icon: <Users size={20} color="var(--white)" />,
+          title: "BUILD PA'L NORTE",
+          desc: "Co-founder & CMO of this tech community in Matamoros. Organizers of 24h Hackathons.",
+        },
       ],
-      imageAlt: 'Félix E. Martinez Flores',
     },
   }[lang]
 
   return (
     <section id="about-me" className="section">
       <div className="container">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-80px' }}
-          variants={{ show: { transition: { staggerChildren: 0.12 } } }}
-        >
-          {/* Row: label + divider */}
-          <motion.div variants={fadeUp} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
-            <span className="sys-label">{T.sysLabel}</span>
-            <div style={{ flex: 1, height: '1px', background: 'var(--gray-800)' }} />
-          </motion.div>
+        <span className="section-label">{t.label}</span>
 
-          {/* Main two-col layout */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'auto 1fr',
-            gap: '5rem',
-            alignItems: 'start',
-          }}>
-            {/* Left: photo + pillars */}
-            <motion.div variants={fadeUp} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {/* Photo */}
-              <div style={{
-                width: '220px',
-                aspectRatio: '1',
+        <div className="bento-grid">
+          {/* Photo Widget (col-span-4) */}
+          <div className="bento-card col-span-4" style={{ alignItems: 'center', textAlign: 'center', justifyContent: 'center' }}>
+            <div
+              style={{
+                width: '160px',
+                height: '160px',
+                borderRadius: '50%',
                 overflow: 'hidden',
-                border: 'var(--border-strong)',
+                border: '2px solid rgba(255, 255, 255, 0.15)',
+                marginBottom: '1.2rem',
                 position: 'relative',
-              }}>
-                <img
-                  src="/imagenmia.jpeg"
-                  alt={T.imageAlt}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'grayscale(100%) contrast(1.08)' }}
-                />
-                {/* Red corner accent */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0, right: 0,
-                  width: '28px', height: '28px',
-                  background: 'var(--red)',
-                }} />
-              </div>
-
-              {/* Pillars */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-                {T.pillars.map((p, i) => (
-                  <div key={i} style={{
-                    padding: '1rem 1.2rem',
-                    borderTop: i === 0 ? 'var(--border)' : 'none',
-                    border: 'var(--border)',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.8rem',
-                  }}>
-                    <span style={{ color: 'var(--red)', marginTop: '2px', flexShrink: 0 }}>{p.icon}</span>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.92rem', color: 'var(--white)', marginBottom: '0.15rem' }}>{p.title}</div>
-                      <div style={{ fontFamily: 'var(--font-dot)', fontSize: '0.65rem', letterSpacing: '0.08em', color: 'var(--gray-500)' }}>{p.sub}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Right: headline + text */}
-            <motion.div variants={fadeUp}>
-              <h2 className="display-lg" style={{ whiteSpace: 'pre-line', marginBottom: '2.5rem' }}>
-                {T.heading}
-              </h2>
-              <p className="text-body" style={{ marginBottom: '1.5rem' }}>{T.p1}</p>
-              <p className="text-body">{T.p2}</p>
-            </motion.div>
+              }}
+            >
+              <img
+                src="/imagenmia.jpeg"
+                alt="Félix E. Martinez Flores"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  filter: 'grayscale(100%) contrast(1.15)',
+                }}
+              />
+            </div>
+            <span className="ndot" style={{ fontSize: '1.05rem', color: 'var(--white)' }}>
+              FÉLIX E. MARTINEZ
+            </span>
+            <span className="mono-tag mono-tag-red" style={{ marginTop: '0.4rem' }}>
+              CS @ UTRGV
+            </span>
           </div>
-        </motion.div>
+
+          {/* Narrative Widget (col-span-8) */}
+          <div className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
+            <h2 className="card-title" style={{ fontSize: '1.6rem', marginBottom: '1rem', color: 'var(--white)' }}>
+              {t.title}
+            </h2>
+            <p className="body-text" style={{ marginBottom: '1rem' }}>
+              {t.p1}
+            </p>
+            <p className="body-text">
+              {t.p2}
+            </p>
+          </div>
+
+          {/* 3 Pillar Bento Widgets (col-span-4 each) */}
+          {t.pillars.map((p, i) => (
+            <div key={i} className="bento-card col-span-4">
+              <div style={{ marginBottom: '1rem' }}>{p.icon}</div>
+              <h3 className="card-title" style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>
+                {p.title}
+              </h3>
+              <p className="body-text" style={{ fontSize: '0.88rem' }}>
+                {p.desc}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

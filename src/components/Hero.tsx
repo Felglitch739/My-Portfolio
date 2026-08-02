@@ -1,252 +1,191 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowDown, Terminal, Download } from 'lucide-react'
+import { Terminal, Download, ArrowRight, Cpu, Code2, Sparkles, Activity } from 'lucide-react'
 
 interface HeroProps {
   onOpenTerminal: () => void
   lang?: 'es' | 'en'
 }
 
-function useTypewriter(words: string[], speed = 65, pause = 2200) {
+function useTypewriter(words: string[], speed = 70, pause = 2000) {
   const el = useRef<HTMLSpanElement>(null)
   useEffect(() => {
     let wi = 0, ci = 0, deleting = false, timer: ReturnType<typeof setTimeout>
     const tick = () => {
       const word = words[wi]
-      if (el.current) el.current.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++)
+      if (el.current) {
+        el.current.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++)
+      }
       let delay = deleting ? speed / 2 : speed
-      if (!deleting && ci > word.length) { delay = pause; deleting = true }
-      else if (deleting && ci < 0) { deleting = false; wi = (wi + 1) % words.length; ci = 0 }
+      if (!deleting && ci > word.length) {
+        delay = pause; deleting = true
+      } else if (deleting && ci < 0) {
+        deleting = false; wi = (wi + 1) % words.length; ci = 0
+      }
       timer = setTimeout(tick, delay)
     }
     tick()
     return () => clearTimeout(timer)
-  }, [])
+  }, [words])
   return el
 }
 
 export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
-  const T = {
+  const t = {
     es: {
-      available:   'Disponible para oportunidades',
-      roles:       ['Software Engineer', 'Hardware Hacker', 'Embedded Systems', 'CS @ UTRGV', "Co-Fundador Pa'l Norte"],
-      line1:       'Ingeniería',
-      line2:       'de Software',
-      line3:       '& Hardware.',
-      sub:         'Construyendo soluciones de alto impacto donde el software se funde con el silicio.',
-      cta1:        'Ver Proyectos',
-      cta2:        'Abrir Terminal',
-      cv:          'Descargar CV',
-      status:      '01 — EN VIVO',
-      tagline:     'Computer Science · UTRGV · Matamoros, Tamps.',
+      status: "SISTEMA ACTIVO // UTRGV CS",
+      roles: [
+        'FULL-STACK SOFTWARE ENGINEER',
+        'HARDWARE HACKER & EMBEDDED BUILDER',
+        'COMPUTER SCIENCE @ UTRGV',
+        'CO-FOUNDER @ BUILD PA\'L NORTE',
+      ],
+      titleLine1: "INGENIERÍA DE",
+      titleLine2: "SOFTWARE & HARDWARE",
+      desc: "Construyendo soluciones de alto impacto en la intersección del software y el hardware: desde aplicaciones web con IA hasta sistemas integrados autónomos.",
+      projectsBtn: "Explorar Obras",
+      terminalBtn: "Abrir Terminal",
+      cvBtn: "Descargar CV",
+      location: "Matamoros, Tamps. / RGV, TX",
+      stats: [
+        { val: "05+", label: "Sistemas Clave" },
+        { val: "24H", label: "Hackathon Host" },
+        { val: "IEEE", label: "Miembro Activo" },
+      ],
     },
     en: {
-      available:   'Open to opportunities',
-      roles:       ['Software Engineer', 'Hardware Hacker', 'Embedded Systems', 'CS @ UTRGV', "Co-Founder Pa'l Norte"],
-      line1:       'Engineering',
-      line2:       'Software',
-      line3:       '& Hardware.',
-      sub:         'Building high-impact solutions where software meets silicon.',
-      cta1:        'See Projects',
-      cta2:        'Open Terminal',
-      cv:          'Download CV',
-      status:      '01 — LIVE',
-      tagline:     'Computer Science · UTRGV · Matamoros, Tamps.',
-    },
+      status: "SYSTEM ACTIVE // UTRGV CS",
+      roles: [
+        'FULL-STACK SOFTWARE ENGINEER',
+        'HARDWARE HACKER & EMBEDDED BUILDER',
+        'COMPUTER SCIENCE @ UTRGV',
+        'CO-FOUNDER @ BUILD PA\'L NORTE',
+      ],
+      titleLine1: "ENGINEERING AT THE",
+      titleLine2: "EDGE OF HARDWARE",
+      desc: "Building high-impact solutions at the intersection of software and hardware: from AI-powered web applications to autonomous embedded systems.",
+      projectsBtn: "Explore Work",
+      terminalBtn: "Open Terminal",
+      cvBtn: "Download Resume",
+      location: "Matamoros, Tamps. / RGV, TX",
+      stats: [
+        { val: "05+", label: "Core Systems" },
+        { val: "24H", label: "Hackathon Host" },
+        { val: "IEEE", label: "Active Member" },
+      ],
+    }
   }[lang]
 
-  const typedRef = useTypewriter(T.roles)
-
-  const tickerItems = [
-    'C++', 'Python', 'React', 'TypeScript', 'Vite', 'Tailwind CSS', 'SQL', 'Supabase',
-    'Embedded Systems', 'React Native', 'Build Pa\'l Norte', 'IEEE Member',
-  ]
+  const typedRef = useTypewriter(t.roles)
 
   return (
-    <>
-      <section
-        id="hero"
-        style={{
-          minHeight: '100vh',
-          paddingTop: 'var(--nav-height)',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          position: 'relative',
-          zIndex: 1,
-          borderBottom: 'var(--border)',
-        }}
-      >
-        <div className="container" style={{ paddingTop: '3rem', paddingBottom: '3rem' }}>
-          {/* Top status row */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '3rem',
-            flexWrap: 'wrap',
-            gap: '1rem',
-          }}>
-            <span className="sys-label">{T.status}</span>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-              fontFamily: 'var(--font-dot)',
-              fontSize: '0.65rem',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'var(--gray-600)',
-            }}>
-              {/* Live status pulse */}
-              <span style={{
-                width: '6px', height: '6px', borderRadius: '50%',
-                background: 'var(--red)',
-                animation: 'pulse 2s ease-in-out infinite',
-              }} />
-              {T.available}
-            </div>
-          </div>
+    <section id="hero" className="section" style={{ paddingTop: 'calc(var(--nav-height) + 2.5rem)' }}>
+      <div className="container">
+        {/* Bento Grid Layout */}
+        <div className="bento-grid">
 
-          {/* Main layout: two columns */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto',
-            gap: '2rem',
-            alignItems: 'flex-end',
-          }}>
-            {/* Left — headline */}
+          {/* Widget 1: Main Banner Hero Card (col-span-8) */}
+          <div className="bento-card col-span-8" style={{ justifyContent: 'space-between', minHeight: '380px' }}>
             <div>
-              <motion.h1
-                className="display-xl"
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              >
-                {T.line1}<br />
-                {T.line2}<br />
-                <span style={{ color: 'var(--gray-600)' }}>{T.line3}</span>
-              </motion.h1>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+                <span className="section-label" style={{ margin: 0 }}>01 // HERO_SYS</span>
+                <span className="mono-tag mono-tag-red">FÉLIX E. MARTINEZ FLORES</span>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
+              {/* Typewriter role */}
+              <div
                 style={{
-                  marginTop: '2rem',
-                  fontFamily: 'var(--font-dot)',
-                  fontSize: '0.85rem',
-                  letterSpacing: '0.05em',
-                  color: 'var(--gray-600)',
+                  fontFamily: 'var(--font-ndot)',
+                  fontSize: 'clamp(0.85rem, 2vw, 1.1rem)',
+                  color: 'var(--red)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem',
+                  gap: '0.4rem',
+                  marginBottom: '1rem',
                 }}
               >
-                <span style={{ color: 'var(--red)' }}>&gt;</span>
-                <span ref={typedRef} style={{ borderRight: '1px solid var(--gray-500)', paddingRight: '3px' }} />
-              </motion.div>
+                <span>&gt;</span>
+                <span ref={typedRef} style={{ borderRight: '2px solid var(--red)', paddingRight: '4px' }} />
+              </div>
+
+              <h1 className="display-title" style={{ marginBottom: '1.2rem' }}>
+                {t.titleLine1} <br />
+                <span style={{ color: 'var(--gray-400)' }}>{t.titleLine2}</span>
+              </h1>
+
+              <p className="body-text" style={{ maxWidth: '580px', marginBottom: '2rem' }}>
+                {t.desc}
+              </p>
             </div>
 
-            {/* Right — vertical info column */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="hide-mobile"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1.5rem',
-                alignItems: 'flex-end',
-                paddingBottom: '0.5rem',
-              }}
-            >
-              <div style={{ textAlign: 'right' }}>
-                <div className="idx" style={{ marginBottom: '0.3rem' }}>IDENTIDAD</div>
-                <div style={{ fontFamily: 'var(--font-dot)', fontSize: '0.78rem', color: 'var(--gray-300)', lineHeight: 1.6 }}>
-                  Félix E. Martinez Flores<br />
-                  <span style={{ color: 'var(--gray-600)' }}>Matamoros / RGV, MX-TX</span>
-                </div>
-              </div>
-              <div style={{ width: '1px', height: '40px', background: 'var(--gray-800)' }} />
-              <div style={{ textAlign: 'right' }}>
-                <div className="idx" style={{ marginBottom: '0.3rem' }}>EDUCACIÓN</div>
-                <div style={{ fontFamily: 'var(--font-dot)', fontSize: '0.78rem', color: 'var(--gray-300)', lineHeight: 1.6 }}>
-                  CS @ UTRGV<br />
-                  <span style={{ color: 'var(--gray-600)' }}>Universidad de Texas RGV</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Description + CTA row */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            style={{
-              marginTop: '3.5rem',
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '2rem',
-              paddingTop: '2rem',
-              borderTop: 'var(--border)',
-            }}
-          >
-            <p style={{ maxWidth: '480px', color: 'var(--gray-400)', fontSize: '1.05rem', lineHeight: 1.65 }}>
-              {T.sub}
-            </p>
-
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-              <a href="#projects" className="btn btn-primary">{T.cta1}</a>
-              <button onClick={onOpenTerminal} className="btn btn-outline">
-                <Terminal size={14} /> {T.cta2}
+            {/* Action buttons */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', alignItems: 'center' }}>
+              <a href="#projects" className="btn-bento btn-bento-primary">
+                {t.projectsBtn} <ArrowRight size={14} />
+              </a>
+              <button onClick={onOpenTerminal} className="btn-bento btn-bento-outline">
+                <Terminal size={14} /> {t.terminalBtn}
               </button>
-              <a href="/Felix_Martinez_Resume.pdf" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ color: 'var(--gray-500)' }}>
-                <Download size={14} /> {T.cv}
+              <a href="/Felix_Martinez_Resume.pdf" target="_blank" rel="noreferrer" className="btn-bento btn-bento-outline" style={{ color: 'var(--gray-400)' }}>
+                <Download size={14} /> {t.cvBtn}
               </a>
             </div>
-          </motion.div>
-        </div>
+          </div>
 
-        {/* Bottom scroll indicator */}
-        <div style={{
-          position: 'absolute',
-          bottom: '1.5rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '0.4rem',
-          color: 'var(--gray-700)',
-        }}>
-          <ArrowDown size={16} />
-          <span className="idx">scroll</span>
-        </div>
-      </section>
+          {/* Widget 2: Live Hardware Status (col-span-4) */}
+          <div className="bento-card col-span-4" style={{ justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+                <span className="section-label" style={{ margin: 0 }}>STATUS // LIVE</span>
+                <Activity size={16} color="var(--red)" />
+              </div>
 
-      {/* ── Ticker beneath hero ── */}
-      <div className="ticker-wrap" style={{ position: 'relative', zIndex: 1 }}>
-        <div className="ticker-inner">
-          {[...tickerItems, ...tickerItems].map((item, i) => (
-            <span key={i} className="ticker-item">
-              <span className="rdot" />
-              {item}
-            </span>
-          ))}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1.5rem' }}>
+                <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--red)', boxShadow: '0 0 10px var(--red)' }} />
+                <span className="ndot" style={{ fontSize: '1rem', color: 'var(--white)' }}>UTRGV CS STUDENT</span>
+              </div>
+
+              <p className="body-text" style={{ fontSize: '0.88rem', marginBottom: '1.5rem' }}>
+                Construyendo la arquitectura de <strong style={{ color: 'var(--white)' }}>AuraFit</strong> & <strong style={{ color: 'var(--white)' }}>KronoBook</strong>.
+              </p>
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1rem' }}>
+              <span className="ndot" style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>UBICACIÓN:</span>
+              <div className="ndot" style={{ fontSize: '0.82rem', color: 'var(--gray-200)', marginTop: '0.2rem' }}>
+                {t.location}
+              </div>
+            </div>
+          </div>
+
+          {/* Widget 3: Quick Stats (col-span-4) */}
+          <div className="bento-card col-span-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
+            {t.stats.map((st, i) => (
+              <div key={i}>
+                <div className="ndot" style={{ fontSize: '1.8rem', color: i === 0 ? 'var(--red)' : 'var(--white)' }}>
+                  {st.val}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--gray-400)', marginTop: '0.3rem' }}>
+                  {st.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Widget 4: Stack Modules Pill Grid (col-span-8) */}
+          <div className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
+            <div className="section-label" style={{ marginBottom: '1rem' }}>02 // HARDWARE & SOFTWARE MODULES</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {['C++', 'PYTHON', 'REACT', 'VITE', 'TAILWIND CSS', 'TYPESCRIPT', 'SQL', 'EMBEDDED SYSTEMS', 'SUPABASE', 'REACT NATIVE'].map((tech) => (
+                <span key={tech} className="mono-tag">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.25; }
-        }
-      `}</style>
-    </>
+    </section>
   )
 }

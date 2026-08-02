@@ -1,138 +1,178 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-
-interface Skill {
-  id: string
-  name: string
-  cat: string
-  level: number   // 0-100
-  note: string
-  usedIn: string
-}
+import { Cpu, Terminal, Layers, Database, Code2, Sparkles, Activity } from 'lucide-react'
 
 interface TechStackProps {
   lang?: 'es' | 'en'
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] } },
+interface Skill {
+  name: string
+  cat: string
+  level: number
+  desc: string
+  appliedIn: string
+  icon: React.ReactNode
 }
 
 export default function TechStack({ lang = 'es' }: TechStackProps) {
   const [selected, setSelected] = useState<Skill | null>(null)
 
   const skills: Skill[] = [
-    { id: 'cpp',    name: 'C++',          cat: 'SYSTEMS',  level: 88, note: 'Programación de bajo nivel, algoritmos y lógica embebida para microcontroladores.',     usedIn: 'IEEEXtreme · Mining Mayhem Robotics · Embedded' },
-    { id: 'py',     name: 'Python',       cat: 'BACKEND',  level: 86, note: 'Automatización, consumo de APIs y herramientas de scripting desplegadas en producción.', usedIn: 'Family Weather Bot · PythonAnywhere · AI Tools' },
-    { id: 'react',  name: 'React',        cat: 'FRONTEND', level: 90, note: 'SPAs, arquitectura de componentes y flujos de estado a escala de SaaS multi-tenant.',   usedIn: 'KronoBook SaaS · Gazpacho\'s SPA · Portfolio' },
-    { id: 'vite',   name: 'Vite',         cat: 'TOOLING',  level: 84, note: 'Bundler ultrarrápido con HMR. Mi estándar para proyectos React modernos.',              usedIn: 'KronoBook · Gazpacho\'s · Portfolio' },
-    { id: 'tw',     name: 'Tailwind',     cat: 'FRONTEND', level: 88, note: 'Utility-first CSS para interfaces responsivas con diseño token-based.',                  usedIn: 'KronoBook SaaS · DualFX · Layouts' },
-    { id: 'ts',     name: 'TypeScript',   cat: 'LANGUAGE', level: 82, note: 'Tipado estático para evitar errores en runtime y escalar proyectos sin deuda técnica.',  usedIn: 'AuraFit React Native · All Web SPAs' },
-    { id: 'sql',    name: 'SQL',          cat: 'DATA',     level: 78, note: 'Diseño de esquemas relacionales multi-tenant con Supabase para KronoBook.',              usedIn: 'KronoBook Multi-Tenant DB Schema' },
+    {
+      name: 'C++',
+      cat: 'SYSTEMS / HARDWARE',
+      level: 90,
+      desc: 'Programación de bajo nivel, optimización de memoria y lógica para microcontroladores.',
+      appliedIn: 'IEEEXtreme, IEEE Mining Mayhem Robotics & Embebed Systems',
+      icon: <Cpu size={20} color="var(--red)" />,
+    },
+    {
+      name: 'Python',
+      cat: 'BACKEND / AUTOMATION',
+      level: 88,
+      desc: 'Scripting, consumo de APIs meteorológicas, automatizaciones y herramientas de IA.',
+      appliedIn: 'Family Weather Alert Bot, PythonAnywhere, Data Pipelines',
+      icon: <Terminal size={20} />,
+    },
+    {
+      name: 'React',
+      cat: 'FRONTEND ARCHITECTURE',
+      level: 92,
+      desc: 'Interfaces SPAs, gestión de estado compleja y diseño modular de componentes.',
+      appliedIn: 'KronoBook SaaS, Gazpacho\'s SPA & Portfolio',
+      icon: <Code2 size={20} />,
+    },
+    {
+      name: 'Vite',
+      cat: 'BUILD TOOLING',
+      level: 85,
+      desc: 'Empaquetador frontend ultrarrápido con HMR y pipeline de producción optimizado.',
+      appliedIn: 'KronoBook, Gazpacho\'s & Modern SPAs',
+      icon: <Sparkles size={20} />,
+    },
+    {
+      name: 'Tailwind CSS',
+      cat: 'UI SYSTEMS',
+      level: 90,
+      desc: 'Sistemas de tokens de diseño utility-first, layouts responsivos e interfaces de alta velocidad.',
+      appliedIn: 'KronoBook SaaS, DualFX & Custom Design Systems',
+      icon: <Layers size={20} />,
+    },
+    {
+      name: 'TypeScript',
+      cat: 'TYPE SAFETY',
+      level: 86,
+      desc: 'Desarrollo fuertemente tipado para evitar errores en runtime y escalar proyectos sin deuda técnica.',
+      appliedIn: 'AuraFit React Native Mobile App & Full-Stack Web SPAs',
+      icon: <Code2 size={20} />,
+    },
+    {
+      name: 'SQL',
+      cat: 'DATABASE / SUPABASE',
+      level: 80,
+      desc: 'Esquemas relacionales multi-tenant, políticas RLS y consultas optimizadas.',
+      appliedIn: 'KronoBook Multi-Tenant Database Schema in Supabase',
+      icon: <Database size={20} />,
+    },
   ]
 
-  const T = {
-    es: { label: '03 — Stack', heading: 'Tech\nVault.', sub: 'Herramientas que uso. Sin más, sin menos.', click: 'Click para inspeccionar aplicación real →' },
-    en: { label: '03 — Stack', heading: 'Tech\nVault.', sub: 'Tools I use. No more, no less.', click: 'Click to inspect real-world usage →' },
+  const t = {
+    es: {
+      label: "04 // HARDWARE & SOFTWARE MODULES",
+      title: "TECH VAULT",
+      sub: "Haz clic en cualquier módulo de hardware para inspeccionar su implementación en mis proyectos.",
+    },
+    en: {
+      label: "04 // HARDWARE & SOFTWARE MODULES",
+      title: "TECH VAULT",
+      sub: "Click on any hardware module to inspect its real-world usage in my projects.",
+    },
   }[lang]
 
   return (
     <section id="skills" className="section">
       <div className="container">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-60px' }}
-          variants={{ show: { transition: { staggerChildren: 0.1 } } }}
-        >
-          <motion.div variants={fadeUp} style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
-            <span className="sys-label">{T.label}</span>
-            <div style={{ flex: 1, height: '1px', background: 'var(--gray-800)' }} />
-          </motion.div>
+        <span className="section-label">{t.label}</span>
+        <h2 className="display-title" style={{ fontSize: '2.5rem', marginBottom: '0.4rem' }}>
+          {t.title}
+        </h2>
+        <p className="body-text" style={{ marginBottom: '2rem' }}>
+          {t.sub}
+        </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'start' }}>
-            {/* Left: heading */}
-            <motion.div variants={fadeUp}>
-              <h2 className="display-lg" style={{ whiteSpace: 'pre-line', marginBottom: '1.5rem' }}>{T.heading}</h2>
-              <p className="text-body" style={{ marginBottom: '1rem' }}>{T.sub}</p>
-              <p className="text-sm" style={{ color: 'var(--gray-600)' }}>{T.click}</p>
-            </motion.div>
-
-            {/* Right: skill rows */}
-            <motion.div variants={fadeUp}>
-              {skills.map((sk, i) => (
-                <motion.div
-                  key={sk.id}
-                  onClick={() => setSelected(selected?.id === sk.id ? null : sk)}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '90px 1fr 48px',
-                    alignItems: 'center',
-                    gap: '1.2rem',
-                    padding: '1rem 0',
-                    borderBottom: 'var(--border)',
-                    cursor: 'pointer',
-                    borderLeft: selected?.id === sk.id ? '2px solid var(--red)' : '2px solid transparent',
-                    paddingLeft: '0.8rem',
-                    transition: 'border-color 0.15s',
-                  }}
-                  whileHover={{ x: 4 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <div>
-                    <span className="idx">{sk.cat}</span>
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 600, color: 'var(--white)', fontSize: '1.05rem', marginBottom: '0.3rem' }}>{sk.name}</div>
-                    <div style={{ height: '2px', background: 'var(--gray-800)', borderRadius: '1px', overflow: 'hidden' }}>
-                      <div style={{
-                        width: `${sk.level}%`,
-                        height: '100%',
-                        background: selected?.id === sk.id ? 'var(--red)' : 'var(--gray-600)',
-                        transition: 'width 0.5s ease, background 0.15s',
-                      }} />
-                    </div>
-                  </div>
-                  <div className="idx" style={{ textAlign: 'right' }}>{sk.level}%</div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Expansion panel */}
-          <AnimatePresence>
-            {selected && (
-              <motion.div
-                key={selected.id}
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={{ overflow: 'hidden' }}
+        {/* Skill Modules Bento Grid */}
+        <div className="bento-grid">
+          {skills.map((sk) => {
+            const isSel = selected?.name === sk.name
+            return (
+              <div
+                key={sk.name}
+                onClick={() => setSelected(isSel ? null : sk)}
+                className={`bento-card col-span-4 ${isSel ? 'bento-card-active' : ''}`}
+                style={{ cursor: 'pointer', justifyContent: 'space-between', minHeight: '170px' }}
               >
-                <div style={{
-                  marginTop: '2rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--red-border)',
-                  background: 'var(--red-dim)',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto',
-                  gap: '2rem',
-                  alignItems: 'center',
-                }}>
-                  <div>
-                    <div className="sys-label" style={{ marginBottom: '0.6rem' }}>{selected.name} — Aplicación Real</div>
-                    <p className="text-body" style={{ marginBottom: '0.8rem' }}>{selected.note}</p>
-                    <span className="tag tag-active">{selected.usedIn}</span>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
+                    <span className="mono-tag">{sk.cat}</span>
+                    <div>{sk.icon}</div>
                   </div>
-                  <button onClick={() => setSelected(null)} style={{ background: 'transparent', border: 'none', color: 'var(--gray-500)', cursor: 'pointer', fontFamily: 'var(--font-dot)', fontSize: '0.7rem', letterSpacing: '0.15em' }}>
-                    [ ESC ]
-                  </button>
+                  <h3 className="card-title" style={{ fontSize: '1.2rem' }}>{sk.name}</h3>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--gray-400)', marginBottom: '0.3rem' }} className="ndot">
+                    <span>PWR_OUTPUT</span>
+                    <span>{sk.level}%</span>
+                  </div>
+                  <div style={{ height: '3px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${sk.level}%`, background: isSel ? 'var(--red)' : 'var(--white)' }} />
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Selected Module Detail Widget */}
+        <AnimatePresence>
+          {selected && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 15 }}
+              className="bento-card col-span-12 bento-card-active"
+              style={{ marginTop: '1.25rem', padding: '2rem' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <div className="ndot" style={{ fontSize: '1.1rem', color: 'var(--white)', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <Activity size={18} color="var(--red)" />
+                  MÓDULO: {selected.name}
+                </div>
+                <button
+                  onClick={() => setSelected(null)}
+                  className="mono-tag"
+                  style={{ cursor: 'pointer', background: 'transparent' }}
+                >
+                  [ CLOSE_INSPECTOR ]
+                </button>
+              </div>
+
+              <p className="body-text" style={{ color: 'var(--white)', marginBottom: '1rem' }}>
+                {selected.desc}
+              </p>
+
+              <div style={{ borderTop: '1px solid rgba(255, 0, 0, 0.2)', paddingTop: '0.8rem' }}>
+                <span className="ndot" style={{ fontSize: '0.72rem', color: 'var(--red)' }}>
+                  APLICADO EN PROYECTOS:
+                </span>
+                <div className="ndot" style={{ fontSize: '0.85rem', color: 'var(--gray-200)', marginTop: '0.2rem' }}>
+                  {selected.appliedIn}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )
