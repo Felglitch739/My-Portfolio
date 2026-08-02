@@ -183,25 +183,37 @@ function BilliardsHardwareCanvas() {
         const b = balls[i]
         if (!b.active) continue
 
+        // Realistic felt rolling friction (no more infinite air-hockey slide)
         b.x += b.vx
         b.y += b.vy
-        b.vx *= 0.982
-        b.vy *= 0.982
+        b.vx *= 0.968
+        b.vy *= 0.968
 
-        if (Math.abs(b.vx) < 0.04) b.vx = 0
-        if (Math.abs(b.vy) < 0.04) b.vy = 0
+        if (Math.hypot(b.vx, b.vy) < 0.08) {
+          b.vx = 0
+          b.vy = 0
+        }
 
-        // Wall Bounce
+        // Realistic Cushion Bounce (absorbs rubber cushion energy)
         const minX = 22, maxX = W - 22, minY = 22, maxY = H - 22
-        if (b.x - R < minX) { b.x = minX + R; b.vx *= -0.85 }
-        if (b.x + R > maxX) { b.x = maxX - R; b.vx *= -0.85 }
-        if (b.y - R < minY) { b.y = minY + R; b.vy *= -0.85 }
-        if (b.y + R > maxY) { b.y = maxY - R; b.vy *= -0.85 }
+        if (b.x - R < minX) { b.x = minX + R; b.vx *= -0.76 }
+        if (b.x + R > maxX) { b.x = maxX - R; b.vx *= -0.76 }
+        if (b.y - R < minY) { b.y = minY + R; b.vy *= -0.76 }
+        if (b.y + R > maxY) { b.y = maxY - R; b.vy *= -0.76 }
 
-        // Check Pocketing (Disappear when in pocket)
+        // Sensitive Pocket Funnel / Gravitational Suction & Drop Logic
         for (const p of pockets) {
           const distToPocket = Math.hypot(b.x - p.x, b.y - p.y)
-          if (distToPocket < 15) {
+
+          // Gravitational pull when ball rolls close to pocket mouth
+          if (distToPocket < 26) {
+            const pull = 0.08
+            b.vx += (p.x - b.x) * pull
+            b.vy += (p.y - b.y) * pull
+          }
+
+          // Sensitive Drop Threshold into Pocket
+          if (distToPocket < 20) {
             b.active = false
             b.vx = 0
             b.vy = 0
@@ -225,7 +237,7 @@ function BilliardsHardwareCanvas() {
           }
         }
 
-        // Ball vs Ball Collisions
+        // Elastic Ball vs Ball Collisions (Momentum Transfer)
         for (let j = i + 1; j < balls.length; j++) {
           const b2 = balls[j]
           if (!b2.active) continue
@@ -233,23 +245,26 @@ function BilliardsHardwareCanvas() {
           const dx = b2.x - b.x
           const dy = b2.y - b.y
           const dist = Math.hypot(dx, dy)
-          if (dist < R * 2) {
-            const angle = Math.atan2(dy, dx)
-            const sin = Math.sin(angle)
-            const cos = Math.cos(angle)
+          if (dist < R * 2 && dist > 0) {
+            const nx = dx / dist
+            const ny = dy / dist
+            const kx = b.vx - b2.vx
+            const ky = b.vy - b2.vy
+            const p = nx * kx + ny * ky
+
+            if (p > 0) {
+              b.vx -= p * nx * 0.96
+              b.vy -= p * ny * 0.96
+              b2.vx += p * nx * 0.96
+              b2.vy += p * ny * 0.96
+            }
+
+            // Separate overlapping balls
             const overlap = R * 2 - dist
-            b.x -= cos * (overlap / 2)
-            b.y -= sin * (overlap / 2)
-            b2.x += cos * (overlap / 2)
-            b2.y += sin * (overlap / 2)
-            const vx1 = b.vx * cos + b.vy * sin
-            const vy1 = b.vy * cos - b.vx * sin
-            const vx2 = b2.vx * cos + b2.vy * sin
-            const vy2 = b2.vy * cos - b2.vx * sin
-            b.vx = vx2 * cos - vy1 * sin
-            b.vy = vy1 * cos + vx2 * sin
-            b2.vx = vx1 * cos - vy2 * sin
-            b2.vy = vy2 * cos + vx1 * sin
+            b.x -= nx * overlap * 0.5
+            b.y -= ny * overlap * 0.5
+            b2.x += nx * overlap * 0.5
+            b2.y += ny * overlap * 0.5
           }
         }
       }
