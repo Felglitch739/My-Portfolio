@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion'
-import { User, Cpu, Code2, Users } from 'lucide-react'
+import { Code2, Users } from 'lucide-react'
 
 interface AboutMeProps {
   lang?: 'es' | 'en'

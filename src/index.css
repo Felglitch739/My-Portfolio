@@ -3,7 +3,15 @@
    Monochrome + #FF0000 Pure Red Accent
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DotGothic16&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@font-face {
+  font-family: 'NDot';
+  src: url('/fonts/ndot.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -31,7 +39,7 @@
   --red-border:   rgba(255, 0, 0, 0.4);
 
   /* Typography */
-  --font-ndot:    'DotGothic16', 'Courier New', monospace;
+  --font-ndot:    'NDot', 'Courier New', monospace;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 
   /* Geometry & Borders */
