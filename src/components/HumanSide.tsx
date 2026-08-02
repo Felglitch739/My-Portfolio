@@ -1,13 +1,57 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { RotateCcw } from 'lucide-react'
 
 interface HumanSideProps {
   lang?: 'es' | 'en'
 }
 
-/* ── Interactive Hardware Billiards Simulator (7 Balls, Pockets & Cue Aiming) ── */
+interface Ball {
+  id: number
+  x: number
+  y: number
+  vx: number
+  vy: number
+  color: string
+  num: number
+  active: boolean
+}
+
+/* ── Interactive Hardware Billiards Simulator with Pocketing & Power Meter ── */
 function BilliardsHardwareCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [pottedCount, setPottedCount] = useState(0)
+  const [scratchMessage, setScratchMessage] = useState(false)
+  const [powerPercent, setPowerPercent] = useState(0)
+
+  // References for mutable state in physics loop
+  const ballsRef = useRef<Ball[]>([])
+  const isDraggingRef = useRef(false)
+  const dragPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const mousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+
+  const initBalls = (W: number, H: number) => {
+    return [
+      { id: 0, x: W * 0.25, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff', num: 0, active: true }, // Cue ball
+      { id: 1, x: W * 0.62, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff', num: 1, active: true },
+      { id: 2, x: W * 0.68, y: H * 0.43, vx: 0, vy: 0, color: '#888888', num: 2, active: true },
+      { id: 3, x: W * 0.68, y: H * 0.57, vx: 0, vy: 0, color: '#ffffff', num: 3, active: true },
+      { id: 4, x: W * 0.74, y: H * 0.36, vx: 0, vy: 0, color: '#888888', num: 4, active: true },
+      { id: 5, x: W * 0.74, y: H * 0.5, vx: 0, vy: 0, color: '#FF0000', num: 8, active: true },  // Pure Red 8-ball
+      { id: 6, x: W * 0.74, y: H * 0.64, vx: 0, vy: 0, color: '#888888', num: 6, active: true },
+    ]
+  }
+
+  const resetGame = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const W = canvas.offsetWidth || 500
+    const H = canvas.offsetHeight || 260
+    ballsRef.current = initBalls(W, H)
+    setPottedCount(0)
+    setScratchMessage(false)
+    setPowerPercent(0)
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -20,27 +64,67 @@ function BilliardsHardwareCanvas() {
     let H = (canvas.height = 260)
     const R = 10
 
-    const balls = [
-      { id: 0, x: W * 0.25, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff', num: 0 }, // Cue ball
-      { id: 1, x: W * 0.62, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff', num: 1 },
-      { id: 2, x: W * 0.68, y: H * 0.43, vx: 0, vy: 0, color: '#888888', num: 2 },
-      { id: 3, x: W * 0.68, y: H * 0.57, vx: 0, vy: 0, color: '#ffffff', num: 3 },
-      { id: 4, x: W * 0.74, y: H * 0.36, vx: 0, vy: 0, color: '#888888', num: 4 },
-      { id: 5, x: W * 0.74, y: H * 0.5, vx: 0, vy: 0, color: '#FF0000', num: 8 },  // Pure Red 8-ball
-      { id: 6, x: W * 0.74, y: H * 0.64, vx: 0, vy: 0, color: '#888888', num: 6 },
-    ]
+    if (ballsRef.current.length === 0) {
+      ballsRef.current = initBalls(W, H)
+    }
 
-    const handleCanvasClick = (e: MouseEvent) => {
+    const handleMouseDown = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
-      const clickX = e.clientX - rect.left
-      const clickY = e.clientY - rect.top
-      const cueBall = balls[0]
-      const dx = clickX - cueBall.x
-      const dy = clickY - cueBall.y
-      const angle = Math.atan2(dy, dx)
-      const power = 14
-      cueBall.vx = Math.cos(angle) * power
-      cueBall.vy = Math.sin(angle) * power
+      const mx = e.clientX - rect.left
+      const my = e.clientY - rect.top
+
+      const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
+      if (!cueBall) return
+
+      // Allow dragging if cue ball is mostly stopped
+      const isMoving = Math.hypot(cueBall.vx, cueBall.vy) > 0.15
+      if (isMoving) return
+
+      isDraggingRef.current = true
+      dragPosRef.current = { x: mx, y: my }
+      mousePosRef.current = { x: mx, y: my }
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect()
+      const mx = e.clientX - rect.left
+      const my = e.clientY - rect.top
+      mousePosRef.current = { x: mx, y: my }
+
+      if (isDraggingRef.current) {
+        const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
+        if (!cueBall) return
+        const dx = cueBall.x - mx
+        const dy = cueBall.y - my
+        const dist = Math.hypot(dx, dy)
+        const powerRatio = Math.min(dist / 100, 1)
+        setPowerPercent(Math.round(powerRatio * 100))
+      }
+    }
+
+    const handleMouseUp = () => {
+      if (!isDraggingRef.current) return
+      isDraggingRef.current = false
+
+      const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
+      if (!cueBall) return
+
+      const mx = mousePosRef.current.x
+      const my = mousePosRef.current.y
+      const dx = cueBall.x - mx
+      const dy = cueBall.y - my
+      const dist = Math.hypot(dx, dy)
+
+      if (dist > 5) {
+        const powerRatio = Math.min(dist / 100, 1)
+        const maxSpeed = 18
+        const speed = powerRatio * maxSpeed
+        const angle = Math.atan2(dy, dx)
+
+        cueBall.vx = Math.cos(angle) * speed
+        cueBall.vy = Math.sin(angle) * speed
+      }
+      setPowerPercent(0)
     }
 
     const handleResize = () => {
@@ -49,17 +133,24 @@ function BilliardsHardwareCanvas() {
       H = canvas.height = 260
     }
 
-    canvas.addEventListener('click', handleCanvasClick)
+    canvas.addEventListener('mousedown', handleMouseDown)
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseup', handleMouseUp)
     window.addEventListener('resize', handleResize)
+
+    const pockets = [
+      { x: 16, y: 16 }, { x: W / 2, y: 12 }, { x: W - 16, y: 16 },
+      { x: 16, y: H - 16 }, { x: W / 2, y: H - 12 }, { x: W - 16, y: H - 16 },
+    ]
 
     const render = () => {
       ctx.clearRect(0, 0, W, H)
 
-      // Solid Deep Black Felt
+      // Felt
       ctx.fillStyle = '#050505'
       ctx.fillRect(0, 0, W, H)
 
-      // Engineering Dot Grid on Felt
+      // Dot Grid
       ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'
       for (let x = 16; x < W; x += 16) {
         for (let y = 16; y < H; y += 16) {
@@ -69,46 +160,76 @@ function BilliardsHardwareCanvas() {
         }
       }
 
-      // Hardware Rail Border
+      // Rails
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'
       ctx.lineWidth = 2
       ctx.strokeRect(10, 10, W - 20, H - 20)
 
-      // 6 Hardware Pockets
-      const pockets = [
-        { x: 14, y: 14 }, { x: W / 2, y: 10 }, { x: W - 14, y: 14 },
-        { x: 14, y: H - 14 }, { x: W / 2, y: H - 10 }, { x: W - 14, y: H - 14 },
-      ]
+      // 6 Pockets
       pockets.forEach((p) => {
         ctx.beginPath()
-        ctx.arc(p.x, p.y, 13, 0, Math.PI * 2)
+        ctx.arc(p.x, p.y, 14, 0, Math.PI * 2)
         ctx.fillStyle = '#000000'
         ctx.fill()
         ctx.strokeStyle = '#FF0000'
-        ctx.lineWidth = 1
+        ctx.lineWidth = 1.5
         ctx.stroke()
       })
 
-      // Ball Physics & Collisions
+      const balls = ballsRef.current
+
+      // Physics & Pockets
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i]
+        if (!b.active) continue
+
         b.x += b.vx
         b.y += b.vy
-        b.vx *= 0.984
-        b.vy *= 0.984
+        b.vx *= 0.982
+        b.vy *= 0.982
 
         if (Math.abs(b.vx) < 0.04) b.vx = 0
         if (Math.abs(b.vy) < 0.04) b.vy = 0
 
+        // Wall Bounce
         const minX = 22, maxX = W - 22, minY = 22, maxY = H - 22
-        if (b.x - R < minX) { b.x = minX + R; b.vx *= -0.88 }
-        if (b.x + R > maxX) { b.x = maxX - R; b.vx *= -0.88 }
-        if (b.y - R < minY) { b.y = minY + R; b.vy *= -0.88 }
-        if (b.y + R > maxY) { b.y = maxY - R; b.vy *= -0.88 }
+        if (b.x - R < minX) { b.x = minX + R; b.vx *= -0.85 }
+        if (b.x + R > maxX) { b.x = maxX - R; b.vx *= -0.85 }
+        if (b.y - R < minY) { b.y = minY + R; b.vy *= -0.85 }
+        if (b.y + R > maxY) { b.y = maxY - R; b.vy *= -0.85 }
 
-        // Ball vs Ball
+        // Check Pocketing (Disappear when in pocket)
+        for (const p of pockets) {
+          const distToPocket = Math.hypot(b.x - p.x, b.y - p.y)
+          if (distToPocket < 15) {
+            b.active = false
+            b.vx = 0
+            b.vy = 0
+
+            if (b.num === 0) {
+              // Cue ball scratch! Reset after short delay
+              setScratchMessage(true)
+              setTimeout(() => {
+                b.x = W * 0.25
+                b.y = H * 0.5
+                b.vx = 0
+                b.vy = 0
+                b.active = true
+                setScratchMessage(false)
+              }, 800)
+            } else {
+              // Object ball potted!
+              setPottedCount(prev => prev + 1)
+            }
+            break
+          }
+        }
+
+        // Ball vs Ball Collisions
         for (let j = i + 1; j < balls.length; j++) {
           const b2 = balls[j]
+          if (!b2.active) continue
+
           const dx = b2.x - b.x
           const dy = b2.y - b.y
           const dist = Math.hypot(dx, dy)
@@ -131,8 +252,12 @@ function BilliardsHardwareCanvas() {
             b2.vy = vy2 * cos + vx1 * sin
           }
         }
+      }
 
-        // Draw Ball
+      // Draw Balls
+      for (const b of balls) {
+        if (!b.active) continue
+
         ctx.beginPath()
         ctx.arc(b.x, b.y, R, 0, Math.PI * 2)
         ctx.fillStyle = b.color
@@ -147,26 +272,101 @@ function BilliardsHardwareCanvas() {
         }
       }
 
+      // Aiming & Power Indicator line while dragging
+      const cueBall = balls.find(b => b.num === 0 && b.active)
+      if (cueBall && isDraggingRef.current) {
+        const mx = mousePosRef.current.x
+        const my = mousePosRef.current.y
+        const dx = cueBall.x - mx
+        const dy = cueBall.y - my
+        const angle = Math.atan2(dy, dx)
+
+        // Dotted Aim Line
+        ctx.beginPath()
+        ctx.setLineDash([4, 4])
+        ctx.moveTo(cueBall.x, cueBall.y)
+        ctx.lineTo(cueBall.x + Math.cos(angle) * 120, cueBall.y + Math.sin(angle) * 120)
+        ctx.strokeStyle = '#FF0000'
+        ctx.lineWidth = 1.5
+        ctx.stroke()
+        ctx.setLineDash([])
+
+        // Cue Stick Line
+        const dist = Math.min(Math.hypot(dx, dy), 100)
+        ctx.beginPath()
+        ctx.moveTo(cueBall.x - Math.cos(angle) * (R + 6 + dist * 0.3), cueBall.y - Math.sin(angle) * (R + 6 + dist * 0.3))
+        ctx.lineTo(cueBall.x - Math.cos(angle) * (R + 70 + dist * 0.3), cueBall.y - Math.sin(angle) * (R + 70 + dist * 0.3))
+        ctx.strokeStyle = '#ffffff'
+        ctx.lineWidth = 3
+        ctx.stroke()
+      }
+
       animationId = requestAnimationFrame(render)
     }
 
     render()
 
     return () => {
-      canvas.removeEventListener('click', handleCanvasClick)
+      canvas.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationId)
     }
   }, [])
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '260px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-      <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'crosshair' }} />
-      <div className="ndot" style={{ position: 'absolute', top: 14, left: 16, fontSize: '0.7rem', color: '#ffffff' }}>
-        SIMULADOR DE BILLAR // 8-BALL
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+      {/* Status Bar: Power Meter + Potted Counter + Reset Button */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          <span className="ndot" style={{ fontSize: '0.7rem', color: 'var(--gray-400)' }}>
+            BOLAS EMBOCADAS: <strong style={{ color: 'var(--red)' }}>{pottedCount} / 6</strong>
+          </span>
+          {scratchMessage && (
+            <span className="ndot" style={{ fontSize: '0.65rem', color: 'var(--red)', animation: 'pulse 1s infinite' }}>
+              ¡FALTA! BOLA BLANCA REUBICADA
+            </span>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          {/* Power Meter Visual */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span className="ndot" style={{ fontSize: '0.65rem', color: 'var(--gray-400)' }}>FUERZA:</span>
+            <div style={{ width: '60px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div 
+                style={{ 
+                  width: `${powerPercent}%`, 
+                  height: '100%', 
+                  background: powerPercent > 70 ? 'var(--red)' : '#ffffff',
+                  transition: 'width 0.05s linear'
+                }} 
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={resetGame}
+            className="mono-tag"
+            style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', padding: '0.3rem 0.6rem' }}
+            title="Reiniciar mesa"
+          >
+            <RotateCcw size={12} color="var(--red)" /> RE-RACK
+          </button>
+        </div>
       </div>
-      <div className="ndot" style={{ position: 'absolute', bottom: 14, right: 16, fontSize: '0.62rem', color: 'var(--red)' }}>
-        [ HAZ CLIC EN EL TAPETE PARA APUNTAR Y DISPARAR ]
+
+      {/* Billiards Canvas Container */}
+      <div style={{ position: 'relative', width: '100%', height: '250px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'grab' }} />
+        
+        <div className="ndot" style={{ position: 'absolute', top: 14, left: 16, fontSize: '0.68rem', color: '#ffffff', pointerEvents: 'none' }}>
+          8-BALL POOL SIMULATOR
+        </div>
+        <div className="ndot" style={{ position: 'absolute', bottom: 14, right: 16, fontSize: '0.6rem', color: 'var(--gray-400)', pointerEvents: 'none' }}>
+          [ ARRASTRA Y SUELTA DESDE LA BOLA BLANCA PARA TIRAR ]
+        </div>
       </div>
     </div>
   )
@@ -288,14 +488,6 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
               className="bento-card"
               style={{ background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(10px)', padding: '1.5rem' }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                <h3 className="card-title" style={{ fontSize: '1.1rem', margin: 0 }}>
-                  8-BALL POOL
-                </h3>
-                <div className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-400)' }}>
-                  VS EDUARDO, WICHO, ORLANDO & FÉLIX
-                </div>
-              </div>
               <BilliardsHardwareCanvas />
             </motion.div>
 
