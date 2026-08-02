@@ -323,7 +323,7 @@ body {
 }
 
 /* ══════════════════════════════════
-   RESPONSIVE BENTO GRID SPANS
+   RESPONSIVE BENTO GRID & MOBILE UTILITIES
 ══════════════════════════════════ */
 
 .col-span-12 { grid-column: span 12; }
@@ -334,11 +334,35 @@ body {
 .col-span-4  { grid-column: span 4; }
 .col-span-3  { grid-column: span 3; }
 
+/* Active tap feedback for touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .bento-card:active {
+    border-color: rgba(255, 0, 0, 0.4) !important;
+    transform: scale(0.99) !important;
+  }
+}
+
 @media (max-width: 900px) {
   .col-span-8, .col-span-7, .col-span-6, .col-span-5, .col-span-4, .col-span-3 {
     grid-column: span 12;
   }
   .bento-card {
     padding: 1.35rem;
+  }
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100vw;
+  }
+  .section {
+    padding: 3rem 0;
+  }
+  .display-title {
+    font-size: clamp(1.6rem, 7vw, 2.2rem) !important;
+  }
+  .container {
+    padding: 0 1rem;
   }
 }

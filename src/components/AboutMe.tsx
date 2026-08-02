@@ -80,13 +80,15 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
           <div className="bento-card col-span-4" style={{ alignItems: 'center', textAlign: 'center', justifyContent: 'center' }}>
             <div
               style={{
-                width: '160px',
-                height: '160px',
+                width: '180px',
+                height: '180px',
                 borderRadius: '50%',
                 overflow: 'hidden',
-                border: '2px solid rgba(255, 255, 255, 0.15)',
+                border: '2px solid var(--red)',
+                boxShadow: '0 0 25px rgba(255, 0, 0, 0.3), 0 0 50px rgba(255, 0, 0, 0.1)',
                 marginBottom: '1.2rem',
                 position: 'relative',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               }}
             >
               <img
@@ -96,7 +98,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  filter: 'grayscale(100%) contrast(1.15)',
+                  display: 'block',
                 }}
               />
             </div>

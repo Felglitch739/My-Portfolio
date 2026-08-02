@@ -21,31 +21,56 @@ export default function CircuitCanvas() {
 
     window.addEventListener('resize', handleResize)
 
-    // Node & Trace generation
-    const nodeCount = Math.floor((width * height) / 35000)
+    // Node & Trace generation for engineering grid
+    const nodeCount = Math.floor((width * height) / 30000)
     const nodes: { x: number; y: number; vx: number; vy: number; radius: number; pulse: number }[] = []
 
-    for (let i = 0; i < Math.max(30, nodeCount); i++) {
+    for (let i = 0; i < Math.max(35, nodeCount); i++) {
       nodes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        radius: Math.random() * 1.5 + 1,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        radius: Math.random() * 1.4 + 1,
         pulse: Math.random() * Math.PI * 2,
       })
     }
 
-    // Mouse tracking for interactive glow
-    let mouseX = -1000
-    let mouseY = -1000
+    // Interactive pointer (Mouse + Touch support for Mobile)
+    let pointerX = -1000
+    let pointerY = -1000
+    let isTouching = false
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX
-      mouseY = e.clientY
+      pointerX = e.clientX
+      pointerY = e.clientY
+      isTouching = false
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        pointerX = e.touches[0].clientX
+        pointerY = e.touches[0].clientY
+        isTouching = true
+      }
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        pointerX = e.touches[0].clientX
+        pointerY = e.touches[0].clientY
+        isTouching = true
+      }
+    }
+
+    const handleTouchEnd = () => {
+      isTouching = false
     }
 
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
+    window.addEventListener('touchend', handleTouchEnd)
 
     let time = 0
 
@@ -53,9 +78,29 @@ export default function CircuitCanvas() {
       time += 0.02
       ctx.clearRect(0, 0, width, height)
 
-      // Draw faint grid pattern
-      const gridSize = 60
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.025)'
+      // Ambient breathing glow pulse for mobile idle state
+      const ambientX = isTouching || pointerX > 0 
+        ? pointerX 
+        : width / 2 + Math.cos(time * 0.5) * (width * 0.25)
+      const ambientY = isTouching || pointerY > 0 
+        ? pointerY 
+        : height / 2 + Math.sin(time * 0.7) * (height * 0.2)
+
+      // Soft ambient light aura (Pure Red #FF0000 accent)
+      const auraGradient = ctx.createRadialGradient(
+        ambientX, ambientY, 10,
+        ambientX, ambientY, width < 768 ? 220 : 320
+      )
+      auraGradient.addColorStop(0, 'rgba(255, 0, 0, 0.08)')
+      auraGradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.03)')
+      auraGradient.addColorStop(1, 'rgba(0, 0, 0, 0)')
+
+      ctx.fillStyle = auraGradient
+      ctx.fillRect(0, 0, width, height)
+
+      // Draw engineering grid pattern
+      const gridSize = width < 768 ? 40 : 60
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)'
       ctx.lineWidth = 1
 
       for (let x = 0; x < width; x += gridSize) {
@@ -75,7 +120,6 @@ export default function CircuitCanvas() {
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i]
 
-        // Move nodes slowly
         node.x += node.vx
         node.y += node.vy
 
@@ -85,22 +129,22 @@ export default function CircuitCanvas() {
         node.pulse += 0.03
         const pulseAlpha = (Math.sin(node.pulse) + 1) / 2
 
-        // Mouse distance
-        const dx = mouseX - node.x
-        const dy = mouseY - node.y
+        // Pointer distance (mouse or touch)
+        const dx = ambientX - node.x
+        const dy = ambientY - node.y
         const dist = Math.sqrt(dx * dx + dy * dy)
-        const isNearMouse = dist < 180
+        const isNearPointer = dist < (width < 768 ? 160 : 220)
 
         // Draw connections
         for (let j = i + 1; j < nodes.length; j++) {
           const other = nodes[j]
           const distance = Math.hypot(node.x - other.x, node.y - other.y)
 
-          if (distance < 140) {
-            const alpha = (1 - distance / 140) * 0.15 * (isNearMouse ? 2.5 : 1)
+          if (distance < (width < 768 ? 110 : 140)) {
+            const alpha = (1 - distance / 140) * 0.12 * (isNearPointer ? 2.5 : 1)
             ctx.beginPath()
-            
-            // Draw circuit-style right-angle connections occasionally
+
+            // Circuit-style right-angle trace lines
             if ((i + j) % 3 === 0) {
               const midX = (node.x + other.x) / 2
               ctx.moveTo(node.x, node.y)
@@ -112,39 +156,32 @@ export default function CircuitCanvas() {
               ctx.lineTo(other.x, other.y)
             }
 
-            ctx.strokeStyle = isNearMouse
-              ? `rgba(6, 182, 212, ${alpha * 1.5})`
-              : `rgba(56, 189, 248, ${alpha})`
-            ctx.lineWidth = isNearMouse ? 1.2 : 0.8
+            ctx.strokeStyle = isNearPointer
+              ? `rgba(255, 0, 0, ${alpha * 1.8})`
+              : `rgba(255, 255, 255, ${alpha * 0.8})`
+            ctx.lineWidth = isNearPointer ? 1.2 : 0.7
             ctx.stroke()
 
-            // Draw glowing data pulse on trace
-            if ((i + j) % 5 === 0) {
-              const pos = (Math.sin(time + i) + 1) / 2
+            // Glowing data pulse on trace
+            if ((i + j) % 4 === 0) {
+              const pos = (Math.sin(time * 1.5 + i) + 1) / 2
               const px = node.x + (other.x - node.x) * pos
               const py = node.y + (other.y - node.y) * pos
               ctx.beginPath()
               ctx.arc(px, py, 1.2, 0, Math.PI * 2)
-              ctx.fillStyle = 'rgba(56, 189, 248, 0.6)'
+              ctx.fillStyle = isNearPointer ? '#FF0000' : 'rgba(255, 255, 255, 0.4)'
               ctx.fill()
             }
           }
         }
 
-        // Draw node
+        // Draw node dot
         ctx.beginPath()
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
-        ctx.fillStyle = isNearMouse
-          ? `rgba(34, 211, 238, ${0.8 + pulseAlpha * 0.2})`
-          : `rgba(56, 189, 248, ${0.3 + pulseAlpha * 0.3})`
+        ctx.fillStyle = isNearPointer
+          ? `#FF0000`
+          : `rgba(255, 255, 255, ${0.2 + pulseAlpha * 0.3})`
         ctx.fill()
-
-        if (isNearMouse) {
-          ctx.beginPath()
-          ctx.arc(node.x, node.y, node.radius * 3, 0, Math.PI * 2)
-          ctx.fillStyle = 'rgba(6, 182, 212, 0.15)'
-          ctx.fill()
-        }
       }
 
       animationFrameId = requestAnimationFrame(render)
@@ -155,6 +192,9 @@ export default function CircuitCanvas() {
     return () => {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleTouchEnd)
       cancelAnimationFrame(animationFrameId)
     }
   }, [])
@@ -166,8 +206,8 @@ export default function CircuitCanvas() {
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: '100vw',
+        height: '100vh',
         pointerEvents: 'none',
         zIndex: 0,
       }}
