@@ -240,9 +240,9 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
                 flex: 1,
                 padding: '1.2rem',
                 overflowY: 'auto',
-                fontSize: '0.88rem',
+                fontSize: '0.86rem',
                 lineHeight: 1.6,
-                fontFamily: 'var(--font-ndot)',
+                fontFamily: 'var(--font-mono)',
               }}
             >
               {history.map((line) => (
@@ -283,7 +283,7 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
                   border: 'none',
                   outline: 'none',
                   color: 'var(--white)',
-                  fontFamily: 'var(--font-ndot)',
+                  fontFamily: 'var(--font-mono)',
                   fontSize: '0.88rem',
                 }}
                 autoFocus
