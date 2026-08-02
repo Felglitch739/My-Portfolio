@@ -22,7 +22,7 @@ function MinimalBilliardsWidget() {
 
     const balls = [
       { id: 0, x: W * 0.3, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff' }, // Cue ball
-      { id: 1, x: W * 0.7, y: H * 0.5, vx: 0, vy: 0, color: 'var(--red)' }, // 8-ball
+      { id: 1, x: W * 0.7, y: H * 0.5, vx: 0, vy: 0, color: '#FF0000' }, // 8-ball
     ]
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -141,10 +141,10 @@ function MinimalBilliardsWidget() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '200px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
-      <div className="ndot" style={{ position: 'absolute', top: 12, left: 16, fontSize: '0.7rem', color: 'var(--white)' }}>
+      <div className="ndot" style={{ position: 'absolute', top: 12, left: 16, fontSize: '0.7rem', color: '#fff' }}>
         SIMULACIÓN // 8-BALL
       </div>
-      <div className="ndot" style={{ position: 'absolute', bottom: 12, right: 16, fontSize: '0.6rem', color: 'var(--gray-500)' }}>
+      <div className="ndot" style={{ position: 'absolute', bottom: 12, right: 16, fontSize: '0.6rem', color: '#71717a' }}>
         [ MOVER MOUSE PARA INTERACTUAR ]
       </div>
     </div>
@@ -251,7 +251,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
             </p>
           </motion.div>
 
-          <div className="col-span-7 bento-grid" style={{ gap: '1.25rem', display: 'flex', flexDirection: 'column' }}>
+          <div className="col-span-7" style={{ gap: '1.25rem', display: 'flex', flexDirection: 'column' }}>
             
             {/* Card 2: Minimalist Billiards */}
             <motion.div 
