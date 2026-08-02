@@ -17,7 +17,7 @@ interface CyberTerminalProps {
 export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTerminalProps) {
   const [input, setInput] = useState('')
   const [history, setHistory] = useState<OutputLine[]>([
-    { id: '1', type: 'system', text: 'FMF_HARDWARE_TERMINAL v3.0 (x86_64-utrgv-hardware)' },
+    { id: '1', type: 'system', text: 'FMF_OS_TERMINAL v3.0 (x86_64-utrgv-software)' },
     { id: '2', type: 'system', text: 'Type "help" or click command pills below.' },
   ])
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -43,7 +43,7 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
           type: 'output',
           text: `COMMAND LIST:
   • whoami    - Profile summary & UTRGV CS status
-  • skills    - Technical modules (C++, Python, React, Vite, Tailwind, TS, SQL)
+  • skills    - Technical modules (React Native, Python, React, Vite, Tailwind, TS, SQL)
   • projects  - Overview of KronoBook, AuraFit, Build Pa'l Norte & more
   • hobbies   - Fitness (PPL), Guitar & AI, Gaming (Rust/Minecraft), Billiards
   • billiards - Jump to 8-Ball Billiards simulator
@@ -57,7 +57,7 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
           id: (Date.now() + 1).toString(),
           type: 'success',
           text: `[IDENTITY]: Félix E. Martinez Flores
-[ROLE]: Full-Stack Software Engineer & Hardware Hacker
+[ROLE]: Full-Stack Software Engineer & Mobile Developer
 [EDU]: Computer Science Student @ UTRGV
 [PHILOSOPHY]: Programming is the art of solving complex logical puzzles. I build systems, not just code.`,
         })
@@ -67,12 +67,12 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'output',
-          text: `HARDWARE & SOFTWARE MODULES:
-• C++ (Systems & Low-Level)
+          text: `SOFTWARE MODULES:
+• React Native (Mobile Architecture)
 • Python (APIs & Automation)
 • React / Vite / Tailwind CSS / TypeScript
 • SQL & Supabase (Multi-Tenant Architecture)
-• Embedded Systems & Robotics`,
+• Node.js & Next.js`,
         })
         break
 
@@ -198,7 +198,7 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
                 <Move size={14} color="var(--gray-400)" />
                 <TerminalIcon size={16} color="var(--red)" />
                 <span className="ndot" style={{ fontSize: '0.8rem', color: 'var(--white)' }}>
-                  HARDWARE_SCREEN // FMF_OS
+                  TERMINAL // FMF_OS
                 </span>
               </div>
               <button

@@ -20,12 +20,12 @@ export default function TechStack({ lang = 'es' }: TechStackProps) {
 
   const skills: Skill[] = [
     {
-      name: 'C++',
-      cat: 'SYSTEMS / HARDWARE',
+      name: 'React Native',
+      cat: 'MOBILE ARCHITECTURE',
       level: 90,
-      desc: 'Programación de bajo nivel, optimización de memoria y lógica para microcontroladores.',
-      appliedIn: 'IEEEXtreme, IEEE Mining Mayhem Robotics & Embebed Systems',
-      icon: <Cpu size={20} color="var(--red)" />,
+      desc: 'Desarrollo de aplicaciones móviles multiplataforma nativas con TypeScript e integración de APIs complejas.',
+      appliedIn: 'AuraFit AI Fitness App & Mobile Solutions',
+      icon: <Terminal size={20} color="var(--red)" />,
     },
     {
       name: 'Python',
@@ -79,14 +79,14 @@ export default function TechStack({ lang = 'es' }: TechStackProps) {
 
   const t = {
     es: {
-      label: "04 // HARDWARE & SOFTWARE MODULES",
+      label: "04 // SOFTWARE MODULES",
       title: "TECH VAULT",
-      sub: "Haz clic en cualquier módulo de hardware para inspeccionar su implementación en mis proyectos.",
+      sub: "Haz clic en cualquier módulo para inspeccionar su implementación en mis proyectos.",
     },
     en: {
-      label: "04 // HARDWARE & SOFTWARE MODULES",
+      label: "04 // SOFTWARE MODULES",
       title: "TECH VAULT",
-      sub: "Click on any hardware module to inspect its real-world usage in my projects.",
+      sub: "Click on any module to inspect its real-world usage in my projects.",
     },
   }[lang]
 

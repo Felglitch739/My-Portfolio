@@ -12,7 +12,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
       title: "CONSTRUYENDO SISTEMAS, NO SOLO CÓDIGO",
       p1: (
         <>
-          <strong style={{ color: 'var(--white)' }}>Soy Félix E. Martinez Flores,</strong> estudiante de Ciencias de la Computación (Computer Science) en <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. Trabajo en la frontera donde el software se funde con el hardware, desde aplicaciones web impulsadas por IA hasta sistemas embebidos autónomos.
+          <strong style={{ color: 'var(--white)' }}>Soy Félix E. Martinez Flores,</strong> estudiante de Ciencias de la Computación (Computer Science) en <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. Me especializo en el desarrollo de software full-stack, desde aplicaciones web impulsadas por IA hasta arquitecturas móviles modernas.
         </>
       ),
       p2: (
@@ -27,9 +27,9 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
           desc: "Desarrollo web y móvil avanzado con React, Vite, TypeScript, Tailwind CSS y Supabase.",
         },
         {
-          icon: <Cpu size={20} color="var(--red)" />,
-          title: "HARDWARE HACKER",
-          desc: "Sistemas embebidos y programación de bajo nivel con C++, microcontroladores y robótica.",
+          icon: <Code2 size={20} color="var(--red)" />,
+          title: "MOBILE & WEB APPS",
+          desc: "Desarrollo de aplicaciones nativas multiplataforma usando React Native y arquitecturas modernas cloud con Supabase.",
         },
         {
           icon: <Users size={20} color="var(--white)" />,
@@ -43,7 +43,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
       title: "BUILDING SYSTEMS, NOT JUST CODE",
       p1: (
         <>
-          <strong style={{ color: 'var(--white)' }}>I'm Félix E. Martinez Flores,</strong> a Computer Science student at <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. I operate at the boundary where software meets hardware, from AI web apps to autonomous embedded systems.
+          <strong style={{ color: 'var(--white)' }}>I'm Félix E. Martinez Flores,</strong> a Computer Science student at <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. I specialize in full-stack software development, from AI-powered web apps to modern mobile architectures.
         </>
       ),
       p2: (
@@ -58,9 +58,9 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
           desc: "Web & mobile engineering with React, Vite, TypeScript, Tailwind CSS, and Supabase.",
         },
         {
-          icon: <Cpu size={20} color="var(--red)" />,
-          title: "HARDWARE HACKER",
-          desc: "Embedded systems and low-level C++ programming, microcontrollers, and robotics.",
+          icon: <Code2 size={20} color="var(--red)" />,
+          title: "MOBILE & WEB APPS",
+          desc: "Cross-platform native application development using React Native and modern cloud architectures with Supabase.",
         },
         {
           icon: <Users size={20} color="var(--white)" />,

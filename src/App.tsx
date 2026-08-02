@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -14,6 +14,15 @@ import CyberTerminal from './components/CyberTerminal'
 export default function App() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false)
   const [lang, setLang] = useState<'es' | 'en'>('es')
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [])
 
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
@@ -40,8 +49,21 @@ export default function App() {
         }}
       />
 
-      {/* Strict Engineering Graph Grid Background (NO particles or floating nodes) */}
-      <div className="graph-grid-bg" aria-hidden />
+      {/* Premium Background Layers */}
+      <div className="mesh-gradient-bg" aria-hidden />
+      
+      {/* Cursor Flashlight */}
+      <motion.div
+        className="cursor-flashlight"
+        animate={{
+          x: mousePos.x,
+          y: mousePos.y,
+        }}
+        transition={{ type: 'tween', ease: 'backOut', duration: 0.15 }}
+      />
+      
+      {/* Heavy Frosted Glass Overlay */}
+      <div className="glass-overlay" aria-hidden />
 
       {/* Navigation */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} setLang={setLang} />

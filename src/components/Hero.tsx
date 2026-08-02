@@ -36,13 +36,13 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
       status: "SISTEMA ACTIVO // UTRGV CS",
       roles: [
         'FULL-STACK SOFTWARE ENGINEER',
-        'HARDWARE HACKER & EMBEDDED BUILDER',
+        'MOBILE & WEB APP DEVELOPER',
         'COMPUTER SCIENCE @ UTRGV',
         'CO-FOUNDER @ BUILD PA\'L NORTE',
       ],
-      titleLine1: "INGENIERÍA DE",
-      titleLine2: "SOFTWARE & HARDWARE",
-      desc: "Construyendo soluciones de alto impacto en la intersección del software y el hardware: desde aplicaciones web con IA hasta sistemas integrados autónomos.",
+      titleLine1: "FULL-STACK SOFTWARE",
+      titleLine2: "ENGINEERING",
+      desc: "Construyendo soluciones de alto impacto: desde aplicaciones web escalables con IA hasta arquitecturas móviles modernas y robustas.",
       projectsBtn: "Explorar Obras",
       terminalBtn: "Abrir Terminal",
       cvBtn: "Descargar CV",
@@ -57,13 +57,13 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
       status: "SYSTEM ACTIVE // UTRGV CS",
       roles: [
         'FULL-STACK SOFTWARE ENGINEER',
-        'HARDWARE HACKER & EMBEDDED BUILDER',
+        'MOBILE & WEB APP DEVELOPER',
         'COMPUTER SCIENCE @ UTRGV',
         'CO-FOUNDER @ BUILD PA\'L NORTE',
       ],
-      titleLine1: "ENGINEERING AT THE",
-      titleLine2: "EDGE OF HARDWARE",
-      desc: "Building high-impact solutions at the intersection of software and hardware: from AI-powered web applications to autonomous embedded systems.",
+      titleLine1: "FULL-STACK SOFTWARE",
+      titleLine2: "ENGINEERING",
+      desc: "Building high-impact solutions: from scalable AI-powered web applications to robust modern mobile architectures.",
       projectsBtn: "Explore Work",
       terminalBtn: "Open Terminal",
       cvBtn: "Download Resume",
@@ -176,7 +176,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
           <div className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
             <div className="section-label" style={{ marginBottom: '1rem' }}>02 // HARDWARE & SOFTWARE MODULES</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {['C++', 'PYTHON', 'REACT', 'VITE', 'TAILWIND CSS', 'TYPESCRIPT', 'SQL', 'EMBEDDED SYSTEMS', 'SUPABASE', 'REACT NATIVE'].map((tech) => (
+              {['TYPESCRIPT', 'REACT NATIVE', 'PYTHON', 'SQL', 'TAILWIND CSS', 'VITE', 'SUPABASE', 'REACT', 'NODE.JS', 'NEXT.JS'].map((tech) => (
                 <span key={tech} className="mono-tag">
                   {tech}
                 </span>

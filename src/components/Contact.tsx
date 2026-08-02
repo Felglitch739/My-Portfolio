@@ -155,9 +155,9 @@ export default function Contact({ lang = 'es' }: ContactProps) {
             </h3>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input type="text" name="name" required placeholder={t.namePlaceholder} />
-              <input type="email" name="email" required placeholder={t.emailPlaceholder} />
-              <textarea name="message" required rows={4} placeholder={t.msgPlaceholder} style={{ resize: 'none' }} />
+              <input type="text" name="name" required placeholder={t.namePlaceholder} className="bento-input" />
+              <input type="email" name="email" required placeholder={t.emailPlaceholder} className="bento-input" />
+              <textarea name="message" required rows={4} placeholder={t.msgPlaceholder} className="bento-input" style={{ resize: 'none' }} />
 
               <button
                 type="submit"

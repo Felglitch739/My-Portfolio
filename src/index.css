@@ -3,7 +3,7 @@
    Monochrome + #FF0000 Pure Red Accent
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DotGothic16&display=swap');
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -31,7 +31,7 @@
   --red-border:   rgba(255, 0, 0, 0.4);
 
   /* Typography */
-  --font-ndot:    'Space Mono', 'Courier New', monospace;
+  --font-ndot:    'DotGothic16', 'Courier New', monospace;
   --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 
   /* Geometry & Borders */
@@ -59,16 +59,37 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Strict Engineering Graph Grid Background (NO particles, NO constellation lines) ── */
-.graph-grid-bg {
+/* ── Premium Background & Cursor Interaction ── */
+.mesh-gradient-bg {
   position: fixed;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(20, 20, 25, 1), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(15, 15, 18, 1), transparent 50%);
+  background-color: var(--black);
+  z-index: 0;
+}
+
+.cursor-flashlight {
+  position: fixed;
+  top: -200px;
+  left: -200px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
   pointer-events: none;
   z-index: 0;
+  mix-blend-mode: screen;
+}
+
+.glass-overlay {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(80px);
+  -webkit-backdrop-filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* Custom Scrollbar */
@@ -251,6 +272,30 @@ body {
 .btn-bento-outline:hover {
   border-color: var(--white);
   background: rgba(255, 255, 255, 0.06);
+}
+
+/* Modern Form Inputs */
+.bento-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 1rem 0.8rem;
+  border-radius: 4px 4px 0 0;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.bento-input::placeholder {
+  color: var(--gray-500);
+}
+
+.bento-input:focus {
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom-color: var(--red);
+  box-shadow: 0 4px 10px -4px rgba(255, 0, 0, 0.3);
 }
 
 /* Guitar String Vibration Animation */
