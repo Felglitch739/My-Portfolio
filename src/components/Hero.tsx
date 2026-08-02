@@ -9,10 +9,13 @@ interface HeroProps {
 
 function useTypewriter(words: string[], speed = 70, pause = 2000) {
   const el = useRef<HTMLSpanElement>(null)
+  const wordsKey = words.join(',')
+
   useEffect(() => {
     let wi = 0, ci = 0, deleting = false, timer: ReturnType<typeof setTimeout>
     const tick = () => {
       const word = words[wi]
+      if (!word) return
       if (el.current) {
         el.current.textContent = deleting ? word.slice(0, ci--) : word.slice(0, ci++)
       }
@@ -26,7 +29,8 @@ function useTypewriter(words: string[], speed = 70, pause = 2000) {
     }
     tick()
     return () => clearTimeout(timer)
-  }, [words])
+  }, [wordsKey, speed, pause])
+
   return el
 }
 
