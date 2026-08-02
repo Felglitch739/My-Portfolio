@@ -594,14 +594,42 @@ function MinimalMusicWidget() {
 }
 
 export default function HumanSide({ lang = 'es' }: HumanSideProps) {
+  const [activeDrawer, setActiveDrawer] = useState<'none' | 'billiards' | 'audio'>('none')
+
   const t = {
     es: {
       label: "07 // THE HUMAN ELEMENT",
       title: "FUERA DEL CÓDIGO",
+      card1Title: "FILTRO HUMANO",
+      card1Text: "Más allá de la pantalla, soy alguien familiar y amigable. Valoro profundamente trabajar con personas con las que congenio y puedo formar conexiones genuinas. Soy un gran amante de los animales y mantengo una curiosidad eterna por aprender de todo lo que me rodea.",
+      card2Title: "DISCIPLINA & INTERESES",
+      card2Items: [
+        { label: "PESAS & PPL", desc: "Disciplina constante en gimnasio (Push-Pull-Legs)." },
+        { label: "GUITARRA ACÚSTICA", desc: "Progresiones armónicas y letras de canciones." },
+        { label: "GAMING & MODDING", desc: "Tuning de servidores C++ y JVM en Rust y Minecraft." },
+        { label: "8-BALL POOL", desc: "Partidas de billar para despejar la mente." },
+      ],
+      labsTitle: "MÓDULOS INTERACTIVOS (LABORATORIO OCIONAL)",
+      billiardsBtn: "🎱 EXPERIMENTO // BILLIARDS 8-BALL",
+      audioBtn: "🎵 EXPERIMENTO // SINTETIZADOR DE AUDIO",
+      closeBtn: "CERRAR MÓDULO",
     },
     en: {
       label: "07 // THE HUMAN ELEMENT",
       title: "BEYOND THE CODE",
+      card1Title: "HUMAN FILTER",
+      card1Text: "Beyond the screen, I am a warm and friendly individual. I deeply value working with people I resonate with and building genuine connections. I am a passionate animal lover with an eternal curiosity to learn from everything around me.",
+      card2Title: "DISCIPLINE & HOBBIES",
+      card2Items: [
+        { label: "WEIGHTLIFTING (PPL)", desc: "Consistent discipline in the gym (Push-Pull-Legs)." },
+        { label: "ACOUSTIC GUITAR", desc: "Harmonic progressions and lyric writing." },
+        { label: "GAMING & MODDING", desc: "C++ & JVM server tuning in Rust & Minecraft." },
+        { label: "8-BALL POOL", desc: "Billiards matches with friends to clear the mind." },
+      ],
+      labsTitle: "INTERACTIVE MODULES (OPTIONAL LABS)",
+      billiardsBtn: "🎱 LAB // BILLIARDS 8-BALL SIMULATOR",
+      audioBtn: "🎵 LAB // AUDIO SYNTHESIZER",
+      closeBtn: "CLOSE MODULE",
     },
   }[lang]
 
@@ -614,10 +642,10 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
         </h2>
 
         <div className="bento-grid">
-          {/* Card 1: Personality & Values (col-span-5) */}
+          {/* Card 1: Personality & Values (col-span-6) */}
           <motion.div 
             whileHover={{ y: -2 }}
-            className="bento-card col-span-5"
+            className="bento-card col-span-6"
             style={{ 
               background: 'rgba(0, 0, 0, 0.4)', 
               backdropFilter: 'blur(10px)',
@@ -631,35 +659,103 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
               IDENTIDAD // VALORES
             </div>
             <h3 className="card-title" style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>
-              FILTRO HUMANO
+              {t.card1Title}
             </h3>
             <p className="body-text" style={{ fontSize: '0.95rem', color: 'var(--gray-200)', lineHeight: 1.7 }}>
-              Más allá de la pantalla, soy alguien familiar y amigable. Valoro profundamente trabajar con personas con las que congenio y puedo formar conexiones genuinas. Soy un gran amante de los animales y mantengo una curiosidad eterna por aprender de todo lo que me rodea.
+              {t.card1Text}
             </p>
           </motion.div>
 
-          {/* Right Column (col-span-7) containing Billiards & Music */}
-          <div className="col-span-7" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            
-            {/* Card 2: Interactive Billiards */}
-            <motion.div 
-              whileHover={{ y: -2 }}
-              className="bento-card"
-              style={{ background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(10px)', padding: '1.5rem' }}
-            >
-              <BilliardsHardwareCanvas />
-            </motion.div>
+          {/* Card 2: Hobbies & Discipline (col-span-6) */}
+          <motion.div 
+            whileHover={{ y: -2 }}
+            className="bento-card col-span-6"
+            style={{ 
+              background: 'rgba(0, 0, 0, 0.4)', 
+              backdropFilter: 'blur(10px)',
+              padding: '2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}
+          >
+            <div>
+              <div className="ndot" style={{ color: 'var(--red)', fontSize: '0.75rem', marginBottom: '1rem' }}>
+                DISCIPLINA // ESTILO DE VIDA
+              </div>
+              <h3 className="card-title" style={{ fontSize: '1.3rem', marginBottom: '1.2rem' }}>
+                {t.card2Title}
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.8rem' }}>
+                {t.card2Items.map((item, idx) => (
+                  <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '10px', padding: '0.7rem 0.9rem' }}>
+                    <span className="ndot" style={{ fontSize: '0.75rem', color: 'var(--white)', display: 'block', marginBottom: '0.2rem' }}>
+                      {item.label}
+                    </span>
+                    <span className="body-text" style={{ fontSize: '0.78rem', color: 'var(--gray-400)' }}>
+                      {item.desc}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
 
-            {/* Card 3: Minimalist Music & Audio Synthesizer */}
-            <motion.div 
-              whileHover={{ y: -2 }}
-              className="bento-card"
-              style={{ background: 'transparent', padding: 0, border: 'none' }}
-            >
-              <MinimalMusicWidget />
-            </motion.div>
+          {/* Card 3: Collapsible Interactive Modules (col-span-12) */}
+          <div className="bento-card col-span-12" style={{ background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(10px)', padding: '1.8rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: activeDrawer !== 'none' ? '1.5rem' : 0 }}>
+              <div>
+                <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-500)' }}>
+                  {t.labsTitle}
+                </div>
+                <h3 className="card-title" style={{ fontSize: '1.1rem', marginTop: '0.2rem' }}>
+                  LABORATORIOS INTERACTIVOS A PETICIÓN
+                </h3>
+              </div>
 
+              <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setActiveDrawer(activeDrawer === 'billiards' ? 'none' : 'billiards')}
+                  className={`mono-tag ${activeDrawer === 'billiards' ? 'mono-tag-red' : ''}`}
+                  style={{ cursor: 'pointer', padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                >
+                  {t.billiardsBtn}
+                </button>
+
+                <button
+                  onClick={() => setActiveDrawer(activeDrawer === 'audio' ? 'none' : 'audio')}
+                  className={`mono-tag ${activeDrawer === 'audio' ? 'mono-tag-red' : ''}`}
+                  style={{ cursor: 'pointer', padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                >
+                  {t.audioBtn}
+                </button>
+              </div>
+            </div>
+
+            {/* Expanded Drawer Area */}
+            {activeDrawer === 'billiards' && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}
+              >
+                <BilliardsHardwareCanvas />
+              </motion.div>
+            )}
+
+            {activeDrawer === 'audio' && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}
+              >
+                <MinimalMusicWidget />
+              </motion.div>
+            )}
           </div>
+
         </div>
       </div>
     </section>

@@ -19,6 +19,11 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
           Para mí, <strong style={{ color: 'var(--white)' }}>la programación es el arte de resolver rompecabezas lógicos complejos</strong>. Me apasiona diseñar arquitecturas robustas y escalables, colaborando constantemente con un equipo cercano de desarrolladores y amigos.
         </>
       ),
+      p3: (
+        <>
+          Fuera de la terminal, mantengo una disciplina constante: entreno pesado en el gimnasio (<strong style={{ color: 'var(--white)' }}>rutinas PPL</strong>), exploro progresiones en <strong style={{ color: 'var(--white)' }}>guitarra acústica</strong>, disfruto el modding en servidores de <strong style={{ color: 'var(--white)' }}>Rust y Minecraft</strong>, y comparto partidas de <strong style={{ color: 'var(--white)' }}>billar (8-ball pool)</strong> con amigos.
+        </>
+      ),
       pillars: [
         {
           icon: <Code2 size={20} color="var(--white)" />,
@@ -48,6 +53,11 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
       p2: (
         <>
           For me, <strong style={{ color: 'var(--white)' }}>programming is the art of solving complex logical puzzles</strong>. I am passionate about designing robust, long-lasting system architectures.
+        </>
+      ),
+      p3: (
+        <>
+          Beyond the terminal, I maintain an active discipline: weightlifting (<strong style={{ color: 'var(--white)' }}>Push-Pull-Legs splits</strong>), acoustic <strong style={{ color: 'var(--white)' }}>guitar progressions</strong>, server modding in <strong style={{ color: 'var(--white)' }}>Rust & Minecraft</strong>, and playing <strong style={{ color: 'var(--white)' }}>8-ball pool</strong> with friends.
         </>
       ),
       pillars: [
@@ -118,8 +128,11 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
             <p className="body-text" style={{ marginBottom: '1rem' }}>
               {t.p1}
             </p>
-            <p className="body-text">
+            <p className="body-text" style={{ marginBottom: '1rem' }}>
               {t.p2}
+            </p>
+            <p className="body-text">
+              {t.p3}
             </p>
           </div>
 
