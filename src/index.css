@@ -3,7 +3,7 @@
    Monochrome + #FF0000 Pure Red Accent
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=DotGothic16&display=swap');
+/* Fonts loaded via async preloaded link tags in index.html for max mobile speed */
 
 @font-face {
   font-family: 'NDot';

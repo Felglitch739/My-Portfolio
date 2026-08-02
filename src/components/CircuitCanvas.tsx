@@ -32,16 +32,17 @@ export default function CircuitCanvas() {
 
     window.addEventListener('resize', handleResize)
 
-    // Node & Trace generation for engineering grid
-    const nodeCount = Math.floor((width * height) / 28000)
+    // Node & Trace generation (optimized for low mobile CPU overhead)
+    const isMobile = width < 768
+    const nodeCount = Math.floor((width * height) / (isMobile ? 55000 : 28000))
     const nodes: { x: number; y: number; vx: number; vy: number; radius: number; pulse: number }[] = []
 
-    for (let i = 0; i < Math.max(40, nodeCount); i++) {
+    for (let i = 0; i < Math.max(isMobile ? 16 : 40, nodeCount); i++) {
       nodes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
+        vx: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
+        vy: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
         radius: Math.random() * 1.5 + 1,
         pulse: Math.random() * Math.PI * 2,
       })
