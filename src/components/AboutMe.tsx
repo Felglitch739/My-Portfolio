@@ -106,7 +106,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
               FÉLIX E. MARTINEZ
             </span>
             <span className="mono-tag mono-tag-red" style={{ marginTop: '0.4rem' }}>
-              CS @ UTRGV
+              {lang === 'es' ? 'CS EN UTRGV' : 'CS AT UTRGV'}
             </span>
           </div>
 

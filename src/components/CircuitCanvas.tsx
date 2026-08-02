@@ -1,5 +1,16 @@
 import { useEffect, useRef } from 'react'
 
+interface Particle {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  size: number
+  life: number
+  maxLife: number
+  color: string
+}
+
 export default function CircuitCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -22,16 +33,16 @@ export default function CircuitCanvas() {
     window.addEventListener('resize', handleResize)
 
     // Node & Trace generation for engineering grid
-    const nodeCount = Math.floor((width * height) / 30000)
+    const nodeCount = Math.floor((width * height) / 28000)
     const nodes: { x: number; y: number; vx: number; vy: number; radius: number; pulse: number }[] = []
 
-    for (let i = 0; i < Math.max(35, nodeCount); i++) {
+    for (let i = 0; i < Math.max(40, nodeCount); i++) {
       nodes.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        radius: Math.random() * 1.4 + 1,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        radius: Math.random() * 1.5 + 1,
         pulse: Math.random() * Math.PI * 2,
       })
     }
@@ -41,10 +52,31 @@ export default function CircuitCanvas() {
     let pointerY = -1000
     let isTouching = false
 
+    // Particle burst array for high-impact touch feedback
+    const particles: Particle[] = []
+
+    const spawnParticles = (x: number, y: number, count = 3) => {
+      for (let k = 0; k < count; k++) {
+        const angle = Math.random() * Math.PI * 2
+        const speed = Math.random() * 2 + 0.5
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 2.5 + 1.2,
+          life: 1,
+          maxLife: 30 + Math.random() * 20,
+          color: Math.random() > 0.3 ? '#FF0000' : '#ffffff',
+        })
+      }
+    }
+
     const handleMouseMove = (e: MouseEvent) => {
       pointerX = e.clientX
       pointerY = e.clientY
       isTouching = false
+      if (Math.random() > 0.4) spawnParticles(pointerX, pointerY, 1)
     }
 
     const handleTouchStart = (e: TouchEvent) => {
@@ -52,6 +84,7 @@ export default function CircuitCanvas() {
         pointerX = e.touches[0].clientX
         pointerY = e.touches[0].clientY
         isTouching = true
+        spawnParticles(pointerX, pointerY, 6)
       }
     }
 
@@ -60,6 +93,7 @@ export default function CircuitCanvas() {
         pointerX = e.touches[0].clientX
         pointerY = e.touches[0].clientY
         isTouching = true
+        spawnParticles(pointerX, pointerY, 2)
       }
     }
 
@@ -75,32 +109,33 @@ export default function CircuitCanvas() {
     let time = 0
 
     const render = () => {
-      time += 0.02
+      time += 0.025
       ctx.clearRect(0, 0, width, height)
 
-      // Ambient breathing glow pulse for mobile idle state
+      // Ambient breathing position for mobile when not touched
       const ambientX = isTouching || pointerX > 0 
         ? pointerX 
-        : width / 2 + Math.cos(time * 0.5) * (width * 0.25)
+        : width / 2 + Math.cos(time * 0.6) * (width * 0.3)
       const ambientY = isTouching || pointerY > 0 
         ? pointerY 
-        : height / 2 + Math.sin(time * 0.7) * (height * 0.2)
+        : height / 2 + Math.sin(time * 0.8) * (height * 0.25)
 
-      // Soft ambient light aura (Pure Red #FF0000 accent)
+      // High-visibility glowing ambient light aura (Pure Red #FF0000)
+      const auraRadius = width < 768 ? 260 : 380
       const auraGradient = ctx.createRadialGradient(
         ambientX, ambientY, 10,
-        ambientX, ambientY, width < 768 ? 220 : 320
+        ambientX, ambientY, auraRadius
       )
-      auraGradient.addColorStop(0, 'rgba(255, 0, 0, 0.08)')
-      auraGradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.03)')
+      auraGradient.addColorStop(0, isTouching ? 'rgba(255, 0, 0, 0.25)' : 'rgba(255, 0, 0, 0.16)')
+      auraGradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.05)')
       auraGradient.addColorStop(1, 'rgba(0, 0, 0, 0)')
 
       ctx.fillStyle = auraGradient
       ctx.fillRect(0, 0, width, height)
 
-      // Draw engineering grid pattern
-      const gridSize = width < 768 ? 40 : 60
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)'
+      // Grid pattern
+      const gridSize = width < 768 ? 36 : 60
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)'
       ctx.lineWidth = 1
 
       for (let x = 0; x < width; x += gridSize) {
@@ -116,6 +151,26 @@ export default function CircuitCanvas() {
         ctx.stroke()
       }
 
+      // Draw touch energy particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]
+        p.x += p.vx
+        p.y += p.vy
+        p.life -= 1 / p.maxLife
+
+        if (p.life <= 0) {
+          particles.splice(i, 1)
+          continue
+        }
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2)
+        ctx.fillStyle = p.color === '#FF0000' 
+          ? `rgba(255, 0, 0, ${p.life})` 
+          : `rgba(255, 255, 255, ${p.life * 0.8})`
+        ctx.fill()
+      }
+
       // Draw nodes and connecting trace lines
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i]
@@ -126,25 +181,23 @@ export default function CircuitCanvas() {
         if (node.x < 0 || node.x > width) node.vx *= -1
         if (node.y < 0 || node.y > height) node.vy *= -1
 
-        node.pulse += 0.03
+        node.pulse += 0.04
         const pulseAlpha = (Math.sin(node.pulse) + 1) / 2
 
-        // Pointer distance (mouse or touch)
         const dx = ambientX - node.x
         const dy = ambientY - node.y
         const dist = Math.sqrt(dx * dx + dy * dy)
-        const isNearPointer = dist < (width < 768 ? 160 : 220)
+        const isNearPointer = dist < (width < 768 ? 180 : 250)
 
-        // Draw connections
+        // Connections
         for (let j = i + 1; j < nodes.length; j++) {
           const other = nodes[j]
           const distance = Math.hypot(node.x - other.x, node.y - other.y)
 
-          if (distance < (width < 768 ? 110 : 140)) {
-            const alpha = (1 - distance / 140) * 0.12 * (isNearPointer ? 2.5 : 1)
+          if (distance < (width < 768 ? 120 : 150)) {
+            const alpha = (1 - distance / 150) * 0.15 * (isNearPointer ? 2.5 : 1)
             ctx.beginPath()
 
-            // Circuit-style right-angle trace lines
             if ((i + j) % 3 === 0) {
               const midX = (node.x + other.x) / 2
               ctx.moveTo(node.x, node.y)
@@ -157,19 +210,19 @@ export default function CircuitCanvas() {
             }
 
             ctx.strokeStyle = isNearPointer
-              ? `rgba(255, 0, 0, ${alpha * 1.8})`
-              : `rgba(255, 255, 255, ${alpha * 0.8})`
-            ctx.lineWidth = isNearPointer ? 1.2 : 0.7
+              ? `rgba(255, 0, 0, ${alpha * 2})`
+              : `rgba(255, 255, 255, ${alpha})`
+            ctx.lineWidth = isNearPointer ? 1.4 : 0.8
             ctx.stroke()
 
             // Glowing data pulse on trace
             if ((i + j) % 4 === 0) {
-              const pos = (Math.sin(time * 1.5 + i) + 1) / 2
+              const pos = (Math.sin(time * 1.8 + i) + 1) / 2
               const px = node.x + (other.x - node.x) * pos
               const py = node.y + (other.y - node.y) * pos
               ctx.beginPath()
-              ctx.arc(px, py, 1.2, 0, Math.PI * 2)
-              ctx.fillStyle = isNearPointer ? '#FF0000' : 'rgba(255, 255, 255, 0.4)'
+              ctx.arc(px, py, 1.4, 0, Math.PI * 2)
+              ctx.fillStyle = isNearPointer ? '#FF0000' : 'rgba(255, 255, 255, 0.5)'
               ctx.fill()
             }
           }
@@ -180,7 +233,7 @@ export default function CircuitCanvas() {
         ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
         ctx.fillStyle = isNearPointer
           ? `#FF0000`
-          : `rgba(255, 255, 255, ${0.2 + pulseAlpha * 0.3})`
+          : `rgba(255, 255, 255, ${0.3 + pulseAlpha * 0.4})`
         ctx.fill()
       }
 
@@ -195,7 +248,7 @@ export default function CircuitCanvas() {
       window.removeEventListener('touchstart', handleTouchStart)
       window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('touchend', handleTouchEnd)
-      cancelAnimationFrame(animationFrameId)
+      cancelAnimationFrame(animationId)
     }
   }, [])
 

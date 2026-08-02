@@ -351,6 +351,12 @@ body {
   }
 }
 
+/* Mobile LED breathing border pulse animation */
+@keyframes mobilePulseBorder {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.12); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6); }
+  50% { border-color: rgba(255, 0, 0, 0.35); box-shadow: 0 4px 25px rgba(255, 0, 0, 0.15); }
+}
+
 @media (max-width: 768px) {
   html, body {
     overflow-x: hidden;
@@ -364,5 +370,8 @@ body {
   }
   .container {
     padding: 0 1rem;
+  }
+  .bento-card {
+    animation: mobilePulseBorder 6s ease-in-out infinite;
   }
 }

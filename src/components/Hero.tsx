@@ -46,7 +46,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
       projectsBtn: "Explorar Obras",
       terminalBtn: "Abrir Terminal",
       cvBtn: "Descargar CV",
-      location: "Matamoros, Tamps. / RGV, TX",
+      location: "Brownsville, TX / Matamoros, Tamps.",
       stats: [
         { val: "05+", label: "Sistemas Clave" },
         { val: "24H", label: "Hackathon Host" },
@@ -67,7 +67,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
       projectsBtn: "Explore Work",
       terminalBtn: "Open Terminal",
       cvBtn: "Download Resume",
-      location: "Matamoros, Tamps. / RGV, TX",
+      location: "Brownsville, TX / Matamoros, Tamps.",
       stats: [
         { val: "05+", label: "Core Systems" },
         { val: "24H", label: "Hackathon Host" },

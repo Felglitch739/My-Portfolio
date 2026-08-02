@@ -116,7 +116,7 @@ export default function Contact({ lang = 'es' }: ContactProps) {
               <div>
                 <div className="ndot" style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{t.locationLabel}</div>
                 <div style={{ color: 'var(--white)', fontWeight: 600, fontSize: '0.95rem', marginTop: '0.2rem' }}>
-                  Edinburg, TX / Matamoros, Tamps.
+                  Brownsville, TX / Matamoros, Tamps.
                 </div>
               </div>
 

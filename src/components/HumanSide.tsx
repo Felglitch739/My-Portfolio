@@ -127,6 +127,45 @@ function BilliardsHardwareCanvas() {
       setPowerPercent(0)
     }
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 0) return
+      const rect = canvas.getBoundingClientRect()
+      const mx = e.touches[0].clientX - rect.left
+      const my = e.touches[0].clientY - rect.top
+
+      const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
+      if (!cueBall) return
+
+      const isMoving = Math.hypot(cueBall.vx, cueBall.vy) > 0.15
+      if (isMoving) return
+
+      isDraggingRef.current = true
+      dragPosRef.current = { x: mx, y: my }
+      mousePosRef.current = { x: mx, y: my }
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 0) return
+      const rect = canvas.getBoundingClientRect()
+      const mx = e.touches[0].clientX - rect.left
+      const my = e.touches[0].clientY - rect.top
+      mousePosRef.current = { x: mx, y: my }
+
+      if (isDraggingRef.current) {
+        const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
+        if (!cueBall) return
+        const dx = cueBall.x - mx
+        const dy = cueBall.y - my
+        const dist = Math.hypot(dx, dy)
+        const powerRatio = Math.min(dist / 100, 1)
+        setPowerPercent(Math.round(powerRatio * 100))
+      }
+    }
+
+    const handleTouchEnd = () => {
+      handleMouseUp()
+    }
+
     const handleResize = () => {
       if (!canvas) return
       W = canvas.width = canvas.offsetWidth || 500
@@ -136,6 +175,9 @@ function BilliardsHardwareCanvas() {
     canvas.addEventListener('mousedown', handleMouseDown)
     window.addEventListener('mousemove', handleMouseMove)
     window.addEventListener('mouseup', handleMouseUp)
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: true })
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true })
+    window.addEventListener('touchend', handleTouchEnd)
     window.addEventListener('resize', handleResize)
 
     // Move pockets slightly inward so the threshold isn't completely blocked by cushions
@@ -408,7 +450,7 @@ function BilliardsHardwareCanvas() {
 
       {/* Billiards Canvas Container */}
       <div style={{ position: 'relative', width: '100%', height: '250px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-        <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'grab' }} />
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'grab', touchAction: 'none' }} />
         
         <div className="ndot" style={{ position: 'absolute', top: 14, left: 16, fontSize: '0.68rem', color: '#ffffff', pointerEvents: 'none' }}>
           8-BALL POOL SIMULATOR
