@@ -63,7 +63,7 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
             WebkitBackdropFilter: 'blur(16px)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '9999px',
-            padding: '0.55rem 1.25rem',
+            padding: '0.45rem 0.9rem',
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.7)',
             transition: 'all 0.3s ease',
           }}
@@ -75,10 +75,11 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
             style={{
               textDecoration: 'none',
               color: 'var(--white)',
-              fontSize: '0.88rem',
+              fontSize: '0.95rem',
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
+              flexShrink: 0,
             }}
           >
             <span
@@ -91,7 +92,7 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
                 display: 'inline-block',
               }}
             />
-            FMF <span style={{ color: 'var(--gray-500)', fontWeight: 400 }}>// UTRGV</span>
+            FMF
           </a>
 
           {/* Desktop Navigation Links */}
@@ -117,20 +118,20 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
           </nav>
 
           {/* Desktop & Mobile Action Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
             <button
               onClick={onOpenTerminal}
               className="mono-tag mono-tag-red"
-              style={{ cursor: 'pointer', fontSize: '0.65rem', padding: '0.35rem 0.65rem' }}
+              style={{ cursor: 'pointer', fontSize: '0.65rem', padding: '0.35rem 0.55rem' }}
               title="Open Hardware Terminal"
             >
-              <Terminal size={12} /> CONSOLE
+              <Terminal size={12} /> <span className="hide-mobile">CONSOLE</span>
             </button>
 
             <button
               onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
               className="mono-tag"
-              style={{ cursor: 'pointer', background: 'rgba(255, 255, 255, 0.05)', fontSize: '0.65rem', padding: '0.35rem 0.65rem' }}
+              style={{ cursor: 'pointer', background: 'rgba(255, 255, 255, 0.05)', fontSize: '0.65rem', padding: '0.35rem 0.55rem' }}
             >
               <Globe size={12} /> {lang.toUpperCase()}
             </button>
@@ -143,13 +144,14 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
                 background: mobileOpen ? 'var(--red)' : 'rgba(255, 255, 255, 0.08)',
                 border: '1px solid rgba(255, 255, 255, 0.15)',
                 borderRadius: '50%',
-                width: '36px',
-                height: '36px',
+                width: '34px',
+                height: '34px',
                 color: 'var(--white)',
                 cursor: 'pointer',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
+                flexShrink: 0,
               }}
               aria-label="Toggle menu"
             >
