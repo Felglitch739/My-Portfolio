@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ExternalLink, X, Globe, Smartphone, Users, CloudSun, ArrowUpRight } from 'lucide-react'
+import Bento3DTilt from './Bento3DTilt'
 
 const GithubIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -127,9 +128,9 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
           {projects.map((p, i) => {
             const isLarge = i < 2
             return (
-              <div
+              <Bento3DTilt
                 key={p.id}
-                className={`bento-card ${isLarge ? 'col-span-6' : 'col-span-4'}`}
+                className={isLarge ? 'col-span-6' : 'col-span-4'}
                 style={{ justifyContent: 'space-between', minHeight: '340px' }}
               >
                 <div>
@@ -190,7 +191,7 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
                     </button>
                   </div>
                 </div>
-              </div>
+              </Bento3DTilt>
             )
           })}
         </div>

@@ -11,6 +11,8 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import CyberTerminal from './components/CyberTerminal'
 
+import Scroll3DWorld from './components/Scroll3DWorld'
+
 export default function App() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false)
   const [lang, setLang] = useState<'es' | 'en'>('es')
@@ -68,16 +70,18 @@ export default function App() {
       {/* Navigation */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} setLang={setLang} />
 
-      {/* Main Bento Content */}
-      <main style={{ position: 'relative', zIndex: 1 }}>
-        <Hero onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} />
-        <AboutMe lang={lang} />
-        <TechStack lang={lang} />
-        <Projects lang={lang} />
-        <Events lang={lang} />
-        <HumanSide lang={lang} />
-        <Contact lang={lang} />
-      </main>
+      {/* Main Bento Content with 3D Camera Scroll World */}
+      <Scroll3DWorld>
+        <main style={{ position: 'relative', zIndex: 1 }}>
+          <Hero onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} />
+          <AboutMe lang={lang} />
+          <TechStack lang={lang} />
+          <Projects lang={lang} />
+          <Events lang={lang} />
+          <HumanSide lang={lang} />
+          <Contact lang={lang} />
+        </main>
+      </Scroll3DWorld>
 
       {/* Footer */}
       <Footer lang={lang} />

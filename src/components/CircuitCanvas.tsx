@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react'
 
-interface Particle {
+interface Particle3D {
   x: number
   y: number
+  z: number
   vx: number
   vy: number
-  size: number
-  life: number
-  maxLife: number
-  color: string
+  vz: number
+  radius: number
+  pulse: number
 }
 
 export default function CircuitCanvas() {
@@ -32,210 +32,124 @@ export default function CircuitCanvas() {
 
     window.addEventListener('resize', handleResize)
 
-    // Node & Trace generation (optimized for low mobile CPU overhead)
+    // 3D Nodes & Spatial Depth Setup
     const isMobile = width < 768
-    const nodeCount = Math.floor((width * height) / (isMobile ? 55000 : 28000))
-    const nodes: { x: number; y: number; vx: number; vy: number; radius: number; pulse: number }[] = []
+    const nodeCount = Math.max(isMobile ? 20 : 55, Math.floor((width * height) / (isMobile ? 50000 : 25000)))
+    const nodes: Particle3D[] = []
 
-    for (let i = 0; i < Math.max(isMobile ? 16 : 40, nodeCount); i++) {
+    for (let i = 0; i < nodeCount; i++) {
       nodes.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
-        vy: (Math.random() - 0.5) * (isMobile ? 0.25 : 0.4),
-        radius: Math.random() * 1.5 + 1,
+        x: (Math.random() - 0.5) * width * 1.5,
+        y: (Math.random() - 0.5) * height * 1.5,
+        z: Math.random() * 800 + 100,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        vz: (Math.random() - 0.5) * 0.8,
+        radius: Math.random() * 1.8 + 1,
         pulse: Math.random() * Math.PI * 2,
       })
     }
 
-    // Interactive pointer (Mouse + Touch support for Mobile)
-    let pointerX = -1000
-    let pointerY = -1000
-    let isTouching = false
-
-    // Particle burst array for high-impact touch feedback
-    const particles: Particle[] = []
-
-    const spawnParticles = (x: number, y: number, count = 3) => {
-      for (let k = 0; k < count; k++) {
-        const angle = Math.random() * Math.PI * 2
-        const speed = Math.random() * 2 + 0.5
-        particles.push({
-          x,
-          y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          size: Math.random() * 2.5 + 1.2,
-          life: 1,
-          maxLife: 30 + Math.random() * 20,
-          color: Math.random() > 0.3 ? '#FF0000' : '#ffffff',
-        })
-      }
-    }
+    // Interactive pointer & Scroll tracking
+    let pointerX = width / 2
+    let pointerY = height / 2
+    let lastScrollY = window.scrollY
+    let scrollSpeed = 0
 
     const handleMouseMove = (e: MouseEvent) => {
       pointerX = e.clientX
       pointerY = e.clientY
-      isTouching = false
-      if (Math.random() > 0.4) spawnParticles(pointerX, pointerY, 1)
     }
 
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        pointerX = e.touches[0].clientX
-        pointerY = e.touches[0].clientY
-        isTouching = true
-        spawnParticles(pointerX, pointerY, 6)
-      }
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        pointerX = e.touches[0].clientX
-        pointerY = e.touches[0].clientY
-        isTouching = true
-        spawnParticles(pointerX, pointerY, 2)
-      }
-    }
-
-    const handleTouchEnd = () => {
-      isTouching = false
+    const handleScroll = () => {
+      const currentScroll = window.scrollY
+      scrollSpeed = (currentScroll - lastScrollY) * 0.15
+      lastScrollY = currentScroll
     }
 
     window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: true })
-    window.addEventListener('touchend', handleTouchEnd)
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
-    let time = 0
+    const fov = 400
 
     const render = () => {
-      time += 0.025
       ctx.clearRect(0, 0, width, height)
 
-      // Ambient breathing position for mobile when not touched
-      const ambientX = isTouching || pointerX > 0 
-        ? pointerX 
-        : width / 2 + Math.cos(time * 0.6) * (width * 0.3)
-      const ambientY = isTouching || pointerY > 0 
-        ? pointerY 
-        : height / 2 + Math.sin(time * 0.8) * (height * 0.25)
+      // Decay scroll speed effect
+      scrollSpeed *= 0.92
 
-      // High-visibility glowing ambient light aura (Pure Red #FF0000)
-      const auraRadius = width < 768 ? 260 : 380
-      const auraGradient = ctx.createRadialGradient(
-        ambientX, ambientY, 10,
-        ambientX, ambientY, auraRadius
-      )
-      auraGradient.addColorStop(0, isTouching ? 'rgba(255, 0, 0, 0.25)' : 'rgba(255, 0, 0, 0.16)')
-      auraGradient.addColorStop(0.5, 'rgba(255, 0, 0, 0.05)')
-      auraGradient.addColorStop(1, 'rgba(0, 0, 0, 0)')
+      const centerX = width / 2
+      const centerY = height / 2
 
-      ctx.fillStyle = auraGradient
-      ctx.fillRect(0, 0, width, height)
+      // Draw 3D Spatial Grid Lines
+      ctx.lineWidth = 0.5
 
-      // Grid pattern
-      const gridSize = width < 768 ? 36 : 60
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)'
-      ctx.lineWidth = 1
-
-      for (let x = 0; x < width; x += gridSize) {
-        ctx.beginPath()
-        ctx.moveTo(x, 0)
-        ctx.lineTo(x, height)
-        ctx.stroke()
-      }
-      for (let y = 0; y < height; y += gridSize) {
-        ctx.beginPath()
-        ctx.moveTo(0, y)
-        ctx.lineTo(width, y)
-        ctx.stroke()
-      }
-
-      // Draw touch energy particles
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i]
-        p.x += p.vx
-        p.y += p.vy
-        p.life -= 1 / p.maxLife
-
-        if (p.life <= 0) {
-          particles.splice(i, 1)
-          continue
-        }
-
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2)
-        ctx.fillStyle = p.color === '#FF0000' 
-          ? `rgba(255, 0, 0, ${p.life})` 
-          : `rgba(255, 255, 255, ${p.life * 0.8})`
-        ctx.fill()
-      }
-
-      // Draw nodes and connecting trace lines
+      // Render 3D Nodes & Connective Network Traces
       for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i]
+        const n = nodes[i]
 
-        node.x += node.vx
-        node.y += node.vy
+        // Update 3D Positions (Z moves with scroll speed for 3D travel effect)
+        n.x += n.vx
+        n.y += n.vy
+        n.z -= n.vz + scrollSpeed
 
-        if (node.x < 0 || node.x > width) node.vx *= -1
-        if (node.y < 0 || node.y > height) node.vy *= -1
+        // Wrap Z in 3D frustum bounds
+        if (n.z < 50) n.z = 900
+        if (n.z > 900) n.z = 50
 
-        node.pulse += 0.04
-        const pulseAlpha = (Math.sin(node.pulse) + 1) / 2
+        // Wrap X & Y bounds
+        if (Math.abs(n.x) > width) n.x = -n.x
+        if (Math.abs(n.y) > height) n.y = -n.y
 
-        const dx = ambientX - node.x
-        const dy = ambientY - node.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        const isNearPointer = dist < (width < 768 ? 180 : 250)
+        // Perspective 3D projection
+        const scale = fov / (fov + n.z)
+        const px = centerX + n.x * scale
+        const py = centerY + n.y * scale
 
-        // Connections
+        n.pulse += 0.03
+        const currentRadius = n.radius * scale * (1 + Math.sin(n.pulse) * 0.25)
+        const opacity = Math.min(1, Math.max(0.1, scale * 1.2))
+
+        // Draw 3D particle node
+        ctx.beginPath()
+        ctx.arc(px, py, Math.max(0.8, currentRadius), 0, Math.PI * 2)
+        ctx.fillStyle = i % 7 === 0 ? `rgba(255, 0, 0, ${opacity})` : `rgba(255, 255, 255, ${opacity * 0.7})`
+        ctx.fill()
+
+        // Connect 3D nodes that are spatially close in 3D
         for (let j = i + 1; j < nodes.length; j++) {
-          const other = nodes[j]
-          const distance = Math.hypot(node.x - other.x, node.y - other.y)
+          const n2 = nodes[j]
+          const dx = n.x - n2.x
+          const dy = n.y - n2.y
+          const dz = n.z - n2.z
+          const dist3D = Math.sqrt(dx * dx + dy * dy + dz * dz)
 
-          if (distance < (width < 768 ? 120 : 150)) {
-            const alpha = (1 - distance / 150) * 0.15 * (isNearPointer ? 2.5 : 1)
+          if (dist3D < 160) {
+            const scale2 = fov / (fov + n2.z)
+            const p2x = centerX + n2.x * scale2
+            const p2y = centerY + n2.y * scale2
+
+            const lineOpacity = (1 - dist3D / 160) * opacity * 0.25
             ctx.beginPath()
-
-            if ((i + j) % 3 === 0) {
-              const midX = (node.x + other.x) / 2
-              ctx.moveTo(node.x, node.y)
-              ctx.lineTo(midX, node.y)
-              ctx.lineTo(midX, other.y)
-              ctx.lineTo(other.x, other.y)
-            } else {
-              ctx.moveTo(node.x, node.y)
-              ctx.lineTo(other.x, other.y)
-            }
-
-            ctx.strokeStyle = isNearPointer
-              ? `rgba(255, 0, 0, ${alpha * 2})`
-              : `rgba(255, 255, 255, ${alpha})`
-            ctx.lineWidth = isNearPointer ? 1.4 : 0.8
+            ctx.moveTo(px, py)
+            ctx.lineTo(p2x, p2y)
+            ctx.strokeStyle = (i + j) % 9 === 0 ? `rgba(255, 0, 0, ${lineOpacity})` : `rgba(255, 255, 255, ${lineOpacity * 0.5})`
             ctx.stroke()
-
-            // Glowing data pulse on trace
-            if ((i + j) % 4 === 0) {
-              const pos = (Math.sin(time * 1.8 + i) + 1) / 2
-              const px = node.x + (other.x - node.x) * pos
-              const py = node.y + (other.y - node.y) * pos
-              ctx.beginPath()
-              ctx.arc(px, py, 1.4, 0, Math.PI * 2)
-              ctx.fillStyle = isNearPointer ? '#FF0000' : 'rgba(255, 255, 255, 0.5)'
-              ctx.fill()
-            }
           }
         }
 
-        // Draw node dot
-        ctx.beginPath()
-        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2)
-        ctx.fillStyle = isNearPointer
-          ? `#FF0000`
-          : `rgba(255, 255, 255, ${0.3 + pulseAlpha * 0.4})`
-        ctx.fill()
+        // Pointer 3D attraction vector
+        const pDx = px - pointerX
+        const pDy = py - pointerY
+        const pDist = Math.sqrt(pDx * pDx + pDy * pDy)
+
+        if (pDist < 140) {
+          ctx.beginPath()
+          ctx.moveTo(px, py)
+          ctx.lineTo(pointerX, pointerY)
+          ctx.strokeStyle = `rgba(255, 0, 0, ${(1 - pDist / 140) * 0.35})`
+          ctx.stroke()
+        }
       }
 
       animationFrameId = requestAnimationFrame(render)
@@ -246,9 +160,7 @@ export default function CircuitCanvas() {
     return () => {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
-      window.removeEventListener('touchend', handleTouchEnd)
+      window.removeEventListener('scroll', handleScroll)
       cancelAnimationFrame(animationId)
     }
   }, [])
@@ -258,12 +170,10 @@ export default function CircuitCanvas() {
       ref={canvasRef}
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
+        inset: 0,
         pointerEvents: 'none',
         zIndex: 0,
+        opacity: 0.85,
       }}
     />
   )
