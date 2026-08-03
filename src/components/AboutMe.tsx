@@ -88,7 +88,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
 
         <div className="bento-grid">
           {/* Photo Widget (col-span-4) */}
-          <Bento3DTilt className="bento-card col-span-4" style={{ alignItems: 'center', textAlign: 'center', justifyContent: 'center' }}>
+          <Bento3DTilt className="col-span-4" style={{ alignItems: 'center', textAlign: 'center', justifyContent: 'center' }}>
             <div
               style={{
                 width: '180px',
@@ -122,7 +122,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
           </Bento3DTilt>
 
           {/* Narrative Widget (col-span-8) */}
-          <Bento3DTilt className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
+          <Bento3DTilt className="col-span-8" style={{ justifyContent: 'center' }}>
             <h2 className="card-title" style={{ fontSize: '1.6rem', marginBottom: '1rem', color: 'var(--white)' }}>
               {t.title}
             </h2>
@@ -139,7 +139,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
 
           {/* 3 Pillar Bento Widgets (col-span-4 each) */}
           {t.pillars.map((p, i) => (
-            <Bento3DTilt key={i} className="bento-card col-span-4">
+            <Bento3DTilt key={i} className="col-span-4">
               <div style={{ marginBottom: '1rem' }}>{p.icon}</div>
               <h3 className="card-title" style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>
                 {p.title}

@@ -54,6 +54,7 @@ export default function Bento3DTilt({
 
   return (
     <div
+      className={className}
       style={{
         perspective: '1000px',
         transformStyle: 'preserve-3d',
@@ -63,7 +64,7 @@ export default function Bento3DTilt({
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={className}
+        className="bento-card"
         style={{
           ...style,
           rotateX,
@@ -73,6 +74,8 @@ export default function Bento3DTilt({
           position: 'relative',
           overflow: 'hidden',
           willChange: 'transform',
+          height: '100%',
+          width: '100%',
         }}
       >
         {/* 3D Specular Light Reflection Glare Overlay */}

@@ -89,9 +89,8 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
       <div className="container">
         {/* Bento Grid Layout with 3D Spatial Tilt & Hardware Core */}
         <div className="bento-grid">
-
           {/* Widget 1: Main Banner Hero Card (col-span-8) */}
-          <Bento3DTilt className="bento-card col-span-8" style={{ justifyContent: 'space-between', minHeight: '380px' }}>
+          <Bento3DTilt className="col-span-8" style={{ justifyContent: 'space-between', minHeight: '380px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
                 <span className="section-label" style={{ margin: 0 }}>01 // HERO_SYS</span>
@@ -139,7 +138,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
           </Bento3DTilt>
 
           {/* Widget 2: 3D Hardware Interactive Core (col-span-4) */}
-          <Bento3DTilt className="bento-card col-span-4" style={{ justifyContent: 'space-between', padding: '1.5rem' }}>
+          <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between', padding: '1.5rem' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.8rem' }}>
                 <span className="section-label" style={{ margin: 0 }}>3D CORE // HARDWARE</span>
@@ -159,7 +158,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
           </Bento3DTilt>
 
           {/* Widget 3: Quick Stats (col-span-4) */}
-          <Bento3DTilt className="bento-card col-span-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
+          <Bento3DTilt className="col-span-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
             {t.stats.map((st, i) => (
               <div key={i}>
                 <div className="ndot" style={{ fontSize: '1.8rem', color: i === 0 ? 'var(--red)' : 'var(--white)' }}>
@@ -173,7 +172,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
           </Bento3DTilt>
 
           {/* Widget 4: Stack Modules Pill Grid (col-span-8) */}
-          <Bento3DTilt className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
+          <Bento3DTilt className="col-span-8" style={{ justifyContent: 'center' }}>
             <div className="section-label" style={{ marginBottom: '1rem' }}>02 // HARDWARE & SOFTWARE MODULES</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {['TYPESCRIPT', 'REACT NATIVE', 'PYTHON', 'SQL', 'TAILWIND CSS', 'VITE', 'SUPABASE', 'REACT', 'NODE.JS', 'NEXT.JS'].map((tech) => (
