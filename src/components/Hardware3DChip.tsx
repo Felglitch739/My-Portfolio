@@ -7,10 +7,9 @@ export default function Hardware3DChip() {
     const container = containerRef.current
     if (!container) return
 
-    // Dynamic import of Three.js or Canvas 3D rendering
     let animationId: number
     let width = container.offsetWidth || 300
-    let height = container.offsetHeight || 300
+    let height = container.offsetHeight || 260
 
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -24,7 +23,6 @@ export default function Hardware3DChip() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Pointer tracking for 3D rotation
     let mouseX = 0
     let mouseY = 0
     let targetX = 0
@@ -32,131 +30,145 @@ export default function Hardware3DChip() {
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect()
-      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2
-      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2
+      mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2.5
+      mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2.5
     }
 
     window.addEventListener('mousemove', handleMouseMove)
 
     let angleX = 0
     let angleY = 0
+    let angleZ = 0
     let time = 0
 
-    // 3D Cube & Circuit Ring Geometry Nodes
-    const cubeVertices = [
-      [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
-      [-1, -1, 1],  [1, -1, 1],  [1, 1, 1],  [-1, 1, 1],
-    ]
+    // 3D Icosahedron Vertices (Golden ratio phi)
+    const phi = (1 + Math.sqrt(5)) / 2
+    const rawVertices: [number, number, number][] = [
+      [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
+      [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
+      [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1]
+    ].map(([x, y, z]) => {
+      const len = Math.sqrt(x * x + y * y + z * z)
+      return [x / len, y / len, z / len]
+    })
 
-    const cubeEdges = [
-      [0, 1], [1, 2], [2, 3], [3, 0], // Back face
-      [4, 5], [5, 6], [6, 7], [7, 4], // Front face
-      [0, 4], [1, 5], [2, 6], [3, 7], // Connecting edges
-    ]
+    // Edges connecting vertices with distance threshold
+    const edges: [number, number][] = []
+    for (let i = 0; i < rawVertices.length; i++) {
+      for (let j = i + 1; j < rawVertices.length; j++) {
+        const dx = rawVertices[i][0] - rawVertices[j][0]
+        const dy = rawVertices[i][1] - rawVertices[j][1]
+        const dz = rawVertices[i][2] - rawVertices[j][2]
+        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz)
+        if (dist < 1.1) {
+          edges.push([i, j])
+        }
+      }
+    }
 
-    // Orbital particles
-    const particleCount = 28
-    const particles = Array.from({ length: particleCount }).map(() => ({
-      angle: Math.random() * Math.PI * 2,
-      radius: 70 + Math.random() * 50,
-      speed: (Math.random() - 0.5) * 0.03,
-      y: (Math.random() - 0.5) * 60,
-    }))
+    // Concentric Ring Vertices (3D Gyroscope)
+    const ring1Count = 24
+    const ring1Points = Array.from({ length: ring1Count }).map((_, i) => {
+      const a = (i / ring1Count) * Math.PI * 2
+      return [Math.cos(a) * 1.5, Math.sin(a) * 1.5, 0] as [number, number, number]
+    })
 
-    const project = (x: number, y: number, z: number) => {
-      // 3D Rotation matrices
-      const radX = angleX
-      const radY = angleY
+    const ring2Points = Array.from({ length: ring1Count }).map((_, i) => {
+      const a = (i / ring1Count) * Math.PI * 2
+      return [Math.cos(a) * 1.8, 0, Math.sin(a) * 1.8] as [number, number, number]
+    })
 
-      // Rotate Y
-      const x1 = x * Math.cos(radY) + z * Math.sin(radY)
-      const y1 = y
-      const z1 = -x * Math.sin(radY) + z * Math.cos(radY)
+    const project = (x: number, y: number, z: number, rx = angleX, ry = angleY, rz = angleZ) => {
+      // 3D Rotations
+      // Y-axis
+      let x1 = x * Math.cos(ry) + z * Math.sin(ry)
+      let y1 = y
+      let z1 = -x * Math.sin(ry) + z * Math.cos(ry)
 
-      // Rotate X
-      const x2 = x1
-      const y2 = y1 * Math.cos(radX) - z1 * Math.sin(radX)
-      const z2 = y1 * Math.sin(radX) + z1 * Math.cos(radX)
+      // X-axis
+      let x2 = x1
+      let y2 = y1 * Math.cos(rx) - z1 * Math.sin(rx)
+      let z2 = y1 * Math.sin(rx) + z1 * Math.cos(rx)
 
-      // Perspective projection
-      const distance = 3.5
-      const fov = 160
-      const scale = fov / (distance + z2)
+      // Z-axis
+      let x3 = x2 * Math.cos(rz) - y2 * Math.sin(rz)
+      let y3 = x2 * Math.sin(rz) + y2 * Math.cos(rz)
+      let z3 = z2
+
+      const fov = 220
+      const dist = 3.2
+      const scale = fov / (dist + z3)
       return {
-        px: width / 2 + x2 * scale * 35,
-        py: height / 2 + y2 * scale * 35,
+        px: width / 2 + x3 * scale,
+        py: height / 2 + y3 * scale,
         scale,
-        z: z2,
+        z: z3,
       }
     }
 
     const render = () => {
       time += 0.02
-      targetX += (mouseY * 0.5 - targetX) * 0.05
-      targetY += (mouseX * 0.5 - targetY) * 0.05
+      targetX += (mouseY * 0.6 - targetX) * 0.05
+      targetY += (mouseX * 0.6 - targetY) * 0.05
 
-      angleX = targetX + Math.sin(time * 0.5) * 0.1
-      angleY = targetY + time * 0.3
+      angleX = targetX + Math.sin(time * 0.4) * 0.2
+      angleY = targetY + time * 0.4
+      angleZ = Math.cos(time * 0.3) * 0.15
 
       ctx.clearRect(0, 0, width, height)
 
-      // Draw 3D Core Red Glow
-      const glowGrad = ctx.createRadialGradient(width / 2, height / 2, 5, width / 2, height / 2, 100)
-      glowGrad.addColorStop(0, 'rgba(255, 0, 0, 0.35)')
-      glowGrad.addColorStop(0.5, 'rgba(255, 0, 0, 0.08)')
+      // Core Red Glow Gradient
+      const glowGrad = ctx.createRadialGradient(width / 2, height / 2, 2, width / 2, height / 2, 90)
+      glowGrad.addColorStop(0, 'rgba(255, 0, 0, 0.4)')
+      glowGrad.addColorStop(0.4, 'rgba(255, 0, 0, 0.12)')
       glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)')
       ctx.fillStyle = glowGrad
       ctx.fillRect(0, 0, width, height)
 
-      // Project vertices
-      const projected = cubeVertices.map(([x, y, z]) => project(x, y, z))
-
-      // Draw 3D Outer Box Edges (Monochrome + Red LED Accent)
-      ctx.lineWidth = 1.5
-      cubeEdges.forEach(([i, j]) => {
-        const p1 = projected[i]
-        const p2 = projected[j]
-
-        ctx.beginPath()
-        ctx.moveTo(p1.px, p1.py)
-        ctx.lineTo(p2.px, p2.py)
-        ctx.strokeStyle = (i + j) % 2 === 0 ? 'rgba(255, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.4)'
-        ctx.stroke()
-      })
-
-      // Draw 3D Outer Box Vertices (Dots)
-      projected.forEach((p) => {
-        ctx.beginPath()
-        ctx.arc(p.px, p.py, 3, 0, Math.PI * 2)
-        ctx.fillStyle = '#ffffff'
-        ctx.fill()
-      })
-
-      // Draw Inner Hardware Core (Red LED Processor Chip)
-      const coreSize = 0.5
-      const innerVertices = cubeVertices.map(([x, y, z]) => project(x * coreSize, y * coreSize, z * coreSize))
+      // Draw Outer Gyro Ring 1 (White Accent)
       ctx.lineWidth = 1
-      cubeEdges.forEach(([i, j]) => {
-        const p1 = innerVertices[i]
-        const p2 = innerVertices[j]
+      const projRing1 = ring1Points.map(([x, y, z]) => project(x, y, z, angleX * 0.5, angleY + time * 0.2, angleZ))
+      ctx.beginPath()
+      projRing1.forEach((p, idx) => {
+        if (idx === 0) ctx.moveTo(p.px, p.py)
+        else ctx.lineTo(p.px, p.py)
+      })
+      ctx.closePath()
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)'
+      ctx.stroke()
+
+      // Draw Outer Gyro Ring 2 (Red Accent)
+      const projRing2 = ring2Points.map(([x, y, z]) => project(x, y, z, angleX + time * 0.3, angleY * 0.5, angleZ))
+      ctx.beginPath()
+      projRing2.forEach((p, idx) => {
+        if (idx === 0) ctx.moveTo(p.px, p.py)
+        else ctx.lineTo(p.px, p.py)
+      })
+      ctx.closePath()
+      ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)'
+      ctx.stroke()
+
+      // Project & Draw 3D Icosahedron Core
+      const projIcosa = rawVertices.map(([x, y, z]) => project(x * 0.95, y * 0.95, z * 0.95))
+
+      // Edges
+      edges.forEach(([i, j]) => {
+        const p1 = projIcosa[i]
+        const p2 = projIcosa[j]
+        const opacity = Math.min(1, Math.max(0.2, (p1.z + p2.z) / 2 + 1.2))
+
         ctx.beginPath()
         ctx.moveTo(p1.px, p1.py)
         ctx.lineTo(p2.px, p2.py)
-        ctx.strokeStyle = '#FF0000'
+        ctx.strokeStyle = (i + j) % 2 === 0 ? `rgba(255, 0, 0, ${opacity * 0.9})` : `rgba(255, 255, 255, ${opacity * 0.7})`
         ctx.stroke()
       })
 
-      // Draw Orbital 3D Particles
-      particles.forEach((p) => {
-        p.angle += p.speed
-        const px = Math.cos(p.angle) * p.radius * 0.02
-        const pz = Math.sin(p.angle) * p.radius * 0.02
-        const py = p.y * 0.02
-
-        const proj = project(px, py, pz)
+      // Vertices (Dots)
+      projIcosa.forEach((p, i) => {
         ctx.beginPath()
-        ctx.arc(proj.px, proj.py, 1.8, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(255, 0, 0, 0.8)'
+        ctx.arc(p.px, p.py, i % 2 === 0 ? 3 : 2, 0, Math.PI * 2)
+        ctx.fillStyle = i % 2 === 0 ? '#FF0000' : '#FFFFFF'
         ctx.fill()
       })
 
@@ -168,7 +180,7 @@ export default function Hardware3DChip() {
     const handleResize = () => {
       if (!container) return
       width = canvas.width = container.offsetWidth || 300
-      height = canvas.height = container.offsetHeight || 300
+      height = canvas.height = container.offsetHeight || 260
     }
 
     window.addEventListener('resize', handleResize)

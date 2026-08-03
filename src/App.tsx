@@ -12,6 +12,7 @@ import Footer from './components/Footer'
 import CyberTerminal from './components/CyberTerminal'
 
 import Scroll3DWorld from './components/Scroll3DWorld'
+import Floating3DElements from './components/Floating3DElements'
 
 export default function App() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false)
@@ -66,6 +67,9 @@ export default function App() {
       
       {/* Heavy Frosted Glass Overlay */}
       <div className="glass-overlay" aria-hidden />
+
+      {/* Floating 3D Parallax Elements */}
+      <Floating3DElements />
 
       {/* Navigation */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} setLang={setLang} />
