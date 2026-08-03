@@ -21,11 +21,10 @@ export default function Scroll3DWorld({ children }: Scroll3DWorldProps) {
     restDelta: 0.001,
   })
 
-  // 3D Camera Animations based on Scroll Progress
-  // Camera rotates and sways in 3D space as you scroll through sections
-  const cameraRotateX = useTransform(smoothScroll, [0, 0.25, 0.5, 0.75, 1], [0, -3.5, 3.5, -2, 0])
-  const cameraRotateY = useTransform(smoothScroll, [0, 0.3, 0.6, 1], [0, 2, -2, 0])
-  const cameraZ = useTransform(smoothScroll, [0, 0.5, 1], [0, -30, 0])
+  // Subtle, ultra-smooth 3D Camera Animations based on Scroll Progress
+  const cameraRotateX = useTransform(smoothScroll, [0, 0.25, 0.5, 0.75, 1], [0, -1.2, 1.2, -0.8, 0])
+  const cameraRotateY = useTransform(smoothScroll, [0, 0.3, 0.6, 1], [0, 0.8, -0.8, 0])
+  const cameraZ = useTransform(smoothScroll, [0, 0.5, 1], [0, -12, 0])
 
   return (
     <div

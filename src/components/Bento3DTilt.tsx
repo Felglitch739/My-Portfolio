@@ -12,7 +12,7 @@ export default function Bento3DTilt({
   children,
   className = '',
   style = {},
-  intensity = 15,
+  intensity = 8,
 }: Bento3DTiltProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50, opacity: 0 })

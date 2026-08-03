@@ -3,33 +3,25 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 export default function Floating3DElements() {
   const { scrollYProgress } = useScroll()
 
-  // Staggered parallax scroll speeds
-  const yFast = useTransform(scrollYProgress, [0, 1], [0, -900])
-  const yMid = useTransform(scrollYProgress, [0, 1], [0, -550])
-  const ySlow = useTransform(scrollYProgress, [0, 1], [0, -280])
-  const yReverse = useTransform(scrollYProgress, [0, 1], [0, 450])
+  // Gentle, subtle parallax scroll speeds
+  const yFast = useTransform(scrollYProgress, [0, 1], [0, -450])
+  const yMid = useTransform(scrollYProgress, [0, 1], [0, -280])
+  const ySlow = useTransform(scrollYProgress, [0, 1], [0, -140])
 
   const symbols = [
-    // ----------------------------------------------------
-    // BACKGROUND ELEMENTS (Behind cards, Z: -240px to -50px)
-    // ----------------------------------------------------
-    { text: 'FÉLIX E. MARTINEZ', top: '6%', left: '2%', z: -180, y: ySlow, color: 'rgba(255, 0, 0, 0.45)', isBg: true, dur: 11, delay: 0 },
-    { text: 'UTRGV CS STUDENT', top: '14%', right: '5%', z: -120, y: yMid, color: 'rgba(255, 255, 255, 0.25)', isBg: true, dur: 9, delay: 1 },
-    { text: '{ COMPUTER SCIENCE }', top: '25%', left: '20%', z: -220, y: yFast, color: 'rgba(255, 255, 255, 0.2)', isBg: true, dur: 13, delay: 2 },
-    { text: 'GYM & FITNESS 🏋️‍♂️', top: '38%', left: '8%', z: -160, y: yMid, color: 'rgba(255, 255, 255, 0.3)', isBg: true, dur: 10, delay: 0.5 },
-    { text: 'BILLIARDS 🎱', top: '45%', right: '12%', z: -140, y: ySlow, color: 'rgba(255, 0, 0, 0.4)', isBg: true, dur: 8, delay: 1.5 },
-    { text: 'AURA FIT // KRONO BOOK', top: '58%', left: '15%', z: -200, y: yFast, color: 'rgba(255, 255, 255, 0.22)', isBg: true, dur: 12, delay: 0 },
-    { text: 'MATAMOROS / BROWNSVILLE', top: '72%', right: '8%', z: -150, y: yMid, color: 'rgba(255, 0, 0, 0.35)', isBg: true, dur: 10, delay: 2 },
-    { text: '0101010101', top: '88%', left: '25%', z: -250, y: yReverse, color: 'rgba(255, 255, 255, 0.15)', isBg: true, dur: 14, delay: 1 },
+    // Background Elements (Softly floating behind cards)
+    { text: 'FÉLIX E. MARTINEZ', top: '7%', left: '3%', z: -160, y: ySlow, color: 'rgba(255, 0, 0, 0.35)', isBg: true, dur: 18, delay: 0 },
+    { text: 'UTRGV CS STUDENT', top: '16%', right: '5%', z: -120, y: yMid, color: 'rgba(255, 255, 255, 0.2)', isBg: true, dur: 22, delay: 2 },
+    { text: 'GYM & FITNESS 🏋️‍♂️', top: '38%', left: '6%', z: -140, y: yMid, color: 'rgba(255, 255, 255, 0.22)', isBg: true, dur: 20, delay: 1 },
+    { text: 'BILLIARDS 8-BALL 🎱', top: '46%', right: '8%', z: -130, y: ySlow, color: 'rgba(255, 0, 0, 0.35)', isBg: true, dur: 24, delay: 3 },
+    { text: 'MATAMOROS / BROWNSVILLE', top: '75%', right: '6%', z: -150, y: yMid, color: 'rgba(255, 0, 0, 0.3)', isBg: true, dur: 19, delay: 2 },
 
-    // ----------------------------------------------------
-    // FOREGROUND & MIDGROUND ELEMENTS (Floating in 3D Space)
-    // ----------------------------------------------------
-    { text: '</>', top: '10%', right: '8%', z: 140, y: yFast, color: 'var(--red)', isBg: false, dur: 7, delay: 0 },
-    { text: 'SOFTWARE ENGINEER', top: '20%', left: '5%', z: 90, y: yMid, color: 'var(--white)', isBg: false, dur: 8, delay: 0.8 },
-    { text: 'REACT NATIVE & AI', top: '32%', right: '4%', z: 160, y: yFast, color: 'var(--red)', isBg: false, dur: 6.5, delay: 1.2 },
-    { text: 'IEEE // 24H HACKATHON', top: '64%', left: '3%', z: 130, y: yMid, color: 'var(--white)', isBg: false, dur: 9.5, delay: 0 },
-    { text: 'BUILD PA\'L NORTE', top: '80%', right: '3%', z: 110, y: ySlow, color: 'var(--red)', isBg: false, dur: 8.5, delay: 0.4 },
+    // Foreground / Midground Elements (Subtle front depth)
+    { text: '</>', top: '10%', right: '8%', z: 90, y: yFast, color: 'var(--red)', isBg: false, dur: 16, delay: 0 },
+    { text: 'SOFTWARE ENGINEER', top: '22%', left: '5%', z: 60, y: yMid, color: 'rgba(255, 255, 255, 0.7)', isBg: false, dur: 20, delay: 1 },
+    { text: 'REACT NATIVE & AI', top: '34%', right: '4%', z: 100, y: yFast, color: 'var(--red)', isBg: false, dur: 17, delay: 2 },
+    { text: 'IEEE // 24H HACKATHON', top: '65%', left: '4%', z: 80, y: yMid, color: 'rgba(255, 255, 255, 0.65)', isBg: false, dur: 21, delay: 0 },
+    { text: 'BUILD PA\'L NORTE', top: '82%', right: '4%', z: 70, y: ySlow, color: 'var(--red)', isBg: false, dur: 19, delay: 1.5 },
   ]
 
   return (
@@ -55,22 +47,22 @@ export default function Floating3DElements() {
             y: s.y,
             transform: `translateZ(${s.z}px)`,
             fontFamily: 'var(--font-ndot)',
-            fontSize: s.isBg ? 'clamp(1rem, 2.5vw, 1.8rem)' : 'clamp(0.8rem, 1.5vw, 1.2rem)',
+            fontSize: s.isBg ? 'clamp(0.95rem, 2vw, 1.5rem)' : 'clamp(0.78rem, 1.3vw, 1.1rem)',
             color: s.color,
             textShadow: s.color.includes('var(--red)') || s.color.includes('255, 0, 0')
-              ? '0 0 20px rgba(255, 0, 0, 0.7)'
+              ? '0 0 15px rgba(255, 0, 0, 0.5)'
               : 'none',
             letterSpacing: '0.12em',
-            opacity: s.isBg ? 0.35 : 0.75,
+            opacity: s.isBg ? 0.3 : 0.65,
             filter: s.isBg ? 'blur(1px)' : 'none',
             willChange: 'transform',
           }}
           animate={{
-            rotateX: [0, 25, -20, 0],
-            rotateY: [0, -30, 25, 0],
-            rotateZ: [0, 15, -15, 0],
-            x: [0, 25, -20, 0],
-            y: [0, -20, 25, 0],
+            rotateX: [0, 8, -6, 0],
+            rotateY: [0, -10, 8, 0],
+            rotateZ: [0, 5, -5, 0],
+            x: [0, 10, -10, 0],
+            y: [0, -8, 10, 0],
           }}
           transition={{
             duration: s.dur,
