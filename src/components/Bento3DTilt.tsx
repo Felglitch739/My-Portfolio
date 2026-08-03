@@ -24,6 +24,9 @@ export default function Bento3DTilt({
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
+    // Skip 3D mouse tilt on mobile touch devices for locked 60 FPS touch scroll performance
+    if (window.innerWidth < 768) return
+
     const rect = cardRef.current.getBoundingClientRect()
     const width = rect.width
     const height = rect.height
