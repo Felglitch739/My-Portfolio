@@ -1,4 +1,5 @@
 import { Code2, Users } from 'lucide-react'
+import Bento3DTilt from './Bento3DTilt'
 
 interface AboutMeProps {
   lang?: 'es' | 'en'
@@ -87,7 +88,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
 
         <div className="bento-grid">
           {/* Photo Widget (col-span-4) */}
-          <div className="bento-card col-span-4" style={{ alignItems: 'center', textAlign: 'center', justifyContent: 'center' }}>
+          <Bento3DTilt className="bento-card col-span-4" style={{ alignItems: 'center', textAlign: 'center', justifyContent: 'center' }}>
             <div
               style={{
                 width: '180px',
@@ -118,10 +119,10 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
             <span className="mono-tag mono-tag-red" style={{ marginTop: '0.4rem' }}>
               {lang === 'es' ? 'CS EN UTRGV' : 'CS AT UTRGV'}
             </span>
-          </div>
+          </Bento3DTilt>
 
           {/* Narrative Widget (col-span-8) */}
-          <div className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
+          <Bento3DTilt className="bento-card col-span-8" style={{ justifyContent: 'center' }}>
             <h2 className="card-title" style={{ fontSize: '1.6rem', marginBottom: '1rem', color: 'var(--white)' }}>
               {t.title}
             </h2>
@@ -134,11 +135,11 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
             <p className="body-text">
               {t.p3}
             </p>
-          </div>
+          </Bento3DTilt>
 
           {/* 3 Pillar Bento Widgets (col-span-4 each) */}
           {t.pillars.map((p, i) => (
-            <div key={i} className="bento-card col-span-4">
+            <Bento3DTilt key={i} className="bento-card col-span-4">
               <div style={{ marginBottom: '1rem' }}>{p.icon}</div>
               <h3 className="card-title" style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>
                 {p.title}
@@ -146,7 +147,7 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
               <p className="body-text" style={{ fontSize: '0.88rem' }}>
                 {p.desc}
               </p>
-            </div>
+            </Bento3DTilt>
           ))}
         </div>
       </div>
