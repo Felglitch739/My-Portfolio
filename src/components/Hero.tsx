@@ -39,45 +39,47 @@ function useTypewriter(words: string[], speed = 70, pause = 2000) {
 export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
   const t = {
     es: {
-      status: "SISTEMA ACTIVO // UTRGV CS",
+      status: "SISTEMA ACTIVO // UTRGV CS & HARDWARE",
       roles: [
-        'FULL-STACK SOFTWARE ENGINEER',
-        'MOBILE & WEB APP DEVELOPER',
-        'COMPUTER SCIENCE @ UTRGV',
+        'SOFTWARE ENGINEER',
+        'FULL-STACK & MOBILE DEVELOPER',
+        'HARDWARE & EMBEDDED SYSTEMS ENTHUSIAST',
         'CO-FOUNDER @ BUILD PA\'L NORTE',
+        'COMPUTER SCIENCE @ UTRGV',
       ],
-      titleLine1: "FULL-STACK SOFTWARE",
+      titleLine1: "SOFTWARE & HARDWARE",
       titleLine2: "ENGINEERING",
-      desc: "Construyendo soluciones de alto impacto: desde aplicaciones web escalables con IA hasta arquitecturas móviles modernas y robustas.",
-      projectsBtn: "Explorar Obras",
+      desc: "Desarrollo de software full-stack (web y móvil), arquitecturas multi-tenant escalables, integración de hardware/IoT y plugins CAD con IA. Co-fundador y líder comunitario en la región.",
+      projectsBtn: "Explorar Proyectos",
       terminalBtn: "Abrir Terminal",
       cvBtn: "Descargar CV",
       location: "Brownsville, TX / Matamoros, Tamps.",
       stats: [
-        { val: "05+", label: "Sistemas Clave" },
+        { val: "06+", label: "Sistemas & Proyectos" },
         { val: "24H", label: "Hackathon Host" },
-        { val: "IEEE", label: "Miembro Activo" },
+        { val: "IEEE", label: "IEEEXtreme Competitor" },
       ],
     },
     en: {
-      status: "SYSTEM ACTIVE // UTRGV CS",
+      status: "SYSTEM ACTIVE // UTRGV CS & HARDWARE",
       roles: [
-        'FULL-STACK SOFTWARE ENGINEER',
-        'MOBILE & WEB APP DEVELOPER',
-        'COMPUTER SCIENCE @ UTRGV',
+        'SOFTWARE ENGINEER',
+        'FULL-STACK & MOBILE DEVELOPER',
+        'HARDWARE & EMBEDDED SYSTEMS ENTHUSIAST',
         'CO-FOUNDER @ BUILD PA\'L NORTE',
+        'COMPUTER SCIENCE @ UTRGV',
       ],
-      titleLine1: "FULL-STACK SOFTWARE",
+      titleLine1: "SOFTWARE & HARDWARE",
       titleLine2: "ENGINEERING",
-      desc: "Building high-impact solutions: from scalable AI-powered web applications to robust modern mobile architectures.",
-      projectsBtn: "Explore Work",
+      desc: "Full-stack software development (web & mobile), scalable multi-tenant architectures, hardware/IoT integrations, and CAD/BIM AI plugins. Co-founder and regional tech community leader.",
+      projectsBtn: "Explore Projects",
       terminalBtn: "Open Terminal",
       cvBtn: "Download Resume",
       location: "Brownsville, TX / Matamoros, Tamps.",
       stats: [
-        { val: "05+", label: "Core Systems" },
+        { val: "06+", label: "Systems & Projects" },
         { val: "24H", label: "Hackathon Host" },
-        { val: "IEEE", label: "Active Member" },
+        { val: "IEEE", label: "IEEEXtreme Competitor" },
       ],
     }
   }[lang]
@@ -175,7 +177,7 @@ export default function Hero({ onOpenTerminal, lang = 'es' }: HeroProps) {
           <Bento3DTilt className="col-span-8" style={{ justifyContent: 'center' }}>
             <div className="section-label" style={{ marginBottom: '1rem' }}>02 // HARDWARE & SOFTWARE MODULES</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {['TYPESCRIPT', 'REACT NATIVE', 'PYTHON', 'SQL', 'TAILWIND CSS', 'VITE', 'SUPABASE', 'REACT', 'NODE.JS', 'NEXT.JS'].map((tech) => (
+              {['REACT NATIVE', 'EXPO', 'TYPESCRIPT', 'PYTHON', 'ESP32 / BLE', 'SUPABASE', 'POSTGRESQL', 'C# / REVIT API', 'MODEL CONTEXT PROTOCOL (MCP)', 'TAILWIND CSS', 'VITE', 'NODE.JS'].map((tech) => (
                 <span key={tech} className="mono-tag">
                   {tech}
                 </span>

@@ -22,18 +22,19 @@ export default function Floating3DElements() {
 
   const symbols = [
     // Background Elements (Softly floating behind cards, negative Z)
-    { text: 'FÉLIX E. MARTINEZ', top: '8%', left: '3%', z: -150, y: ySlow, color: 'rgba(255, 0, 0, 0.35)', isBg: true, dur: 18, delay: 0 },
-    { text: 'UTRGV CS STUDENT', top: '18%', right: '5%', z: -110, y: yMid, color: 'rgba(255, 255, 255, 0.2)', isBg: true, dur: 22, delay: 2 },
-    { text: 'GYM & FITNESS 🏋️‍♂️', top: '38%', left: '6%', z: -130, y: yMid, color: 'rgba(255, 255, 255, 0.22)', isBg: true, dur: 20, delay: 1 },
-    { text: 'BILLIARDS 8-BALL 🎱', top: '48%', right: '8%', z: -120, y: ySlow, color: 'rgba(255, 0, 0, 0.35)', isBg: true, dur: 24, delay: 3 },
+    { text: 'FÉLIX E. MARTÍNEZ', top: '8%', left: '3%', z: -150, y: ySlow, color: 'rgba(255, 0, 0, 0.35)', isBg: true, dur: 18, delay: 0 },
+    { text: 'UTRGV CS // PREP RFM', top: '18%', right: '5%', z: -110, y: yMid, color: 'rgba(255, 255, 255, 0.2)', isBg: true, dur: 22, delay: 2 },
+    { text: 'HARDWARE & IOT (ESP32 / BLE)', top: '36%', left: '5%', z: -130, y: yMid, color: 'rgba(255, 0, 0, 0.3)', isBg: true, dur: 20, delay: 1 },
+    { text: 'KRONOBOOK & DUALFX', top: '48%', right: '7%', z: -120, y: ySlow, color: 'rgba(255, 255, 255, 0.25)', isBg: true, dur: 24, delay: 3 },
     { text: 'MATAMOROS / BROWNSVILLE', top: '76%', right: '6%', z: -140, y: yMid, color: 'rgba(255, 0, 0, 0.3)', isBg: true, dur: 19, delay: 2 },
 
     // Foreground / Midground Elements (Subtle front depth)
     { text: '</>', top: '10%', right: '8%', z: 80, y: yFast, color: 'var(--red)', isBg: false, dur: 16, delay: 0 },
     { text: 'SOFTWARE ENGINEER', top: '24%', left: '5%', z: 50, y: yMid, color: 'rgba(255, 255, 255, 0.7)', isBg: false, dur: 20, delay: 1 },
-    { text: 'REACT NATIVE & AI', top: '34%', right: '4%', z: 90, y: yFast, color: 'var(--red)', isBg: false, dur: 17, delay: 2 },
-    { text: 'IEEE // 24H HACKATHON', top: '66%', left: '4%', z: 70, y: yMid, color: 'rgba(255, 255, 255, 0.65)', isBg: false, dur: 21, delay: 0 },
-    { text: 'BUILD PA\'L NORTE', top: '84%', right: '4%', z: 60, y: ySlow, color: 'var(--red)', isBg: false, dur: 19, delay: 1.5 },
+    { text: 'REACT NATIVE & EXPO', top: '34%', right: '4%', z: 90, y: yFast, color: 'var(--red)', isBg: false, dur: 17, delay: 2 },
+    { text: 'CAD BIM // MCP & AI', top: '56%', left: '4%', z: 80, y: yFast, color: 'var(--red)', isBg: false, dur: 18, delay: 1 },
+    { text: 'IEEEXTREME // 18.0 & 19.0', top: '68%', left: '4%', z: 70, y: yMid, color: 'rgba(255, 255, 255, 0.65)', isBg: false, dur: 21, delay: 0 },
+    { text: 'BUILD PA\'L NORTE // 24H HACKATHON', top: '84%', right: '4%', z: 60, y: ySlow, color: 'var(--red)', isBg: false, dur: 19, delay: 1.5 },
   ]
 
   return (

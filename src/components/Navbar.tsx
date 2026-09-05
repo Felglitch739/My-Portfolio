@@ -28,12 +28,12 @@ export default function Navbar({ onOpenTerminal, lang, setLang }: NavbarProps) {
   }, [mobileOpen])
 
   const links = [
-    { href: '#about-me', num: '01', label: lang === 'es' ? 'PERFIL & ARQUITECTURA' : 'PROFILE & ARCHITECTURE' },
+    { href: '#about-me', num: '01', label: lang === 'es' ? 'PERFIL & BIO' : 'PROFILE & BIO' },
     { href: '#skills', num: '02', label: lang === 'es' ? 'STACK TÉCNICO' : 'TECH STACK' },
-    { href: '#projects', num: '03', label: lang === 'es' ? 'PROYECTOS DESTACADOS' : 'FEATURED PROJECTS' },
-    { href: '#events', num: '04', label: lang === 'es' ? 'LOGROS & EVENTOS' : 'ACHIEVEMENTS & EVENTS' },
-    { href: '#human-side', num: '05', label: lang === 'es' ? 'FUERA DEL CÓDIGO' : 'BEYOND THE CODE' },
-    { href: '#contact', num: '06', label: lang === 'es' ? 'CONTACTO DIRECTO' : 'DIRECT CONTACT' },
+    { href: '#projects', num: '03', label: lang === 'es' ? 'PROYECTOS' : 'PROJECTS' },
+    { href: '#events', num: '04', label: lang === 'es' ? 'LIDERAZGO & TRAYECTORIA' : 'LEADERSHIP & TRACK RECORD' },
+    { href: '#human-side', num: '05', label: lang === 'es' ? 'LAB 8-BALL' : '8-BALL LAB' },
+    { href: '#contact', num: '06', label: lang === 'es' ? 'CONTACTO' : 'CONTACT' },
   ]
 
   return (

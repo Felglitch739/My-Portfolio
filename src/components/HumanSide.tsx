@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { RotateCcw, Volume2, VolumeX } from 'lucide-react'
+import { RotateCcw, Activity, Dumbbell, Music, Gamepad2, Sparkles } from 'lucide-react'
+import Bento3DTilt from './Bento3DTilt'
 
 interface HumanSideProps {
   lang?: 'es' | 'en'
@@ -15,42 +16,62 @@ interface Ball {
   color: string
   num: number
   active: boolean
+  isCue?: boolean
+  isEight?: boolean
 }
 
-/* ── Interactive Hardware Billiards Simulator with Pocketing & Power Meter ── */
-function BilliardsHardwareCanvas() {
+/* ── High-Precision 2D Physics Simulator: Cyber 8-Ball Engine ── */
+function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [pottedBalls, setPottedBalls] = useState<Ball[]>([])
   const [scratchMessage, setScratchMessage] = useState(false)
   const [powerPercent, setPowerPercent] = useState(0)
+  const [engineStatus, setEngineStatus] = useState<string>(lang === 'es' ? 'LISTO // ARRASTRA LA BOLA BLANCA' : 'READY // DRAG CUE BALL TO AIM')
 
-  // References for mutable state in physics loop
   const ballsRef = useRef<Ball[]>([])
   const isDraggingRef = useRef(false)
-  const dragPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
-  const mousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const dragCurrentRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
-  const initBalls = (W: number, H: number) => {
-    return [
-      { id: 0, x: W * 0.25, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff', num: 0, active: true }, // Cue ball
-      { id: 1, x: W * 0.62, y: H * 0.5, vx: 0, vy: 0, color: '#ffffff', num: 1, active: true },
-      { id: 2, x: W * 0.68, y: H * 0.43, vx: 0, vy: 0, color: '#888888', num: 2, active: true },
-      { id: 3, x: W * 0.68, y: H * 0.57, vx: 0, vy: 0, color: '#ffffff', num: 3, active: true },
-      { id: 4, x: W * 0.74, y: H * 0.36, vx: 0, vy: 0, color: '#888888', num: 4, active: true },
-      { id: 5, x: W * 0.74, y: H * 0.5, vx: 0, vy: 0, color: '#FF0000', num: 8, active: true },  // Pure Red 8-ball
-      { id: 6, x: W * 0.74, y: H * 0.64, vx: 0, vy: 0, color: '#888888', num: 6, active: true },
+  const R = 11 // Ball radius
+  const FRICTION = 0.984
+  const MIN_VELOCITY = 0.05
+
+  const initRack = (W: number, H: number): Ball[] => {
+    const startX = W * 0.65
+    const startY = H * 0.5
+    const spacing = R * 2 + 1.5
+
+    const rackList: Ball[] = [
+      // Cue Ball (0)
+      { id: 0, x: W * 0.22, y: H * 0.5, vx: 0, vy: 0, color: '#FFFFFF', num: 0, active: true, isCue: true },
+      // Row 1
+      { id: 1, x: startX, y: startY, vx: 0, vy: 0, color: '#E4E4E7', num: 1, active: true },
+      // Row 2
+      { id: 2, x: startX + spacing * 0.86, y: startY - spacing * 0.5, vx: 0, vy: 0, color: '#71717A', num: 2, active: true },
+      { id: 3, x: startX + spacing * 0.86, y: startY + spacing * 0.5, vx: 0, vy: 0, color: '#E4E4E7', num: 3, active: true },
+      // Row 3
+      { id: 4, x: startX + spacing * 1.72, y: startY - spacing, vx: 0, vy: 0, color: '#71717A', num: 4, active: true },
+      { id: 8, x: startX + spacing * 1.72, y: startY, vx: 0, vy: 0, color: '#FF0000', num: 8, active: true, isEight: true }, // 8-Ball
+      { id: 5, x: startX + spacing * 1.72, y: startY + spacing, vx: 0, vy: 0, color: '#E4E4E7', num: 5, active: true },
+      // Row 4
+      { id: 6, x: startX + spacing * 2.58, y: startY - spacing * 0.5, vx: 0, vy: 0, color: '#71717A', num: 6, active: true },
+      { id: 7, x: startX + spacing * 2.58, y: startY + spacing * 0.5, vx: 0, vy: 0, color: '#E4E4E7', num: 7, active: true },
     ]
+
+    return rackList
   }
 
   const resetGame = () => {
     const canvas = canvasRef.current
     if (!canvas) return
-    const W = canvas.offsetWidth || 500
-    const H = canvas.offsetHeight || 260
-    ballsRef.current = initBalls(W, H)
+    const W = canvas.offsetWidth || 600
+    const H = 260
+    ballsRef.current = initRack(W, H)
     setPottedBalls([])
     setScratchMessage(false)
     setPowerPercent(0)
+    setEngineStatus(lang === 'es' ? 'MESA REINICIADA // LISTO' : 'TABLE RE-RACKED // READY')
   }
 
   useEffect(() => {
@@ -60,577 +81,452 @@ function BilliardsHardwareCanvas() {
     if (!ctx) return
 
     let animationId: number
-    let W = (canvas.width = canvas.offsetWidth || 500)
-    let H = (canvas.height = 260)
-    const R = 10
+    const W = (canvas.width = canvas.offsetWidth || 600)
+    const H = (canvas.height = 260)
 
     if (ballsRef.current.length === 0) {
-      ballsRef.current = initBalls(W, H)
+      ballsRef.current = initRack(W, H)
     }
 
-    const handleMouseDown = (e: MouseEvent) => {
+    // Pockets layout: 4 corners + 2 side centers
+    const pocketR = 20
+    const pockets = [
+      { x: pocketR + 4, y: pocketR + 4 },
+      { x: W * 0.5, y: pocketR + 2 },
+      { x: W - pocketR - 4, y: pocketR + 4 },
+      { x: pocketR + 4, y: H - pocketR - 4 },
+      { x: W * 0.5, y: H - pocketR - 2 },
+      { x: W - pocketR - 4, y: H - pocketR - 4 },
+    ]
+
+    const getPos = (e: MouseEvent | TouchEvent) => {
       const rect = canvas.getBoundingClientRect()
-      const mx = e.clientX - rect.left
-      const my = e.clientY - rect.top
-
-      const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
-      if (!cueBall) return
-
-      // Allow dragging if cue ball is mostly stopped
-      const isMoving = Math.hypot(cueBall.vx, cueBall.vy) > 0.15
-      if (isMoving) return
-
-      isDraggingRef.current = true
-      dragPosRef.current = { x: mx, y: my }
-      mousePosRef.current = { x: mx, y: my }
-    }
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      const mx = e.clientX - rect.left
-      const my = e.clientY - rect.top
-      mousePosRef.current = { x: mx, y: my }
-
-      if (isDraggingRef.current) {
-        const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
-        if (!cueBall) return
-        const dx = cueBall.x - mx
-        const dy = cueBall.y - my
-        const dist = Math.hypot(dx, dy)
-        const powerRatio = Math.min(dist / 100, 1)
-        setPowerPercent(Math.round(powerRatio * 100))
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top,
       }
     }
 
-    const handleMouseUp = () => {
+    const onPointerDown = (e: MouseEvent | TouchEvent) => {
+      const pos = getPos(e)
+      const cue = ballsRef.current.find((b) => b.isCue && b.active)
+      if (!cue) return
+
+      // Only allow shot if cue ball is settled
+      const cueSpeed = Math.hypot(cue.vx, cue.vy)
+      if (cueSpeed > 0.25) return
+
+      const dist = Math.hypot(pos.x - cue.x, pos.y - cue.y)
+      if (dist < R * 3.5) {
+        isDraggingRef.current = true
+        dragStartRef.current = { x: cue.x, y: cue.y }
+        dragCurrentRef.current = pos
+        setEngineStatus(lang === 'es' ? 'APUNTANDO // AJUSTA POTENCIA' : 'AIMING // SET POWER')
+      }
+    }
+
+    const onPointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!isDraggingRef.current) return
+      const pos = getPos(e)
+      dragCurrentRef.current = pos
+
+      const cue = ballsRef.current.find((b) => b.isCue && b.active)
+      if (!cue) return
+
+      const dx = cue.x - pos.x
+      const dy = cue.y - pos.y
+      const pullDist = Math.hypot(dx, dy)
+      const powerRatio = Math.min(pullDist / 120, 1)
+      setPowerPercent(Math.round(powerRatio * 100))
+    }
+
+    const onPointerUp = () => {
       if (!isDraggingRef.current) return
       isDraggingRef.current = false
 
-      const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
-      if (!cueBall) return
+      const cue = ballsRef.current.find((b) => b.isCue && b.active)
+      if (!cue) return
 
-      const mx = mousePosRef.current.x
-      const my = mousePosRef.current.y
-      const dx = cueBall.x - mx
-      const dy = cueBall.y - my
-      const dist = Math.hypot(dx, dy)
+      const dx = cue.x - dragCurrentRef.current.x
+      const dy = cue.y - dragCurrentRef.current.y
+      const pullDist = Math.hypot(dx, dy)
 
-      if (dist > 5) {
-        const powerRatio = Math.min(dist / 100, 1)
-        const maxSpeed = 19
-        const speed = powerRatio * maxSpeed
+      if (pullDist > 8) {
+        const powerRatio = Math.min(pullDist / 120, 1)
+        const maxVelocity = 18
         const angle = Math.atan2(dy, dx)
 
-        cueBall.vx = Math.cos(angle) * speed
-        cueBall.vy = Math.sin(angle) * speed
+        cue.vx = Math.cos(angle) * (powerRatio * maxVelocity)
+        cue.vy = Math.sin(angle) * (powerRatio * maxVelocity)
+        setEngineStatus(lang === 'es' ? 'BOLA EN TRAYECTORIA...' : 'BALLS IN MOTION...')
       }
       setPowerPercent(0)
     }
 
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 0) return
-      const rect = canvas.getBoundingClientRect()
-      const mx = e.touches[0].clientX - rect.left
-      const my = e.touches[0].clientY - rect.top
+    canvas.addEventListener('mousedown', onPointerDown)
+    window.addEventListener('mousemove', onPointerMove)
+    window.addEventListener('mouseup', onPointerUp)
 
-      const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
-      if (!cueBall) return
+    canvas.addEventListener('touchstart', onPointerDown, { passive: true })
+    window.addEventListener('touchmove', onPointerMove, { passive: true })
+    window.addEventListener('touchend', onPointerUp)
 
-      const isMoving = Math.hypot(cueBall.vx, cueBall.vy) > 0.15
-      if (isMoving) return
-
-      isDraggingRef.current = true
-      dragPosRef.current = { x: mx, y: my }
-      mousePosRef.current = { x: mx, y: my }
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 0) return
-      const rect = canvas.getBoundingClientRect()
-      const mx = e.touches[0].clientX - rect.left
-      const my = e.touches[0].clientY - rect.top
-      mousePosRef.current = { x: mx, y: my }
-
-      if (isDraggingRef.current) {
-        const cueBall = ballsRef.current.find(b => b.num === 0 && b.active)
-        if (!cueBall) return
-        const dx = cueBall.x - mx
-        const dy = cueBall.y - my
-        const dist = Math.hypot(dx, dy)
-        const powerRatio = Math.min(dist / 100, 1)
-        setPowerPercent(Math.round(powerRatio * 100))
-      }
-    }
-
-    const handleTouchEnd = () => {
-      handleMouseUp()
-    }
-
-    const handleResize = () => {
-      if (!canvas) return
-      W = canvas.width = canvas.offsetWidth || 500
-      H = canvas.height = 260
-    }
-
-    canvas.addEventListener('mousedown', handleMouseDown)
-    window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('mouseup', handleMouseUp)
-    canvas.addEventListener('touchstart', handleTouchStart, { passive: true })
-    canvas.addEventListener('touchmove', handleTouchMove, { passive: true })
-    window.addEventListener('touchend', handleTouchEnd)
-    window.addEventListener('resize', handleResize)
-
-    // Move pockets slightly inward so the threshold isn't completely blocked by cushions
-    const pockets = [
-      { x: 18, y: 18 }, { x: W / 2, y: 12 }, { x: W - 18, y: 18 },
-      { x: 18, y: H - 18 }, { x: W / 2, y: H - 12 }, { x: W - 18, y: H - 18 },
-    ]
-
-    const render = () => {
+    // Main Physics & Render Loop
+    const loop = () => {
       ctx.clearRect(0, 0, W, H)
 
-      // Felt
-      ctx.fillStyle = '#050505'
+      // 1. Draw Table Cushion Borders
+      ctx.fillStyle = '#0a0a0c'
       ctx.fillRect(0, 0, W, H)
 
-      // Dot Grid
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'
-      for (let x = 16; x < W; x += 16) {
-        for (let y = 16; y < H; y += 16) {
-          ctx.beginPath()
-          ctx.arc(x, y, 1, 0, Math.PI * 2)
-          ctx.fill()
-        }
+      // Subtle Grid / Coordinate Marks
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)'
+      ctx.lineWidth = 1
+      for (let x = 40; x < W; x += 40) {
+        ctx.beginPath()
+        ctx.moveTo(x, 0)
+        ctx.lineTo(x, H)
+        ctx.stroke()
+      }
+      for (let y = 40; y < H; y += 40) {
+        ctx.beginPath()
+        ctx.moveTo(0, y)
+        ctx.lineTo(W, y)
+        ctx.stroke()
       }
 
-      // Rails
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)'
-      ctx.lineWidth = 2
-      ctx.strokeRect(10, 10, W - 20, H - 20)
+      // Playing Field Boundary
+      const pad = 12
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)'
+      ctx.lineWidth = 1.5
+      ctx.strokeRect(pad, pad, W - pad * 2, H - pad * 2)
 
-      // 6 Pockets Draw
+      // 2. Draw Pockets
       pockets.forEach((p) => {
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, 16, 0, Math.PI * 2) // slightly larger visual pocket
         ctx.fillStyle = '#000000'
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, pocketR, 0, Math.PI * 2)
         ctx.fill()
-        ctx.strokeStyle = '#FF0000'
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)'
         ctx.lineWidth = 1.5
         ctx.stroke()
       })
 
+      // 3. Physics Updates
       const balls = ballsRef.current
+      let movingCount = 0
 
-      // Physics & Pockets
       for (let i = 0; i < balls.length; i++) {
         const b = balls[i]
         if (!b.active) continue
 
-        // Realistic felt rolling friction
         b.x += b.vx
         b.y += b.vy
-        b.vx *= 0.968
-        b.vy *= 0.968
+        b.vx *= FRICTION
+        b.vy *= FRICTION
 
-        if (Math.hypot(b.vx, b.vy) < 0.08) {
+        if (Math.hypot(b.vx, b.vy) < MIN_VELOCITY) {
           b.vx = 0
           b.vy = 0
+        } else {
+          movingCount++
         }
 
-        // Pocket Suction & Pot Logic
-        let inPocket = false
+        // Cushion Bounces
+        const minX = pad + R
+        const maxX = W - pad - R
+        const minY = pad + R
+        const maxY = H - pad - R
+
+        if (b.x < minX) {
+          b.x = minX
+          b.vx *= -0.85
+        } else if (b.x > maxX) {
+          b.x = maxX
+          b.vx *= -0.85
+        }
+
+        if (b.y < minY) {
+          b.y = minY
+          b.vy *= -0.85
+        } else if (b.y > maxY) {
+          b.y = maxY
+          b.vy *= -0.85
+        }
+
+        // Pocket Detection
         for (const p of pockets) {
-          const distToPocket = Math.hypot(b.x - p.x, b.y - p.y)
-
-          // Gravitational pull when ball rolls close to pocket mouth
-          if (distToPocket < 32) {
-            const pull = 0.15
-            b.vx += (p.x - b.x) * pull
-            b.vy += (p.y - b.y) * pull
-          }
-
-          // Drop Threshold - make it generous so they fall in easily
-          if (distToPocket < 22) {
+          if (Math.hypot(b.x - p.x, b.y - p.y) < pocketR * 0.95) {
             b.active = false
             b.vx = 0
             b.vy = 0
-            inPocket = true
 
-            if (b.num === 0) {
-              // Cue ball scratch
+            if (b.isCue) {
               setScratchMessage(true)
               setTimeout(() => {
-                b.x = W * 0.25
+                b.x = W * 0.22
                 b.y = H * 0.5
                 b.vx = 0
                 b.vy = 0
                 b.active = true
                 setScratchMessage(false)
-              }, 800)
+              }, 900)
             } else {
-              // Object ball potted! Add to UI
-              setPottedBalls(prev => {
-                // avoid duplicates
-                if (prev.find(pb => pb.num === b.num)) return prev;
-                return [...prev, { ...b }]
-              })
+              setPottedBalls((prev) => [...prev, b])
             }
             break
           }
         }
+      }
 
-        // Realistic Cushion Bounce (only if not getting sucked into a pocket)
-        if (!inPocket) {
-          const minX = 22, maxX = W - 22, minY = 22, maxY = H - 22
-          // To prevent balls getting stuck on the pocket lip wall boundaries,
-          // we only apply wall bounce if they are reasonably far from the pocket centers.
-          const isNearAnyPocket = pockets.some(p => Math.hypot(b.x - p.x, b.y - p.y) < 32)
-          
-          if (!isNearAnyPocket) {
-            if (b.x - R < minX) { b.x = minX + R; b.vx *= -0.76 }
-            if (b.x + R > maxX) { b.x = maxX - R; b.vx *= -0.76 }
-            if (b.y - R < minY) { b.y = minY + R; b.vy *= -0.76 }
-            if (b.y + R > maxY) { b.y = maxY - R; b.vy *= -0.76 }
-          }
-        }
-
-        // Elastic Ball vs Ball Collisions
+      // Ball-to-Ball Elastic Collisions
+      for (let i = 0; i < balls.length; i++) {
         for (let j = i + 1; j < balls.length; j++) {
+          const b1 = balls[i]
           const b2 = balls[j]
-          if (!b2.active) continue
+          if (!b1.active || !b2.active) continue
 
-          const dx = b2.x - b.x
-          const dy = b2.y - b.y
+          const dx = b2.x - b1.x
+          const dy = b2.y - b1.y
           const dist = Math.hypot(dx, dy)
-          if (dist < R * 2 && dist > 0) {
+          const minDist = R * 2
+
+          if (dist < minDist && dist > 0) {
+            const overlap = (minDist - dist) * 0.5
             const nx = dx / dist
             const ny = dy / dist
-            const kx = b.vx - b2.vx
-            const ky = b.vy - b2.vy
-            const p = nx * kx + ny * ky
 
-            if (p > 0) {
-              b.vx -= p * nx * 0.96
-              b.vy -= p * ny * 0.96
-              b2.vx += p * nx * 0.96
-              b2.vy += p * ny * 0.96
-            }
+            b1.x -= nx * overlap
+            b1.y -= ny * overlap
+            b2.x += nx * overlap
+            b2.y += ny * overlap
 
-            // Separate overlapping balls
-            const overlap = R * 2 - dist
-            b.x -= nx * overlap * 0.5
-            b.y -= ny * overlap * 0.5
-            b2.x += nx * overlap * 0.5
-            b2.y += ny * overlap * 0.5
+            // Velocity resolution
+            const kx = b1.vx - b2.vx
+            const ky = b1.vy - b2.vy
+            const p = 2 * (nx * kx + ny * ky) / 2
+
+            b1.vx -= p * nx * 0.96
+            b1.vy -= p * ny * 0.96
+            b2.vx += p * nx * 0.96
+            b2.vy += p * ny * 0.96
           }
         }
       }
 
-      // Draw Balls
+      // 4. Laser Aiming Line & Cue Stick Vector
+      const cue = balls.find((b) => b.isCue && b.active)
+      if (isDraggingRef.current && cue) {
+        const pullX = dragCurrentRef.current.x
+        const pullY = dragCurrentRef.current.y
+        const dirX = cue.x - pullX
+        const dirY = cue.y - pullY
+        const pullDist = Math.hypot(dirX, dirY)
+
+        if (pullDist > 5) {
+          const aimAngle = Math.atan2(dirY, dirX)
+          const laserLength = Math.min(pullDist * 4, 300)
+
+          // Laser sight line
+          ctx.beginPath()
+          ctx.setLineDash([4, 4])
+          ctx.strokeStyle = '#FF0000'
+          ctx.lineWidth = 1.5
+          ctx.moveTo(cue.x, cue.y)
+          ctx.lineTo(cue.x + Math.cos(aimAngle) * laserLength, cue.y + Math.sin(aimAngle) * laserLength)
+          ctx.stroke()
+          ctx.setLineDash([])
+
+          // Cue pull-back indicator
+          ctx.beginPath()
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
+          ctx.lineWidth = 3
+          ctx.moveTo(cue.x, cue.y)
+          ctx.lineTo(pullX, pullY)
+          ctx.stroke()
+        }
+      }
+
+      // 5. Render Balls
       for (const b of balls) {
         if (!b.active) continue
 
+        ctx.save()
         ctx.beginPath()
         ctx.arc(b.x, b.y, R, 0, Math.PI * 2)
-        ctx.fillStyle = b.color
-        ctx.fill()
 
-        if (b.num) {
-          ctx.fillStyle = b.num === 8 ? '#ffffff' : '#000000'
-          ctx.font = 'bold 8px var(--font-mono)'
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
+        if (b.isCue) {
+          ctx.fillStyle = '#FFFFFF'
+          ctx.fill()
+          ctx.lineWidth = 1.5
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+          ctx.stroke()
+        } else if (b.isEight) {
+          ctx.fillStyle = '#FF0000'
+          ctx.fill()
+          ctx.lineWidth = 2
+          ctx.strokeStyle = '#FFFFFF'
+          ctx.stroke()
+        } else {
+          ctx.fillStyle = b.color
+          ctx.fill()
+          ctx.lineWidth = 1
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)'
+          ctx.stroke()
+        }
+
+        // Ball Number Text
+        ctx.fillStyle = b.isCue ? '#000000' : '#FFFFFF'
+        ctx.font = 'bold 8px Space Mono, monospace'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        if (!b.isCue) {
           ctx.fillText(b.num.toString(), b.x, b.y)
         }
+        ctx.restore()
       }
 
-      // Aiming & Power Indicator line while dragging
-      const cueBall = balls.find(b => b.num === 0 && b.active)
-      if (cueBall && isDraggingRef.current) {
-        const mx = mousePosRef.current.x
-        const my = mousePosRef.current.y
-        const dx = cueBall.x - mx
-        const dy = cueBall.y - my
-        const angle = Math.atan2(dy, dx)
-
-        // Dotted Aim Line
-        ctx.beginPath()
-        ctx.setLineDash([4, 4])
-        ctx.moveTo(cueBall.x, cueBall.y)
-        ctx.lineTo(cueBall.x + Math.cos(angle) * 120, cueBall.y + Math.sin(angle) * 120)
-        ctx.strokeStyle = '#FF0000'
-        ctx.lineWidth = 1.5
-        ctx.stroke()
-        ctx.setLineDash([])
-
-        // Cue Stick Line
-        const dist = Math.min(Math.hypot(dx, dy), 100)
-        ctx.beginPath()
-        ctx.moveTo(cueBall.x - Math.cos(angle) * (R + 6 + dist * 0.3), cueBall.y - Math.sin(angle) * (R + 6 + dist * 0.3))
-        ctx.lineTo(cueBall.x - Math.cos(angle) * (R + 80 + dist * 0.3), cueBall.y - Math.sin(angle) * (R + 80 + dist * 0.3))
-        ctx.strokeStyle = '#ffffff'
-        ctx.lineWidth = 3
-        ctx.stroke()
+      if (movingCount === 0 && !isDraggingRef.current) {
+        // Ready state
       }
 
-      animationId = requestAnimationFrame(render)
+      animationId = requestAnimationFrame(loop)
     }
 
-    render()
+    loop()
 
     return () => {
-      canvas.removeEventListener('mousedown', handleMouseDown)
-      window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseup', handleMouseUp)
-      window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationId)
+      canvas.removeEventListener('mousedown', onPointerDown)
+      window.removeEventListener('mousemove', onPointerMove)
+      window.removeEventListener('mouseup', onPointerUp)
+      canvas.removeEventListener('touchstart', onPointerDown)
+      window.removeEventListener('touchmove', onPointerMove)
+      window.removeEventListener('touchend', onPointerUp)
     }
-  }, [])
+  }, [lang])
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-      {/* Status Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-        
-        {/* Potted Balls Display */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span className="ndot" style={{ fontSize: '0.65rem', color: 'var(--gray-400)' }}>
-            EMBOCADAS:
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
+      {/* Simulator HUD Bar */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.8rem',
+          padding: '0.75rem 1rem',
+          background: 'rgba(255, 255, 255, 0.03)',
+          borderRadius: '12px',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          <span className="ndot" style={{ fontSize: '0.7rem', color: 'var(--red)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Activity size={13} color="var(--red)" />
+            {engineStatus}
           </span>
-          <div style={{ display: 'flex', gap: '4px', minWidth: '80px' }}>
-            {pottedBalls.map((b, idx) => (
-              <div 
-                key={idx}
-                style={{ 
-                  width: '14px', height: '14px', borderRadius: '50%', 
-                  background: b.color, 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '8px', color: b.num === 8 ? '#fff' : '#000',
-                  fontWeight: 'bold', fontFamily: 'var(--font-mono)'
-                }}
-              >
-                {b.num}
-              </div>
-            ))}
-            {pottedBalls.length === 0 && <span style={{ fontSize: '0.6rem', color: 'var(--gray-600)' }}>NINGUNA</span>}
-          </div>
           {scratchMessage && (
-            <span className="ndot" style={{ fontSize: '0.6rem', color: 'var(--red)', animation: 'pulse 1s infinite', marginLeft: '0.5rem' }}>
-              ¡FALTA! BLANCA REUBICADA
+            <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--red)', animation: 'pulse 1s infinite' }}>
+              [ ¡FALTA! BOLA BLANCA REPOSICIONADA ]
             </span>
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          {/* Power Meter Visual */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <span className="ndot" style={{ fontSize: '0.65rem', color: 'var(--gray-400)' }}>FUERZA:</span>
-            <div style={{ width: '60px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-              <div 
-                style={{ 
-                  width: `${powerPercent}%`, 
-                  height: '100%', 
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
+          {/* Power Gauge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-400)' }}>
+              {lang === 'es' ? 'POTENCIA:' : 'POWER:'}
+            </span>
+            <div style={{ width: '80px', height: '6px', background: 'rgba(255, 255, 255, 0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div
+                style={{
+                  width: `${powerPercent}%`,
+                  height: '100%',
                   background: powerPercent > 70 ? 'var(--red)' : '#ffffff',
-                  transition: 'width 0.05s linear'
-                }} 
+                  transition: 'width 0.04s linear',
+                }}
               />
             </div>
+            <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--white)', minWidth: '32px' }}>
+              {powerPercent}%
+            </span>
           </div>
 
-          <button
-            onClick={resetGame}
-            className="mono-tag"
-            style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem', padding: '0.3rem 0.6rem' }}
-            aria-label="Reiniciar mesa de billar"
-            title="Reiniciar mesa"
-          >
-            <RotateCcw size={12} color="var(--red)" /> RE-RACK
-          </button>
-        </div>
-      </div>
-
-      {/* Billiards Canvas Container */}
-      <div style={{ position: 'relative', width: '100%', height: '250px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-        <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'grab', touchAction: 'none' }} />
-        
-        <div className="ndot" style={{ position: 'absolute', top: 14, left: 16, fontSize: '0.68rem', color: '#ffffff', pointerEvents: 'none' }}>
-          8-BALL POOL SIMULATOR
-        </div>
-        <div className="ndot" style={{ position: 'absolute', bottom: 14, right: 16, fontSize: '0.6rem', color: 'var(--gray-400)', pointerEvents: 'none' }}>
-          [ ARRASTRA Y SUELTA DESDE LA BOLA BLANCA PARA TIRAR ]
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ── Interactive WebAudio Synthesizer Widget ── */
-function MinimalMusicWidget() {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const audioCtxRef = useRef<AudioContext | null>(null)
-  const intervalRef = useRef<number | null>(null)
-  const bars = Array.from({ length: 16 })
-
-  const notes = [
-    261.63, // C4
-    293.66, // D4
-    329.63, // E4
-    392.00, // G4
-    440.00, // A4
-    523.25, // C5
-  ]
-
-  const playNote = () => {
-    if (!audioCtxRef.current) {
-      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-    }
-    const ctx = audioCtxRef.current
-    if (ctx.state === 'suspended') ctx.resume()
-
-    const osc = ctx.createOscillator()
-    const gain = ctx.createGain()
-    const filter = ctx.createBiquadFilter()
-
-    const randomNote = notes[Math.floor(Math.random() * notes.length)]
-    
-    osc.type = 'sine'
-    osc.frequency.setValueAtTime(randomNote, ctx.currentTime)
-    
-    filter.type = 'lowpass'
-    filter.frequency.value = 1000
-
-    gain.gain.setValueAtTime(0, ctx.currentTime)
-    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2)
-    
-    osc.connect(filter)
-    filter.connect(gain)
-    gain.connect(ctx.destination)
-    
-    osc.start()
-    osc.stop(ctx.currentTime + 1.2)
-  }
-
-  const handleMouseEnter = () => {
-    setIsPlaying(true)
-    playNote()
-    intervalRef.current = window.setInterval(() => {
-      playNote()
-    }, 400) // play arpeggio every 400ms
-  }
-
-  const handleMouseLeave = () => {
-    setIsPlaying(false)
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
-  }
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-      if (audioCtxRef.current) audioCtxRef.current.close()
-    }
-  }, [])
-
-  return (
-    <div 
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        padding: '1.5rem',
-        background: 'rgba(0, 0, 0, 0.4)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '16px',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        transition: 'border-color 0.3s ease',
-        cursor: 'pointer'
-      }}
-      className={isPlaying ? 'music-hover' : ''}
-    >
-      <style>{`
-        .music-hover { border-color: rgba(255, 0, 0, 0.4) !important; }
-        .eq-bar { transition: height 0.1s ease, background 0.2s ease; }
-      `}</style>
-      
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-          <div className="ndot" style={{ fontSize: '0.7rem', color: 'var(--red)' }}>
-            AUDIO_MODULE // SÍNTESIS WEB
+          {/* Potted count & Re-rack */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-400)' }}>
+              {lang === 'es' ? 'EMBOCADAS:' : 'POCKETED:'} {pottedBalls.length}
+            </span>
+            <button
+              onClick={resetGame}
+              className="mono-tag mono-tag-red"
+              style={{ cursor: 'pointer', fontSize: '0.65rem', padding: '0.3rem 0.6rem' }}
+              title="Reiniciar mesa"
+            >
+              <RotateCcw size={11} /> RE-RACK
+            </button>
           </div>
-          {isPlaying ? <Volume2 size={14} color="var(--red)" /> : <VolumeX size={14} color="var(--gray-500)" />}
         </div>
-        <h3 className="card-title" style={{ fontSize: '1.2rem', color: 'var(--white)' }}>
-          Acoustic & AI Progressions
-        </h3>
-        <p className="body-text" style={{ fontSize: '0.88rem', marginTop: '0.3rem' }}>
-          Interacción sonora generativa. Pasa el cursor por aquí para activar el sintetizador de escala pentatónica en tiempo real.
-        </p>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', height: '48px', marginTop: '1.5rem' }}>
-        {bars.map((_, i) => {
-          const height = isPlaying 
-            ? 12 + Math.random() * 36 
-            : 8 + Math.sin(i * 0.6) * 6
-          return (
-            <div 
-              key={i} 
-              className="eq-bar"
-              style={{
-                flex: 1,
-                height: `${height}px`,
-                background: isPlaying ? 'var(--red)' : 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '2px 2px 0 0'
-              }}
-            />
-          )
-        })}
+      {/* Billiards Canvas */}
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '260px',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          border: '1px solid rgba(255, 255, 255, 0.14)',
+          boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.8)',
+          touchAction: 'none',
+        }}
+      >
+        <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'crosshair' }} />
+
+        <div className="ndot" style={{ position: 'absolute', top: 12, left: 16, fontSize: '0.65rem', color: 'rgba(255, 255, 255, 0.6)', pointerEvents: 'none' }}>
+          PHYSICS LAB // 2D COLLISION & VECTOR ENGINE
+        </div>
+        <div className="ndot" style={{ position: 'absolute', bottom: 12, right: 16, fontSize: '0.62rem', color: 'rgba(255, 255, 255, 0.45)', pointerEvents: 'none' }}>
+          {lang === 'es' ? '[ ARRASTRA Y SUELTA DESDE LA BOLA BLANCA ]' : '[ DRAG & RELEASE CUE BALL TO STRIKE ]'}
+        </div>
       </div>
     </div>
   )
 }
 
 export default function HumanSide({ lang = 'es' }: HumanSideProps) {
-  const [activeDrawer, setActiveDrawer] = useState<'none' | 'billiards' | 'audio'>('none')
-
   const t = {
     es: {
-      label: "07 // THE HUMAN ELEMENT",
-      title: "FUERA DEL CÓDIGO",
-      card1Title: "FILTRO HUMANO",
-      card1Text: "Más allá de la pantalla, soy alguien familiar y amigable. Valoro profundamente trabajar con personas con las que congenio y puedo formar conexiones genuinas. Soy un gran amante de los animales y mantengo una curiosidad eterna por aprender de todo lo que me rodea.",
-      card2Title: "DISCIPLINA & INTERESES",
-      card2Items: [
-        { label: "PESAS & PPL", desc: "Disciplina constante en gimnasio (Push-Pull-Legs)." },
-        { label: "GUITARRA ACÚSTICA", desc: "Progresiones armónicas y letras de canciones." },
-        { label: "GAMING & MODDING", desc: "Tuning de servidores C++ y JVM en Rust y Minecraft." },
-        { label: "8-BALL POOL", desc: "Partidas de billar para despejar la mente." },
-      ],
-      labsTitle: "MÓDULOS INTERACTIVOS (LABORATORIO OCIONAL)",
-      billiardsBtn: "🎱 EXPERIMENTO // BILLIARDS 8-BALL",
-      audioBtn: "🎵 EXPERIMENTO // SINTETIZADOR DE AUDIO",
-      closeBtn: "CERRAR MÓDULO",
+      label: "07 // DISCIPLINA & LABORATORIO",
+      title: "FUERA DE LA PANTALLA & FÍSICA INTERACTIVA",
+      intro: "La ingeniería no termina en el backend: se refleja en la disciplina física, la música y la pasión por construir modelos interactivos tangibles.",
+      card1Title: "DISCIPLINA DE ENTRENAMIENTO",
+      card1Desc: "Entrenamiento constante de fuerza enfocado en progresiones Push-Pull-Legs (PPL). La misma disciplina que rige el rendimiento físico aplica a la arquitectura de software sin atajos.",
+      card2Title: "MÚSICA & GUITARRA ACÚSTICA",
+      card2Desc: "Exploración de progresiones armónicas y composición en guitarra acústica. El balance creativo ideal entre lógica matemática y expresión sonora.",
+      card3Title: "GAMING & TUNING DE SERVIDORES",
+      card3Desc: "Optimización de servidores C++ y Java en Rust y Minecraft, configuración de redes locales y tácticas de juego colaborativas.",
+      labTitle: "LABORATORIO DE FÍSICA 2D // SIMULADOR 8-BALL",
+      labDesc: "Motor interactivo de física en tiempo real desarrollado con HTML5 Canvas y TypeScript. Modela vectores de colisión elástica, fricción continua, amortiguación contra bandas y detección de troneras.",
     },
     en: {
-      label: "07 // THE HUMAN ELEMENT",
-      title: "BEYOND THE CODE",
-      card1Title: "HUMAN FILTER",
-      card1Text: "Beyond the screen, I am a warm and friendly individual. I deeply value working with people I resonate with and building genuine connections. I am a passionate animal lover with an eternal curiosity to learn from everything around me.",
-      card2Title: "DISCIPLINE & HOBBIES",
-      card2Items: [
-        { label: "WEIGHTLIFTING (PPL)", desc: "Consistent discipline in the gym (Push-Pull-Legs)." },
-        { label: "ACOUSTIC GUITAR", desc: "Harmonic progressions and lyric writing." },
-        { label: "GAMING & MODDING", desc: "C++ & JVM server tuning in Rust & Minecraft." },
-        { label: "8-BALL POOL", desc: "Billiards matches with friends to clear the mind." },
-      ],
-      labsTitle: "INTERACTIVE MODULES (OPTIONAL LABS)",
-      billiardsBtn: "🎱 LAB // BILLIARDS 8-BALL SIMULATOR",
-      audioBtn: "🎵 LAB // AUDIO SYNTHESIZER",
-      closeBtn: "CLOSE MODULE",
+      label: "07 // DISCIPLINE & LAB",
+      title: "BEYOND THE SCREEN & INTERACTIVE PHYSICS",
+      intro: "Engineering extends beyond server backends: it manifests in physical discipline, music, and the drive to build tangible interactive simulations.",
+      card1Title: "WEIGHTLIFTING DISCIPLINE",
+      card1Desc: "Consistent strength training rooted in Push-Pull-Legs (PPL) splits. The same dedication that governs physical output applies to robust, zero-compromise software engineering.",
+      card2Title: "MUSIC & ACOUSTIC GUITAR",
+      card2Desc: "Harmonic progressions and songwriting on acoustic guitar. The ideal creative balance connecting mathematical cadence and sonic expression.",
+      card3Title: "GAMING & SERVER TUNING",
+      card3Desc: "Optimization of C++ and JVM servers in Rust and Minecraft, local network tuning, and tactical team coordination.",
+      labTitle: "2D PHYSICS LAB // 8-BALL SIMULATOR",
+      labDesc: "Real-time interactive physics engine written in HTML5 Canvas and TypeScript. Models elastic collision vectors, continuous friction decay, rail dampening, and pocket capture mechanics.",
     },
   }[lang]
 
@@ -638,125 +534,93 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
     <section id="human-side" className="section">
       <div className="container">
         <span className="section-label">{t.label}</span>
-        <h2 className="display-title" style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
+        <h2 className="display-title" style={{ fontSize: '2.5rem', marginBottom: '0.6rem' }}>
           {t.title}
         </h2>
+        <p className="body-text" style={{ marginBottom: '2.5rem', maxWidth: '750px' }}>
+          {t.intro}
+        </p>
 
         <div className="bento-grid">
-          {/* Card 1: Personality & Values (col-span-6) */}
-          <motion.div 
-            whileHover={{ y: -2 }}
-            className="bento-card col-span-6"
-            style={{ 
-              background: 'rgba(0, 0, 0, 0.4)', 
-              backdropFilter: 'blur(10px)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              padding: '2rem'
-            }}
-          >
-            <div className="ndot" style={{ color: 'var(--red)', fontSize: '0.75rem', marginBottom: '1rem' }}>
-              IDENTIDAD // VALORES
-            </div>
-            <h3 className="card-title" style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>
-              {t.card1Title}
-            </h3>
-            <p className="body-text" style={{ fontSize: '0.95rem', color: 'var(--gray-200)', lineHeight: 1.7 }}>
-              {t.card1Text}
-            </p>
-          </motion.div>
-
-          {/* Card 2: Hobbies & Discipline (col-span-6) */}
-          <motion.div 
-            whileHover={{ y: -2 }}
-            className="bento-card col-span-6"
-            style={{ 
-              background: 'rgba(0, 0, 0, 0.4)', 
-              backdropFilter: 'blur(10px)',
-              padding: '2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}
-          >
+          {/* Card 1: Gym / PPL */}
+          <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between' }}>
             <div>
-              <div className="ndot" style={{ color: 'var(--red)', fontSize: '0.75rem', marginBottom: '1rem' }}>
-                DISCIPLINA // ESTILO DE VIDA
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <span className="mono-tag mono-tag-red">DISCIPLINA // PPL</span>
+                <Dumbbell size={18} color="var(--red)" />
               </div>
-              <h3 className="card-title" style={{ fontSize: '1.3rem', marginBottom: '1.2rem' }}>
+              <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.6rem' }}>
+                {t.card1Title}
+              </h3>
+              <p className="body-text" style={{ fontSize: '0.88rem' }}>
+                {t.card1Desc}
+              </p>
+            </div>
+          </Bento3DTilt>
+
+          {/* Card 2: Acoustic Guitar */}
+          <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <span className="mono-tag">CREATIVIDAD // SONIDO</span>
+                <Music size={18} color="var(--white)" />
+              </div>
+              <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.6rem' }}>
                 {t.card2Title}
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.8rem' }}>
-                {t.card2Items.map((item, idx) => (
-                  <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)', borderRadius: '10px', padding: '0.7rem 0.9rem' }}>
-                    <span className="ndot" style={{ fontSize: '0.75rem', color: 'var(--white)', display: 'block', marginBottom: '0.2rem' }}>
-                      {item.label}
-                    </span>
-                    <span className="body-text" style={{ fontSize: '0.78rem', color: 'var(--gray-400)' }}>
-                      {item.desc}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <p className="body-text" style={{ fontSize: '0.88rem' }}>
+                {t.card2Desc}
+              </p>
             </div>
-          </motion.div>
+          </Bento3DTilt>
 
-          {/* Card 3: Collapsible Interactive Modules (col-span-12) */}
-          <div className="bento-card col-span-12" style={{ background: 'rgba(0, 0, 0, 0.4)', backdropFilter: 'blur(10px)', padding: '1.8rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: activeDrawer !== 'none' ? '1.5rem' : 0 }}>
+          {/* Card 3: Gaming & Modding */}
+          <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <span className="mono-tag">TÁCTICA // JVM & C++</span>
+                <Gamepad2 size={18} color="var(--white)" />
+              </div>
+              <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.6rem' }}>
+                {t.card3Title}
+              </h3>
+              <p className="body-text" style={{ fontSize: '0.88rem' }}>
+                {t.card3Desc}
+              </p>
+            </div>
+          </Bento3DTilt>
+
+          {/* Card 4: Upgraded 8-Ball Physics Simulator Lab (col-span-12) */}
+          <div
+            className="bento-card col-span-12"
+            style={{
+              padding: '2rem',
+              background: 'rgba(10, 10, 12, 0.85)',
+              backdropFilter: 'blur(12px)',
+              borderColor: 'rgba(255, 255, 255, 0.15)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.6rem' }}>
               <div>
-                <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-500)' }}>
-                  {t.labsTitle}
+                <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--red)', marginBottom: '0.2rem' }}>
+                  EXPERIMENTO // SIMULACIÓN DE FÍSICA VECTORIAL
                 </div>
-                <h3 className="card-title" style={{ fontSize: '1.1rem', marginTop: '0.2rem' }}>
-                  LABORATORIOS INTERACTIVOS A PETICIÓN
+                <h3 className="card-title" style={{ fontSize: '1.25rem' }}>
+                  {t.labTitle}
                 </h3>
               </div>
-
-              <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => setActiveDrawer(activeDrawer === 'billiards' ? 'none' : 'billiards')}
-                  className={`mono-tag ${activeDrawer === 'billiards' ? 'mono-tag-red' : ''}`}
-                  style={{ cursor: 'pointer', padding: '0.5rem 1rem', fontSize: '0.75rem' }}
-                >
-                  {t.billiardsBtn}
-                </button>
-
-                <button
-                  onClick={() => setActiveDrawer(activeDrawer === 'audio' ? 'none' : 'audio')}
-                  className={`mono-tag ${activeDrawer === 'audio' ? 'mono-tag-red' : ''}`}
-                  style={{ cursor: 'pointer', padding: '0.5rem 1rem', fontSize: '0.75rem' }}
-                >
-                  {t.audioBtn}
-                </button>
-              </div>
+              <span className="mono-tag mono-tag-red">
+                <Sparkles size={12} /> HTML5 CANVAS + TYPESCRIPT
+              </span>
             </div>
 
-            {/* Expanded Drawer Area */}
-            {activeDrawer === 'billiards' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}
-              >
-                <BilliardsHardwareCanvas />
-              </motion.div>
-            )}
+            <p className="body-text" style={{ fontSize: '0.88rem', marginBottom: '1.5rem', color: 'var(--gray-300)' }}>
+              {t.labDesc}
+            </p>
 
-            {activeDrawer === 'audio' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}
-              >
-                <MinimalMusicWidget />
-              </motion.div>
-            )}
+            {/* Polished Simulator Canvas */}
+            <BilliardsHardwareCanvas lang={lang} />
           </div>
-
         </div>
       </div>
     </section>

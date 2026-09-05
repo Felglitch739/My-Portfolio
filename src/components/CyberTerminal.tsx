@@ -42,13 +42,14 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
           id: (Date.now() + 1).toString(),
           type: 'output',
           text: `COMMAND LIST:
-  • whoami    - Profile summary & UTRGV CS status
-  • skills    - Technical modules (React Native, Python, React, Vite, Tailwind, TS, SQL)
-  • projects  - Overview of KronoBook, AuraFit, Build Pa'l Norte & more
-  • hobbies   - Fitness (PPL), Guitar & AI, Gaming (Rust/Minecraft), Billiards
-  • billiards - Jump to 8-Ball Billiards simulator
-  • contact   - Direct info & social links
-  • clear     - Clear terminal logs`,
+  • whoami     - Profile summary, education (UTRGV & RFM) & engineering focus
+  • skills     - Full stack (Mobile, Web, Backend, Hardware/IoT, CAD/MCP)
+  • projects   - KronoBook, TPH Monitor, AuraFit, Revit MCP, Gazpacho's, Weather Bot
+  • leadership - Build Pa'l Norte, DualFX, IEEEXtreme, FronteraHacks & IEEE
+  • hardware   - ESP32, Arduino, BLE, sensors & embedded systems
+  • billiards  - Jump to 2D Physics Lab & 8-Ball Simulator
+  • contact    - University email, GitHub & portfolio url
+  • clear      - Clear terminal screen`,
         })
         break
 
@@ -56,10 +57,12 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'success',
-          text: `[IDENTITY]: Félix E. Martinez Flores
-[ROLE]: Full-Stack Software Engineer & Mobile Developer
-[EDU]: Computer Science Student @ UTRGV
-[PHILOSOPHY]: Programming is the art of solving complex logical puzzles. I build systems, not just code.`,
+          text: `[IDENTITY]: Félix E. Martínez Flores
+[ROLE]: Software Engineer | Full-Stack & Mobile Developer | Hardware & Embedded Systems Enthusiast
+[EDUCATION]:
+  • University of Texas Rio Grande Valley (UTRGV) - Computer Science
+  • Preparatoria RFM (Matamoros)
+[PROFESSIONAL FOCUS]: Full-stack web & mobile development, multi-tenant cloud architecture, hardware/IoT telemetry, and CAD/BIM AI plugins. Regional tech community co-founder.`,
         })
         break
 
@@ -67,12 +70,12 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'output',
-          text: `SOFTWARE MODULES:
-• React Native (Mobile Architecture)
-• Python (APIs & Automation)
-• React / Vite / Tailwind CSS / TypeScript
-• SQL & Supabase (Multi-Tenant Architecture)
-• Node.js & Next.js`,
+          text: `TECHNICAL ARSENAL:
+• Frontend & Mobile: React, React Native, Expo, TypeScript, JavaScript, Tailwind CSS, Vite
+• Backend & Databases: Python, Flask, Node.js, C++, C#, Supabase, PostgreSQL (Multi-tenant, RLS)
+• Hardware & IoT: ESP32, Arduino Mega 2560, Raspberry Pi, BLE, Water Quality Probes, RFID, LCD 1602
+• CAD & AI: C# Autodesk Revit API plugins, Model Context Protocol (MCP) & LLMs
+• DevOps & Environments: Git, GitHub, Vercel, Linux (Bash), Windows`,
         })
         break
 
@@ -80,24 +83,39 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'output',
-          text: `FEATURED PROJECTS:
-1. KronoBook & DualFX [SaaS]: Multi-tenant booking platform + DualFX auto detailing integration.
-2. AuraFit [AI Mobile]: AI fitness tracking app (Frontera Devs winner, React Native rewrite).
-3. Build Pa'l Norte [Community]: Matamoros tech community co-founder & 24h Hackathon host.
-4. Gazpacho's [Web SPA]: High-end restaurant redesign prototype.
-5. Family Weather [Automation]: Python weather alert bot deployed on PythonAnywhere.`,
+          text: `FEATURED CORE PROJECTS:
+1. KronoBook [SaaS]: Multi-tenant booking platform with dynamic routing & RLS.
+2. TPH Monitor [IoT Mobile]: Real-time water quality telemetry via BLE & ESP32.
+3. AuraFit [AI Mobile]: Mobile fitness tracking suite (FronteraHacks 24h winner, React Native).
+4. Revit CAD Assistant [Desktop]: C# extension connecting BIM models to LLMs via MCP.
+5. Gazpacho's [Commercial Web]: High-end restaurant web redesign on Vercel.
+6. Family Weather Bot [Automation]: Python weather forecast & webhook alert engine.`,
         })
         break
 
-      case 'hobbies':
+      case 'leadership':
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'output',
-          text: `THE HUMAN ELEMENT:
-• Weightlifting (Push-Pull-Legs & Upper-Lower splits).
-• Acoustic Guitar progressions, lyric writing & AI audio generation.
-• Gaming: Rust & Minecraft server tuning, modding & tactics.
-• Billiards: Playing 8-ball pool with Eduardo, Wicho & Orlando.`,
+          text: `COMMUNITY LEADERSHIP & TRACK RECORD:
+• Build Pa'l Norte: Co-founder & CMO. Matamoros tech initiative; organizing 24h Hackathon Vol. 1 at Plaza 11-11.
+• DualFX: Co-founder. Mobile detailing business in Matamoros integrated with KronoBook.
+• IEEEXtreme: Competitor in editions 18.0 (2024) and 19.0 (2025) - 24h global algorithm sprint.
+• FronteraHacks: 24h Hackathon competitor (birth of AuraFit).
+• IEEE Student Branch: Active chapter member (workshops, algorithmics & robotics).
+• ENIEP 2023 & 2024: Academic Biology & competitive volleyball high school representative.`,
+        })
+        break
+
+      case 'hardware':
+        newHistory.push({
+          id: (Date.now() + 1).toString(),
+          type: 'output',
+          text: `HARDWARE & EMBEDDED LAB:
+• Microcontrollers: ESP32 (Wi-Fi + BLE dual core), Arduino Mega 2560 R3.
+• Wireless: Bluetooth Low Energy (BLE) peripheral/central communication.
+• Peripherals: Water quality probes (pH, temperature, turbidity), RC522 RFID, ultrasonic HC-SR04, LCD 1602 I2C.
+• Edge: Raspberry Pi headless Linux nodes.`,
         })
         break
 
@@ -105,21 +123,23 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'success',
-          text: '[BILLIARDS]: Scrolling to 8-ball dot-matrix simulator...',
+          text: '[PHYSICS LAB]: Navigating to 2D Physics Vector Simulator (8-Ball)...',
         })
         setTimeout(() => {
           onClose()
           document.getElementById('human-side')?.scrollIntoView({ behavior: 'smooth' })
-        }, 400)
+        }, 350)
         break
 
       case 'contact':
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'output',
-          text: `CONTACT & SOCIAL:
-• Email: felix.martinez08@utrgv.edu
-• GitHub: https://github.com/Felglitch739`,
+          text: `COMMUNICATION CHANNELS:
+• University Email: felix.martinez08@utrgv.edu
+• Portfolio: https://felixmf.lat
+• GitHub: https://github.com/Felglitch739
+• Location: Brownsville, TX / Matamoros, Tamps.`,
         })
         break
 
@@ -132,7 +152,7 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
         newHistory.push({
           id: (Date.now() + 1).toString(),
           type: 'error',
-          text: `Command not recognized: "${trimmed}". Type "help".`,
+          text: `Command not recognized: "${trimmed}". Type "help" for available commands.`,
         })
         break
     }
@@ -224,7 +244,7 @@ export default function CyberTerminal({ isOpen, onClose, lang = 'es' }: CyberTer
               }}
             >
               <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-500)' }}>CMD:</span>
-              {['whoami', 'skills', 'projects', 'hobbies', 'billiards', 'contact', 'clear'].map((cmd) => (
+              {['whoami', 'skills', 'projects', 'leadership', 'hardware', 'billiards', 'contact', 'clear'].map((cmd) => (
                 <button
                   key={cmd}
                   onClick={() => handleCommand(cmd)}

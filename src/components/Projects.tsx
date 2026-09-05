@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ExternalLink, X, Globe, Smartphone, Users, CloudSun, ArrowUpRight } from 'lucide-react'
+import { ExternalLink, X, Smartphone, Globe, Cpu, Bot, CloudSun, ArrowUpRight, CheckCircle2 } from 'lucide-react'
 import Bento3DTilt from './Bento3DTilt'
 
 const GithubIcon = ({ size = 16 }: { size?: number }) => (
@@ -13,15 +13,21 @@ interface Project {
   id: string
   num: string
   title: string
-  subtitle: string
-  desc: string
-  detail: string
+  subtitleEs: string
+  subtitleEn: string
+  descEs: string
+  descEn: string
+  detailEs: string
+  detailEn: string
+  keyPointsEs: string[]
+  keyPointsEn: string[]
   image?: string
   tags: string[]
   link?: string
   github?: string
-  badge?: string
+  badge: string
   badgeRed?: boolean
+  icon: React.ReactNode
 }
 
 interface ProjectsProps {
@@ -35,83 +41,192 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
     {
       id: 'kronobook',
       num: '01',
-      title: 'KronoBook & DualFX',
-      subtitle: 'PLATA FORMA SAAS MULTI-TENANT & DUALFX',
-      desc: 'Plataforma SaaS para agendamiento de citas y gestión de clientes con Supabase. Integra en vivo la página operativa de DualFX (autolavado y detallado automotriz local).',
-      detail: 'KronoBook fue diseñado con arquitectura multi-tenant en Supabase (RLS) para aislamiento de datos. DualFX se integró como el primer caso de éxito operativo real, gestionando reservas y notificaciones móbiles.',
+      title: 'KronoBook',
+      subtitleEs: 'PLATAFORMA SAAS MULTI-TENANT DE CITAS & SERVICIOS',
+      subtitleEn: 'MULTI-TENANT SAAS APPOINTMENT PLATFORM',
+      descEs: 'Plataforma SaaS multi-inquilino de gestión de citas y reservas diseñada para negocios de servicios (barberías, auto detailing, etc.), con onboarding self-service y control de acceso seguro.',
+      descEn: 'Multi-tenant SaaS booking platform engineered for service businesses (barbershops, auto detailing), featuring self-service business onboarding and granular access control.',
+      detailEs: 'KronoBook resuelve la complejidad de múltiples negocios compartiendo la misma infraestructura mediante un esquema multi-tenant seguro en PostgreSQL con políticas Row-Level Security (RLS) en Supabase. Cuenta con enrutamiento dinámico por inquilino, aislamiento total de datos, panel administrativo en tiempo real e integración operativa directa con el negocio móvil DualFX.',
+      detailEn: 'KronoBook tackles multi-client isolation through PostgreSQL Row-Level Security (RLS) on Supabase. It features dynamic tenant subrouting, zero-leak data boundaries, real-time analytics dashboard, and direct operational deployment powering DualFX mobile detailing.',
+      keyPointsEs: [
+        'Onboarding self-service para negocios independientes',
+        'Enrutamiento dinámico y aislamiento estricto por inquilino (RLS)',
+        'Control de acceso basado en roles y gestión de disponibilidad horaria',
+        'Integración operativa en vivo con clientes comerciales (DualFX)',
+      ],
+      keyPointsEn: [
+        'Self-service onboarding flow for independent businesses',
+        'Dynamic tenant routing with strict Row-Level Security (RLS)',
+        'Role-based access control and live appointment dispatching',
+        'Production integration powering commercial operations (DualFX)',
+      ],
       image: '/KronoBook_Preview.png',
-      tags: ['SAAS MULTI-TENANT', 'SUPABASE', 'REACT', 'TAILWIND CSS'],
+      tags: ['REACT', 'TYPESCRIPT', 'SUPABASE', 'POSTGRESQL', 'TAILWIND CSS'],
       link: 'https://kronobook.vercel.app',
       github: 'https://github.com/Felglitch739/KronoBook',
-      badge: 'PRODUCTION SaaS',
+      badge: 'PRODUCTION SAAS',
       badgeRed: true,
+      icon: <Globe size={18} color="var(--red)" />,
+    },
+    {
+      id: 'tph-monitor',
+      num: '02',
+      title: 'TPH Monitor',
+      subtitleEs: 'MONITOREO INDUSTRIAL DE CALIDAD DE AGUA VÍA BLE',
+      subtitleEn: 'INDUSTRIAL WATER QUALITY MONITORING VIA BLE',
+      descEs: 'Aplicación móvil para el monitoreo industrial de calidad y parámetros de agua en tiempo real conectado vía Bluetooth Low Energy (BLE) a microcontroladores y sensores embebidos.',
+      descEn: 'Industrial mobile monitoring app providing real-time telemetry of water quality metrics connected via Bluetooth Low Energy (BLE) to embedded hardware and probes.',
+      detailEs: 'Diseñada para entornos de medición física, TPH Monitor establece una conexión BLE de baja latencia con estaciones microcontroladas (ESP32). Procesa flujos de datos continuos de sensores de pH, temperatura y turbidez, renderizando gráficos analíticos interactivos y disparando alertas cuando los parámetros superan umbrales críticos.',
+      detailEn: 'Engineered for physical telemetry, TPH Monitor establishes low-latency BLE streaming with ESP32 sensor rigs. It processes continuous streams of pH, temperature, and turbidity data, rendering interactive telemetry graphs and firing instant threshold alarms.',
+      keyPointsEs: [
+        'Conexión continua de baja energía vía Bluetooth LE (BLE)',
+        'Sincronización bidireccional de datos con microcontroladores ESP32',
+        'Gestión de estado reactivo y visualización analítica en tiempo real',
+        'Detección y alertas preventivas de anomalías en parámetros industriales',
+      ],
+      keyPointsEn: [
+        'Continuous low-power Bluetooth Low Energy (BLE) telemetry',
+        'Bidirectional data synchronization with ESP32 microcontrollers',
+        'Reactive real-time state and high-speed telemetry charts',
+        'Threshold detection and proactive alert triggers for industrial probes',
+      ],
+      tags: ['REACT NATIVE', 'BLE PROTOCOL', 'ESP32 / IOT', 'SENSORS', 'TYPESCRIPT'],
+      github: 'https://github.com/Felglitch739',
+      badge: 'HARDWARE & MOBILE',
+      badgeRed: true,
+      icon: <Cpu size={18} color="var(--red)" />,
     },
     {
       id: 'aurafit',
-      num: '02',
+      num: '03',
       title: 'AuraFit Mobile App',
-      subtitle: 'APP DE FITNESS CON IA — FRONTERA DEVS WINNER',
-      desc: 'App móvil impulsada por IA para análisis corporal y entrenamiento personalizado. Ganadora en Frontera Devs Edinburg, actualmente en reescritura desde cero con React Native.',
-      detail: 'Nacida en Frontera Devs Edinburg, AuraFit se está migrando a React Native y TypeScript para lanzamiento nativo en iOS y Android con sugerencias adaptativas por IA.',
+      subtitleEs: 'APP MÓVIL DE FITNESS & SEGUIMIENTO ASISTIDA POR IA',
+      subtitleEn: 'AI-POWERED FITNESS & WORKOUT TRACKING APP',
+      descEs: 'Aplicación móvil de fitness y seguimiento de entrenamiento asistida por IA. Originada durante el hackathon FronteraHacks (24h) en Edinburg y escalada a una app móvil completa.',
+      descEn: 'AI-assisted mobile fitness and training tracking application. Born during the 24h FronteraHacks hackathon in Edinburg and subsequently scaled into a full native app.',
+      detailEs: 'AuraFit combina rutinas de hipertrofia y fuerza con algoritmos adaptativos asistidos por IA para optimizar la sobrecarga progresiva y el volumen semanal. Nació como prototipo ganador en el hackathon FronteraHacks (24h continuas de programación en Edinburg) y ha evolucionado hacia una suite nativa multiplataforma con React Native y Expo.',
+      detailEn: 'AuraFit pairs strength training routines with adaptive AI recommendation engines to calculate progressive overload and weekly muscle volume. Born as a winning concept at the 24-hour FronteraHacks hackathon in Edinburg, it was scaled into a full cross-platform native codebase with React Native and Expo.',
+      keyPointsEs: [
+        'Originada en el hackathon FronteraHacks de 24 horas continuas en Edinburg',
+        'Motor de recomendaciones adaptativas de entrenamiento impulsado por IA',
+        'Arquitectura nativa con React Native, Expo y TypeScript',
+        'Monitoreo analítico de sobrecarga progresiva y métricas corporales',
+      ],
+      keyPointsEn: [
+        'Born during the intensive 24-hour FronteraHacks hackathon in Edinburg',
+        'Adaptive AI training recommendations based on workout performance',
+        'Engineered on React Native, Expo, and TypeScript for iOS & Android',
+        'Progressive overload analytics and volume monitoring dashboards',
+      ],
       image: '/aurafit.png',
-      tags: ['REACT NATIVE', 'AI/ML', 'TYPESCRIPT', 'IOS & ANDROID'],
+      tags: ['REACT NATIVE', 'EXPO', 'PYTHON / AI', 'TYPESCRIPT', 'IOS & ANDROID'],
       link: 'https://aurafit.lrz.app',
       github: 'https://github.com/Felglitch739/AuraFit',
-      badge: 'HACKATHON WINNER',
+      badge: 'FRONTERAHACKS',
       badgeRed: true,
+      icon: <Smartphone size={18} color="var(--red)" />,
     },
     {
-      id: 'build-pal-norte',
-      num: '03',
-      title: "Build Pa'l Norte",
-      subtitle: 'COMUNIDAD TECH & HACKATHON 24H',
-      desc: 'Cofundador y CMO de esta comunidad tecnológica en Matamoros, Tamaulipas. Impulsamos el talento local con eventos colaborativos y nuestro hackathon de 24 horas.',
-      detail: "Build Pa'l Norte es un esfuerzo 100% colaborativo enfocado en empoderar desarrolladores del norte de México con eventos técnicos y competencias intensivas de programación.",
-      tags: ['COMUNIDAD TECH', 'HACKATHON 24H', 'MATAMOROS'],
-      link: 'https://linktr.ee/buildpalnorte',
-      github: 'https://github.com/BuildPalNorte',
-      badge: 'CO-FOUNDER & CMO',
+      id: 'revit-mcp',
+      num: '04',
+      title: 'Extensión Revit CAD / BIM',
+      subtitleEs: 'PLUGIN C# Y ASISTENTE CONVERSACIONAL VÍA MCP',
+      subtitleEn: 'C# REVIT EXTENSION & MCP CONVERSATIONAL BIM BOT',
+      descEs: 'Plugin personalizado de escritorio en C# para Autodesk Revit que integra un asistente conversacional inteligente dentro del entorno BIM mediante Model Context Protocol (MCP).',
+      descEn: 'Custom C# desktop extension for Autodesk Revit integrating a conversational AI assistant directly inside the BIM modeling workflow via Model Context Protocol (MCP).',
+      detailEs: 'Este desarrollo conecta la API nativa de Autodesk Revit con modelos de lenguaje modernos utilizando el protocolo estándar Model Context Protocol (MCP). Permite a arquitectos e ingenieros consultar volumetrías, parámetros de familias y metadatos estructurales en lenguaje natural, agilizando tareas repetitivas de modelado y auditoría BIM.',
+      detailEn: 'This project bridges the native Autodesk Revit API with modern LLMs using the standardized Model Context Protocol (MCP). It enables architects and engineers to query dimensional volumes, family parameters, and structural BIM elements in natural language, automating repetitive modeling and audit tasks.',
+      keyPointsEs: [
+        'Desarrollo de extensión nativa en C# y .NET para Autodesk Revit API',
+        'Integración del Model Context Protocol (MCP) para ingesta de contexto BIM',
+        'Asistente conversacional con IA para consulta y automatización de modelos',
+        'Inspección y auditoría de parámetros estructurales en tiempo real',
+      ],
+      keyPointsEn: [
+        'Native desktop plugin built with C# and .NET for the Autodesk Revit API',
+        'Integration of the Model Context Protocol (MCP) for structured BIM queries',
+        'Conversational AI assistant for model data interrogation and automation',
+        'Real-time structural element inspection and parameter audits',
+      ],
+      tags: ['C#', '.NET', 'AUTODESK REVIT API', 'MCP', 'AI INTEGRATION'],
+      github: 'https://github.com/Felglitch739',
+      badge: 'CAD & AI PROTOCOL',
       badgeRed: false,
+      icon: <Bot size={18} color="var(--white)" />,
     },
     {
       id: 'gazpachos',
-      num: '04',
-      title: "Gazpacho's SPA",
-      subtitle: 'REDIS EÑO WEB BAR & RESTAURANTE',
-      desc: 'Single Page Application (SPA) para restaurante y bar local con interfaz moderna, menú interactivo y navegación fluida.',
-      detail: 'Construida con React y Framer Motion, la aplicación ofrece una experiencia visual envolvente optimizada para clientes locales.',
+      num: '05',
+      title: "Gazpacho's Restaurant - Bar",
+      subtitleEs: 'REDIS EÑO WEB & DESPLIEGUE COMERCIAL',
+      subtitleEn: 'COMMERCIAL WEB REDESIGN & DEPLOYMENT',
+      descEs: 'Rediseño y despliegue del portal web comercial para el restaurante y bar local Gazpacho\'s con frontend moderno, navegación fluida y arquitectura visual envolvente.',
+      descEn: 'Complete redesign and production deployment of the commercial web portal for Gazpacho\'s restaurant and bar, featuring modern UI and high-speed edge delivery.',
+      detailEs: 'Diseñado para potenciar la identidad digital del negocio gastronómico. Desarrollado con React, animaciones fluidas y optimización de rendimiento en Vercel, proporcionando a los comensales acceso ágil al menú interactivo, horarios y reservas de mesa con una estética cuidada.',
+      detailEn: 'Created to elevate the restaurant\'s brand identity and customer acquisition. Developed in React with fluid interactions and deployed on Vercel\'s edge network, giving diners fast access to interactive menus, schedules, and table inquiries.',
+      keyPointsEs: [
+        'Rediseño visual completo con estética moderna y responsive',
+        'Menú interactivo optimizado para alta retención móvil',
+        'Despliegue optimizado en Vercel con tiempos de carga submétricos',
+      ],
+      keyPointsEn: [
+        'Complete visual overhaul with modern responsive styling',
+        'Interactive digital menu optimized for mobile ordering',
+        'Vercel edge deployment ensuring sub-second page loads',
+      ],
       image: "/Gazpacho's.png",
-      tags: ['REACT', 'FRAMER MOTION', 'GLASSMORPHISM'],
+      tags: ['REACT', 'VITE', 'VERCEL', 'UI/UX', 'FRAMER MOTION'],
       link: 'https://gazpachos-lp.vercel.app',
       github: 'https://github.com/Felglitch739/gazpachos-lp',
-      badge: 'WEB SPA',
+      badge: 'COMMERCIAL WEB',
       badgeRed: false,
+      icon: <Globe size={18} color="var(--white)" />,
     },
     {
       id: 'familyweather',
-      num: '05',
+      num: '06',
       title: 'Family Weather Alert Bot',
-      subtitle: 'AUTOMATIZACIÓN PYTHON & APIS',
-      desc: 'Sistema automatizado de alertas meteorológicas construido en Python, integrado con APIs de clima y mensajería en PythonAnywhere.',
-      detail: 'Ejecución automatizada mediante cron jobs en PythonAnywhere que monitorean APIs de clima y envían notificaciones en tiempo real.',
+      subtitleEs: 'BOT AUTOMATIZADO DE ALERTAS METEOROLÓGICAS',
+      subtitleEn: 'AUTOMATED LOCAL WEATHER FORECAST & ALERT BOT',
+      descEs: 'Bot automatizado de pronósticos y alertas meteorológicas locales construido con Python, consumo de la API OpenWeather y webhooks para mensajería instantánea.',
+      descEn: 'Automated weather forecast and local alert bot engineered with Python, consuming the OpenWeather API and dispatching real-time notifications via webhooks.',
+      detailEs: 'Sistema de monitoreo meteorológico desatendido ejecutado mediante tareas programadas (cron jobs). Analiza condiciones de precipitación, viento y temperaturas extremas, formateando reportes automáticos y despachando alertas instantáneas a través de webhooks para mantener a usuarios prevenidos ante cambios drásticos de clima.',
+      detailEn: 'Unattended weather daemon triggered via scheduled cron jobs. It evaluates precipitation thresholds, wind velocity, and extreme temperature shifts, formatting concise summaries and broadcasting instant alerts through webhooks.',
+      keyPointsEs: [
+        'Scripting en Python con consumo de OpenWeather API',
+        'Ejecución programada automatizada 24/7 mediante cron jobs',
+        'Despacho de alertas climáticas críticas vía webhooks instantáneos',
+      ],
+      keyPointsEn: [
+        'Python engine parsing real-time OpenWeather API payloads',
+        '24/7 automated scheduled execution via robust cron pipelines',
+        'Instant broadcast of extreme weather alerts via secure webhooks',
+      ],
       image: '/familyweather.png',
-      tags: ['PYTHON', 'PYTHONANYWHERE', 'APIS'],
+      tags: ['PYTHON', 'OPENWEATHER API', 'WEBHOOKS', 'AUTOMATION', 'CRON'],
       github: 'https://github.com/Felglitch739/Family_Weather',
-      badge: 'AUTOMATION',
+      badge: 'PYTHON AUTOMATION',
       badgeRed: false,
+      icon: <CloudSun size={18} color="var(--white)" />,
     },
   ]
 
   const t = {
     es: {
-      label: "05 // ARCHITECTURE & CASE STUDIES",
+      label: "05 // INGENIERÍA & CASOS DE ESTUDIO",
       title: "PROYECTOS DESTACADOS",
       viewBtn: "Ver Arquitectura",
+      pointsTitle: "PUNTOS CLAVE DE ARQUITECTURA:",
+      techTitle: "TECNOLOGÍAS EMPLEADAS:",
+      closeModal: "CERRAR INSPECTOR",
     },
     en: {
-      label: "05 // ARCHITECTURE & CASE STUDIES",
+      label: "05 // ENGINEERING & CASE STUDIES",
       title: "FEATURED PROJECTS",
       viewBtn: "View Architecture",
+      pointsTitle: "ARCHITECTURAL HIGHLIGHTS:",
+      techTitle: "TECHNOLOGIES EMPLOYED:",
+      closeModal: "CLOSE INSPECTOR",
     },
   }[lang]
 
@@ -131,53 +246,68 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
               <Bento3DTilt
                 key={p.id}
                 className={isLarge ? 'col-span-6' : 'col-span-4'}
-                style={{ justifyContent: 'space-between', minHeight: '340px' }}
+                style={{ justifyContent: 'space-between', minHeight: '360px' }}
               >
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <span className="ndot" style={{ fontSize: '1.2rem', color: 'var(--red)' }}>
-                      PROJ_{p.num}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="ndot" style={{ fontSize: '1.1rem', color: 'var(--red)' }}>
+                        PROJ_{p.num}
+                      </span>
+                      {p.icon}
+                    </div>
                     {p.badge && (
-                      <span className={`mono-tag ${p.badgeRed ? 'mono-tag-red' : ''}`}>
+                      <span className={`mono-tag ${p.badgeRed ? 'mono-tag-red' : ''}`} style={{ fontSize: '0.62rem' }}>
                         {p.badge}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="card-title" style={{ fontSize: '1.4rem', marginBottom: '0.3rem' }}>
+                  <h3 className="card-title" style={{ fontSize: '1.35rem', marginBottom: '0.3rem' }}>
                     {p.title}
                   </h3>
-                  <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-400)', marginBottom: '1rem' }}>
-                    {p.subtitle}
+                  <div className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-400)', marginBottom: '0.9rem' }}>
+                    {lang === 'es' ? p.subtitleEs : p.subtitleEn}
                   </div>
 
-                  <p className="body-text" style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>
-                    {p.desc}
+                  <p className="body-text" style={{ fontSize: '0.88rem', marginBottom: '1.2rem', lineHeight: 1.6 }}>
+                    {lang === 'es' ? p.descEs : p.descEn}
                   </p>
                 </div>
 
                 <div>
                   {/* Tags */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.2rem' }}>
-                    {p.tags.map((t) => (
-                      <span key={t} className="mono-tag" style={{ fontSize: '0.62rem' }}>
-                        {t}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '1.2rem' }}>
+                    {p.tags.map((tag) => (
+                      <span key={tag} className="mono-tag" style={{ fontSize: '0.6rem', padding: '0.25rem 0.5rem' }}>
+                        {tag}
                       </span>
                     ))}
                   </div>
 
                   {/* Actions */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '0.8rem' }}>
-                    <div style={{ display: 'flex', gap: '0.8rem' }}>
+                    <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
                       {p.link && (
-                        <a href={p.link} target="_blank" rel="noreferrer" className="ndot" style={{ fontSize: '0.75rem', color: 'var(--white)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                          <ExternalLink size={13} color="var(--red)" /> LIVE
+                        <a
+                          href={p.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="ndot"
+                          style={{ fontSize: '0.72rem', color: 'var(--white)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
+                          <ExternalLink size={12} color="var(--red)" /> LIVE
                         </a>
                       )}
                       {p.github && (
-                        <a href={p.github} target="_blank" rel="noreferrer" className="ndot" style={{ fontSize: '0.75rem', color: 'var(--gray-400)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                          <GithubIcon size={13} /> GITHUB
+                        <a
+                          href={p.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="ndot"
+                          style={{ fontSize: '0.72rem', color: 'var(--gray-400)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
+                          <GithubIcon size={12} /> GITHUB
                         </a>
                       )}
                     </div>
@@ -207,55 +337,115 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
               style={{
                 position: 'fixed',
                 inset: 0,
-                zIndex: 400,
-                background: 'rgba(0, 0, 0, 0.9)',
-                backdropFilter: 'blur(10px)',
+                zIndex: 500,
+                background: 'rgba(0, 0, 0, 0.88)',
+                backdropFilter: 'blur(12px)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '1.5rem',
               }}
             >
-              <div
+              <motion.div
+                initial={{ scale: 0.95, y: 15 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.95, y: 15 }}
                 className="bento-card bento-card-active"
                 onClick={(e) => e.stopPropagation()}
-                style={{ maxWidth: '640px', width: '100%', padding: '2.2rem' }}
+                style={{ maxWidth: '680px', width: '100%', maxHeight: '88vh', overflowY: 'auto', padding: '2.2rem' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <span className="ndot" style={{ color: 'var(--red)', fontSize: '1.2rem' }}>
-                    PROJ_{selectedProject.num} // ARCHITECTURE
+                  <span className="ndot" style={{ color: 'var(--red)', fontSize: '1.1rem' }}>
+                    PROJ_{selectedProject.num} // ARCHITECTURE_INSPECTOR
                   </span>
                   <button
                     onClick={() => setSelectedProject(null)}
                     className="mono-tag"
                     style={{ cursor: 'pointer', background: 'transparent' }}
                     aria-label="Cerrar inspector de proyecto"
-                    title="Cerrar inspector"
                   >
                     [ CLOSE ]
                   </button>
                 </div>
 
-                <h3 className="card-title" style={{ fontSize: '1.5rem', marginBottom: '0.4rem' }}>
+                <h3 className="card-title" style={{ fontSize: '1.6rem', marginBottom: '0.3rem' }}>
                   {selectedProject.title}
                 </h3>
-                <div className="ndot" style={{ fontSize: '0.75rem', color: 'var(--gray-400)', marginBottom: '1.2rem' }}>
-                  {selectedProject.subtitle}
+                <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-400)', marginBottom: '1.2rem' }}>
+                  {lang === 'es' ? selectedProject.subtitleEs : selectedProject.subtitleEn}
                 </div>
 
-                <p className="body-text" style={{ color: 'var(--white)', marginBottom: '1.5rem' }}>
-                  {selectedProject.detail}
+                <p className="body-text" style={{ color: 'var(--white)', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.7 }}>
+                  {lang === 'es' ? selectedProject.detailEs : selectedProject.detailEn}
                 </p>
 
-                <div style={{ textAlign: 'right' }}>
+                {/* Architectural Highlights */}
+                <div style={{ marginBottom: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.2rem' }}>
+                  <div className="ndot" style={{ fontSize: '0.75rem', color: 'var(--red)', marginBottom: '0.8rem' }}>
+                    {t.pointsTitle}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {(lang === 'es' ? selectedProject.keyPointsEs : selectedProject.keyPointsEn).map((point, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
+                        <CheckCircle2 size={15} color="var(--red)" style={{ marginTop: '3px', flexShrink: 0 }} />
+                        <span className="body-text" style={{ fontSize: '0.85rem', color: 'var(--gray-200)' }}>
+                          {point}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tech Pills */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-500)', marginBottom: '0.5rem' }}>
+                    {t.techTitle}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {selectedProject.tags.map((tag) => (
+                      <span key={tag} className="mono-tag mono-tag-red" style={{ fontSize: '0.65rem' }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Row */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1.2rem' }}>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    {selectedProject.link && (
+                      <a
+                        href={selectedProject.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-bento btn-bento-primary"
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                      >
+                        <ExternalLink size={13} /> LIVE DEMO
+                      </a>
+                    )}
+                    {selectedProject.github && (
+                      <a
+                        href={selectedProject.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-bento btn-bento-outline"
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                      >
+                        <GithubIcon size={13} /> REPOSITORY
+                      </a>
+                    )}
+                  </div>
+
                   <button
                     onClick={() => setSelectedProject(null)}
-                    className="btn-bento btn-bento-primary"
+                    className="btn-bento btn-bento-outline"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
                   >
-                    CLOSE INSPECTOR
+                    {t.closeModal}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

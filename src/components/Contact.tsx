@@ -111,6 +111,9 @@ export default function Contact({ lang = 'es' }: ContactProps) {
                 <div style={{ color: 'var(--white)', fontWeight: 600, fontSize: '0.95rem', marginTop: '0.2rem' }}>
                   UTRGV (Computer Science)
                 </div>
+                <div style={{ color: 'var(--gray-400)', fontSize: '0.8rem', marginTop: '0.1rem' }}>
+                  Preparatoria RFM (Matamoros)
+                </div>
               </div>
 
               <div>

@@ -27,10 +27,10 @@ export default function Footer({ lang = 'es' }: FooterProps) {
       >
         <div>
           <div className="ndot" style={{ fontSize: '0.9rem', color: 'var(--white)' }}>
-            FÉLIX E. MARTINEZ FLORES
+            FÉLIX E. MARTÍNEZ FLORES
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '0.2rem' }}>
-            Full-Stack Software Engineer & Hardware Hacker • UTRGV CS
+            Software Engineer | Full-Stack & Mobile Developer | Hardware & Embedded Systems • felixmf.lat
           </div>
         </div>
 

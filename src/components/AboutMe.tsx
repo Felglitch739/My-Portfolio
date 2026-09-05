@@ -1,4 +1,4 @@
-import { Code2, Users } from 'lucide-react'
+import { Code2, Cpu, Bot } from 'lucide-react'
 import Bento3DTilt from './Bento3DTilt'
 
 interface AboutMeProps {
@@ -8,74 +8,74 @@ interface AboutMeProps {
 export default function AboutMe({ lang = 'es' }: AboutMeProps) {
   const t = {
     es: {
-      label: "03 // PERFIL & ARQUITECTURA",
-      title: "CONSTRUYENDO SISTEMAS, NO SOLO CÓDIGO",
+      label: "03 // PERFIL & BIOGRAFÍA",
+      title: "INGENIERÍA FULL-STACK, HARDWARE & CAD AUTOMATION",
       p1: (
         <>
-          <strong style={{ color: 'var(--white)' }}>Soy Félix E. Martinez Flores,</strong> estudiante de Ciencias de la Computación (Computer Science) en <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. Me especializo en el desarrollo de software full-stack, desde aplicaciones web impulsadas por IA hasta arquitecturas móviles modernas.
+          <strong style={{ color: 'var(--white)' }}>Soy Félix E. Martínez Flores,</strong> estudiante de Ciencias de la Computación (Computer Science) en <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong> con raíces formativas en la <strong style={{ color: 'var(--white)' }}>Preparatoria RFM (Matamoros)</strong>. Me especializo en el desarrollo de software full-stack (web y móvil), arquitectura multi-tenant y la integración con hardware y sistemas embebidos.
         </>
       ),
       p2: (
         <>
-          Para mí, <strong style={{ color: 'var(--white)' }}>la programación es el arte de resolver rompecabezas lógicos complejos</strong>. Me apasiona diseñar arquitecturas robustas y escalables, colaborando constantemente con un equipo cercano de desarrolladores y amigos.
+          Mi experiencia técnica combina <strong style={{ color: 'var(--white)' }}>plataformas SaaS escalables en la nube</strong> (Supabase, PostgreSQL, RLS), <strong style={{ color: 'var(--white)' }}>aplicaciones móviles reactivas</strong> (React Native, Expo) comunicándose con microcontroladores y sensores vía Bluetooth LE, y <strong style={{ color: 'var(--white)' }}>extensiones de escritorio para Autodesk Revit</strong> integrando modelos CAD/BIM mediante Model Context Protocol (MCP) e inteligencia artificial.
         </>
       ),
       p3: (
         <>
-          Fuera de la terminal, mantengo una disciplina constante: entreno pesado en el gimnasio (<strong style={{ color: 'var(--white)' }}>rutinas PPL</strong>), exploro progresiones en <strong style={{ color: 'var(--white)' }}>guitarra acústica</strong>, disfruto el modding en servidores de <strong style={{ color: 'var(--white)' }}>Rust y Minecraft</strong>, y comparto partidas de <strong style={{ color: 'var(--white)' }}>billar (8-ball pool)</strong> con amigos.
+          Fuera de la terminal, mantengo una disciplina constante: entrenamiento de fuerza (<strong style={{ color: 'var(--white)' }}>rutinas PPL</strong>), música y composición en <strong style={{ color: 'var(--white)' }}>guitarra acústica</strong>, y una dedicación constante al ecosistema tecnológico como co-fundador y líder comunitario en <strong style={{ color: 'var(--red)' }}>Build Pa'l Norte</strong>.
         </>
       ),
       pillars: [
         {
-          icon: <Code2 size={20} color="var(--white)" />,
-          title: "FULL-STACK SOFTWARE",
-          desc: "Desarrollo web y móvil avanzado con React, Vite, TypeScript, Tailwind CSS y Supabase.",
-        },
-        {
           icon: <Code2 size={20} color="var(--red)" />,
-          title: "MOBILE & WEB APPS",
-          desc: "Desarrollo de aplicaciones nativas multiplataforma usando React Native y arquitecturas modernas cloud con Supabase.",
+          title: "FULL-STACK & MULTI-TENANT",
+          desc: "Sistemas web y arquitecturas multi-tenant con React, TypeScript, Tailwind CSS, Supabase y PostgreSQL con políticas RLS.",
         },
         {
-          icon: <Users size={20} color="var(--white)" />,
-          title: "BUILD PA'L NORTE",
-          desc: "Cofundador y CMO de esta comunidad tecnológica en Matamoros. Hackathons de 24h.",
+          icon: <Cpu size={20} color="var(--white)" />,
+          title: "MOBILE & HARDWARE IOT",
+          desc: "Apps nativas con React Native y Expo conectadas a microcontroladores ESP32/Arduino, sensores industriales y conectividad BLE en tiempo real.",
+        },
+        {
+          icon: <Bot size={20} color="var(--red)" />,
+          title: "CAD EXTENSIONS & MCP",
+          desc: "Desarrollo de plugins en C# / .NET para Autodesk Revit y orquestación de modelos CAD/BIM con IA mediante Model Context Protocol.",
         },
       ],
     },
     en: {
-      label: "03 // PROFILE & ARCHITECTURE",
-      title: "BUILDING SYSTEMS, NOT JUST CODE",
+      label: "03 // PROFILE & BIOGRAPHY",
+      title: "FULL-STACK ENGINEERING, HARDWARE & CAD AUTOMATION",
       p1: (
         <>
-          <strong style={{ color: 'var(--white)' }}>I'm Félix E. Martinez Flores,</strong> a Computer Science student at <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong>. I specialize in full-stack software development, from AI-powered web apps to modern mobile architectures.
+          <strong style={{ color: 'var(--white)' }}>I'm Félix E. Martínez Flores,</strong> a Computer Science student at <strong style={{ color: 'var(--red)' }}>UTRGV (University of Texas Rio Grande Valley)</strong> with educational roots at <strong style={{ color: 'var(--white)' }}>Preparatoria RFM (Matamoros)</strong>. I specialize in full-stack software engineering (web and mobile), multi-tenant cloud architecture, and hardware/embedded systems integration.
         </>
       ),
       p2: (
         <>
-          For me, <strong style={{ color: 'var(--white)' }}>programming is the art of solving complex logical puzzles</strong>. I am passionate about designing robust, long-lasting system architectures.
+          My technical footprint encompasses <strong style={{ color: 'var(--white)' }}>scalable multi-tenant SaaS platforms</strong> (Supabase, PostgreSQL, RLS), <strong style={{ color: 'var(--white)' }}>reactive mobile applications</strong> (React Native, Expo) communicating with microcontrollers and sensors via Bluetooth LE, and <strong style={{ color: 'var(--white)' }}>desktop plugins for Autodesk Revit</strong> integrating CAD/BIM models with AI using the Model Context Protocol (MCP).
         </>
       ),
       p3: (
         <>
-          Beyond the terminal, I maintain an active discipline: weightlifting (<strong style={{ color: 'var(--white)' }}>Push-Pull-Legs splits</strong>), acoustic <strong style={{ color: 'var(--white)' }}>guitar progressions</strong>, server modding in <strong style={{ color: 'var(--white)' }}>Rust & Minecraft</strong>, and playing <strong style={{ color: 'var(--white)' }}>8-ball pool</strong> with friends.
+          Beyond the screen, I maintain continuous discipline: weight training (<strong style={{ color: 'var(--white)' }}>Push-Pull-Legs</strong>), acoustic <strong style={{ color: 'var(--white)' }}>guitar playing</strong>, and relentless commitment to the regional tech ecosystem as co-founder and community leader at <strong style={{ color: 'var(--red)' }}>Build Pa'l Norte</strong>.
         </>
       ),
       pillars: [
         {
-          icon: <Code2 size={20} color="var(--white)" />,
-          title: "FULL-STACK SOFTWARE",
-          desc: "Web & mobile engineering with React, Vite, TypeScript, Tailwind CSS, and Supabase.",
-        },
-        {
           icon: <Code2 size={20} color="var(--red)" />,
-          title: "MOBILE & WEB APPS",
-          desc: "Cross-platform native application development using React Native and modern cloud architectures with Supabase.",
+          title: "FULL-STACK & MULTI-TENANT",
+          desc: "Web systems and multi-tenant architectures using React, TypeScript, Tailwind CSS, Supabase, and PostgreSQL with robust RLS.",
         },
         {
-          icon: <Users size={20} color="var(--white)" />,
-          title: "BUILD PA'L NORTE",
-          desc: "Co-founder & CMO of this tech community in Matamoros. Organizers of 24h Hackathons.",
+          icon: <Cpu size={20} color="var(--white)" />,
+          title: "MOBILE & HARDWARE IOT",
+          desc: "Native apps with React Native & Expo connected to ESP32/Arduino microcontrollers, industrial sensors, and real-time BLE connectivity.",
+        },
+        {
+          icon: <Bot size={20} color="var(--red)" />,
+          title: "CAD EXTENSIONS & MCP",
+          desc: "Custom C# / .NET plugins for Autodesk Revit and AI-powered CAD/BIM orchestration using the Model Context Protocol (MCP).",
         },
       ],
     },
@@ -114,10 +114,10 @@ export default function AboutMe({ lang = 'es' }: AboutMeProps) {
               />
             </div>
             <span className="ndot" style={{ fontSize: '1.05rem', color: 'var(--white)' }}>
-              FÉLIX E. MARTINEZ
+              FÉLIX E. MARTÍNEZ FLORES
             </span>
             <span className="mono-tag mono-tag-red" style={{ marginTop: '0.4rem' }}>
-              {lang === 'es' ? 'CS EN UTRGV' : 'CS AT UTRGV'}
+              {lang === 'es' ? 'UTRGV CS // PREP RFM' : 'UTRGV CS // PREP RFM'}
             </span>
           </Bento3DTilt>
 
