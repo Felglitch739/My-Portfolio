@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { motion, useSpring, useReducedMotion } from 'framer-motion'
+import { motion, useSpring } from 'framer-motion'
 
 interface Bento3DTiltProps {
   children: React.ReactNode
@@ -14,7 +14,7 @@ export default function Bento3DTilt({
   style = {},
   intensity = 8,
 }: Bento3DTiltProps) {
-  const reducedMotion = useReducedMotion()
+  
   const cardRef = useRef<HTMLDivElement>(null)
   const [glarePos, setGlarePos] = useState({ x: 50, y: 50, opacity: 0 })
 
@@ -26,7 +26,7 @@ export default function Bento3DTilt({
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return
     // Skip 3D mouse tilt on mobile touch devices for locked 60 FPS touch scroll performance
-    if (reducedMotion || window.innerWidth < 768) return
+    if (window.innerWidth < 768) return
 
     const rect = cardRef.current.getBoundingClientRect()
     const width = rect.width

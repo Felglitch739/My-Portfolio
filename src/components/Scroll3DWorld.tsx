@@ -1,12 +1,12 @@
 import React, { useRef } from 'react'
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 interface Scroll3DWorldProps {
   children: React.ReactNode
 }
 
 export default function Scroll3DWorld({ children }: Scroll3DWorldProps) {
-  const reduced = useReducedMotion()
+  
   const containerRef = useRef<HTMLDivElement>(null)
   
   // Track scroll position across the entire page
@@ -23,7 +23,7 @@ export default function Scroll3DWorld({ children }: Scroll3DWorldProps) {
   })
 
   // Mobile check to ensure instant, crisp touch scroll performance on phones
-  const isMobile = reduced || typeof window !== 'undefined' && window.innerWidth < 768
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
 
   // Subtle 3D Camera Animations for Desktop (Disabled on Mobile)
   const cameraRotateX = useTransform(smoothScroll, [0, 0.25, 0.5, 0.75, 1], isMobile ? [0, 0, 0, 0, 0] : [0, -1.2, 1.2, -0.8, 0])

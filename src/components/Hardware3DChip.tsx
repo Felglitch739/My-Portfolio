@@ -7,15 +7,14 @@ export default function Hardware3DChip() {
     const container = containerRef.current
     if (!container) return
 
-    let animationId = 0
-    let visible = true
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let animationId: number
     let width = container.offsetWidth || 300
     let height = container.offsetHeight || 260
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
     const canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
+    canvas.width = Math.round(width * dpr)
+    canvas.height = Math.round(height * dpr)
     canvas.style.width = '100%'
     canvas.style.height = '100%'
     canvas.style.display = 'block'
@@ -24,6 +23,7 @@ export default function Hardware3DChip() {
 
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
     let mouseX = 0
     let mouseY = 0
@@ -36,7 +36,16 @@ export default function Hardware3DChip() {
       mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2.5
     }
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect()
+        mouseX = ((e.touches[0].clientX - rect.left) / rect.width - 0.5) * 2.5
+        mouseY = ((e.touches[0].clientY - rect.top) / rect.height - 0.5) * 2.5
+      }
+    }
+
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
 
     let angleX = 0
     let angleY = 0
@@ -121,8 +130,8 @@ export default function Hardware3DChip() {
 
       // Core Red Glow Gradient
       const glowGrad = ctx.createRadialGradient(width / 2, height / 2, 2, width / 2, height / 2, 90)
-      glowGrad.addColorStop(0, 'rgba(255, 0, 0, 0.4)')
-      glowGrad.addColorStop(0.4, 'rgba(255, 0, 0, 0.12)')
+      glowGrad.addColorStop(0, 'rgba(255, 0, 0, 0.42)')
+      glowGrad.addColorStop(0.4, 'rgba(255, 0, 0, 0.13)')
       glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)')
       ctx.fillStyle = glowGrad
       ctx.fillRect(0, 0, width, height)
@@ -174,38 +183,28 @@ export default function Hardware3DChip() {
         ctx.fill()
       })
 
-      if (!reducedMotion.matches) animationId = requestAnimationFrame(render)
+      animationId = requestAnimationFrame(render)
     }
 
-    const resume = () => {
-      cancelAnimationFrame(animationId)
-      if (visible && !document.hidden) render()
-    }
-    const observer = new IntersectionObserver(entries => {
-      visible = entries[0].isIntersecting
-      resume()
-    })
-    observer.observe(container)
-    document.addEventListener('visibilitychange', resume)
-    reducedMotion.addEventListener('change', resume)
-    resume()
+    render()
 
     const handleResize = () => {
       if (!container) return
-      width = canvas.width = container.offsetWidth || 300
-      height = canvas.height = container.offsetHeight || 260
-      resume()
+      width = container.offsetWidth || 300
+      height = container.offsetHeight || 260
+      const currentDpr = Math.min(window.devicePixelRatio || 1, 2)
+      canvas.width = Math.round(width * currentDpr)
+      canvas.height = Math.round(height * currentDpr)
+      ctx.setTransform(currentDpr, 0, 0, currentDpr, 0, 0)
     }
 
     window.addEventListener('resize', handleResize)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationId)
-      observer.disconnect()
-      document.removeEventListener('visibilitychange', resume)
-      reducedMotion.removeEventListener('change', resume)
     }
   }, [])
 

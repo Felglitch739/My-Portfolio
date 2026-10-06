@@ -1,8 +1,6 @@
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion'
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 export default function Floating3DElements() {
-  const reduced = useReducedMotion()
-
   const { scrollYProgress } = useScroll()
 
   // Physics spring for buttery-smooth scroll tracking with 0 jitter
@@ -35,7 +33,9 @@ export default function Floating3DElements() {
   ]
 
   return (
-    <div className="floating-elements" aria-hidden
+    <div
+      className="floating-elements"
+      aria-hidden
       style={{
         position: 'fixed',
         inset: 0,
@@ -55,7 +55,7 @@ export default function Floating3DElements() {
             top: s.top,
             left: s.left,
             right: s.right,
-            y: reduced ? 0 : s.y,
+            y: s.y,
             z: s.z,
             fontFamily: 'var(--font-ndot)',
             fontSize: s.isBg ? 'clamp(0.95rem, 2vw, 1.5rem)' : 'clamp(0.78rem, 1.3vw, 1.1rem)',
@@ -71,7 +71,7 @@ export default function Floating3DElements() {
         >
           {/* Inner Motion Container: Handles Organic 3D Floating Drift without Y property conflict */}
           <motion.div
-            animate={reduced ? undefined : {
+            animate={{
               rotateX: [0, 8, -6, 0],
               rotateY: [0, -10, 8, 0],
               rotateZ: [0, 5, -5, 0],

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { motion, useScroll, useSpring, useMotionValue, MotionConfig } from 'framer-motion'
+import { motion, useScroll, useSpring, useMotionValue } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import AboutMe from './components/AboutMe'
@@ -17,8 +17,10 @@ import Floating3DElements from './components/Floating3DElements'
 export default function App() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false)
   const [lang, setLang] = useState<'es' | 'en'>('es')
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
+  const mouseX = useMotionValue(-500)
+  const mouseY = useMotionValue(-500)
+  const springX = useSpring(mouseX, { stiffness: 350, damping: 28 })
+  const springY = useSpring(mouseY, { stiffness: 350, damping: 28 })
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -39,7 +41,7 @@ export default function App() {
   })
 
   return (
-    <MotionConfig reducedMotion="user">
+    <>
       {/* Strict Red Scroll Progress Bar */}
       <motion.div
         style={{
@@ -62,8 +64,7 @@ export default function App() {
       {/* Cursor Flashlight */}
       <motion.div
         className="cursor-flashlight"
-        style={{ x: mouseX, y: mouseY }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.15 }}
+        style={{ x: springX, y: springY }}
       />
 
       {/* Heavy Frosted Glass Overlay */}
@@ -97,6 +98,6 @@ export default function App() {
         onClose={() => setIsTerminalOpen(false)}
         lang={lang}
       />
-    </MotionConfig>
+    </>
   )
 }

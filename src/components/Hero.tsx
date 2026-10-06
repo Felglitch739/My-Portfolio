@@ -14,10 +14,7 @@ function useTypewriter(words: string[], speed = 70, pause = 2000) {
 
   useEffect(() => {
     const words: string[] = JSON.parse(wordsKey)
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      if (el.current) el.current.textContent = words[0]
-      return
-    }
+    // Dynamic typewriter effect
     let wi = 0, ci = 0, deleting = false, timer: ReturnType<typeof setTimeout>
     const tick = () => {
       const word = words[wi]
