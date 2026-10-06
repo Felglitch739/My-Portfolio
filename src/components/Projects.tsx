@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { ExternalLink, X, Smartphone, Globe, Cpu, Bot, CloudSun, ArrowUpRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ExternalLink, Smartphone, Globe, Cpu, Bot, CloudSun, ArrowUpRight, CheckCircle2 } from 'lucide-react'
 import AccessibleDialog from './AccessibleDialog'
+import Bento3DTilt from './Bento3DTilt'
 
 const GithubIcon = ({ size = 16 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -43,8 +45,8 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
       title: 'KronoBook',
       subtitleEs: 'PLATAFORMA SAAS MULTI-TENANT DE CITAS & SERVICIOS',
       subtitleEn: 'MULTI-TENANT SAAS APPOINTMENT PLATFORM',
-      descEs: 'Reservas y gestión de citas para negocios de servicios. Un proyecto para trabajar flujos de onboarding, disponibilidad y separación de datos entre negocios.',
-      descEn: 'Bookings and appointment management for service businesses. A project exploring onboarding, availability, and data separation between businesses.',
+      descEs: 'Plataforma SaaS multi-inquilino de gestión de citas y reservas diseñada para negocios de servicios (barberías, auto detailing, etc.), con onboarding self-service y control de acceso seguro.',
+      descEn: 'Multi-tenant SaaS booking platform engineered for service businesses (barbershops, auto detailing), featuring self-service business onboarding and granular access control.',
       detailEs: 'KronoBook resuelve la complejidad de múltiples negocios compartiendo la misma infraestructura mediante un esquema multi-tenant seguro en PostgreSQL con políticas Row-Level Security (RLS) en Supabase. Cuenta con enrutamiento dinámico por inquilino, aislamiento total de datos, panel administrativo en tiempo real e integración operativa directa con el negocio móvil DualFX.',
       detailEn: 'KronoBook tackles multi-client isolation through PostgreSQL Row-Level Security (RLS) on Supabase. It features dynamic tenant subrouting, zero-leak data boundaries, real-time analytics dashboard, and direct operational deployment powering DualFX mobile detailing.',
       keyPointsEs: [
@@ -63,7 +65,7 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
       tags: ['REACT', 'TYPESCRIPT', 'SUPABASE', 'POSTGRESQL', 'TAILWIND CSS'],
       link: 'https://kronobook.vercel.app',
       github: 'https://github.com/Felglitch739/KronoBook',
-      badge: 'WEB / SAAS',
+      badge: 'PRODUCTION SAAS',
       badgeRed: true,
       icon: <Globe size={18} color="var(--red)" />,
     },
@@ -100,10 +102,10 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
       title: 'AuraFit Mobile App',
       subtitleEs: 'APP MÓVIL DE FITNESS & SEGUIMIENTO ASISTIDA POR IA',
       subtitleEn: 'AI-POWERED FITNESS & WORKOUT TRACKING APP',
-      descEs: 'Una app de fitness que nació en FronteraHacks. Combina seguimiento de entrenamiento con recomendaciones asistidas por IA en React Native y Expo.',
-      descEn: 'A fitness app that started at FronteraHacks, combining workout tracking and AI-assisted recommendations with React Native and Expo.',
+      descEs: 'Aplicación móvil de fitness y seguimiento de entrenamiento asistida por IA. Originada durante el hackathon FronteraHacks (24h) en Edinburg y escalada a una app móvil completa.',
+      descEn: 'AI-assisted mobile fitness and training tracking application. Born during the 24h FronteraHacks hackathon in Edinburg and subsequently scaled into a full native app.',
       detailEs: 'AuraFit combina rutinas de hipertrofia y fuerza con algoritmos adaptativos asistidos por IA para optimizar la sobrecarga progresiva y el volumen semanal. Nació como prototipo en el hackathon FronteraHacks (24h continuas de programación en Edinburg) y ha evolucionado hacia una suite nativa multiplataforma con React Native y Expo.',
-      detailEn: 'AuraFit pairs strength training routines with adaptive AI recommendation engines to calculate progressive overload and weekly muscle volume. Born as a prototype at the 24-hour FronteraHacks hackathon in Edinburg, it was scaled into a full cross-platform native codebase with React Native and Expo.',
+      detailEn: 'AuraFit pairs strength training routines with adaptive AI recommendation engines to calculate progressive overload and weekly muscle volume. Born as a concept at the 24-hour FronteraHacks hackathon in Edinburg, it was scaled into a full cross-platform native codebase with React Native and Expo.',
       keyPointsEs: [
         'Originada en el hackathon FronteraHacks de 24 horas continuas en Edinburg',
         'Motor de recomendaciones adaptativas de entrenamiento impulsado por IA',
@@ -164,12 +166,12 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
       keyPointsEs: [
         'Rediseño visual completo con estética moderna y responsive',
         'Menú interactivo optimizado para alta retención móvil',
-        'Publicación del sitio en Vercel',
+        'Despliegue optimizado en Vercel con entrega optimizada de recursos',
       ],
       keyPointsEn: [
         'Complete visual overhaul with modern responsive styling',
         'Interactive digital menu optimized for mobile ordering',
-        'Website deployment on Vercel',
+        'Vercel edge deployment with optimized asset delivery',
       ],
       image: "/Gazpacho's.png",
       tags: ['REACT', 'VITE', 'VERCEL', 'UI/UX', 'FRAMER MOTION'],
@@ -208,49 +210,247 @@ export default function Projects({ lang = 'es' }: ProjectsProps) {
     },
   ]
 
-  const es = lang === 'es'
-  const featuredIds = ['kronobook', 'aurafit', 'gazpachos']
-  const featured = featuredIds.map(id => projects.find(project => project.id === id)!)
-  const otherProjects = projects.filter(project => !featuredIds.includes(project.id))
-  const previewLabel = (project: Project) => ['aurafit', 'familyweather'].includes(project.id)
-    ? (es ? 'CONCEPTO VISUAL' : 'VISUAL CONCEPT')
-    : (es ? 'CAPTURA DEL SITIO' : 'SITE SCREENSHOT')
-  const renderProject = (project: Project, index: number) => (
-    <article className="project-card" key={project.id}>
-      {project.image ? <div className="project-preview"><img src={project.image} alt={`${project.title} — ${previewLabel(project).toLowerCase()}`} loading="lazy" decoding="async" width={800} height={550} /><span className="preview-label">{previewLabel(project)}</span></div>
-        : <div className="project-fallback" aria-hidden="true">{project.icon}</div>}
-      <div className="project-content">
-        <div className="project-kicker"><span>PROJECT / {String(index + 1).padStart(2, '0')}</span><span>{project.badge}</span></div>
-        <h3>{project.title}</h3>
-        <p className="body-text">{es ? project.descEs : project.descEn}</p>
-        <div className="project-tags">{project.tags.slice(0, 4).map(tag => <span className="mono-tag" key={tag}>{tag}</span>)}</div>
-        <div className="project-actions">
-          {project.link && <a href={project.link} target="_blank" rel="noreferrer" aria-label={`${es ? 'Abrir demo de' : 'Open demo of'} ${project.title}`}><ExternalLink size={13} />Demo</a>}
-          {project.github && <a href={project.github} target="_blank" rel="noreferrer" aria-label={`${es ? 'Ver código de' : 'View code for'} ${project.title}`}><GithubIcon size={13} />{es ? 'Código' : 'Code'}</a>}
-          <button onClick={() => setSelectedProject(project)} aria-label={`${es ? 'Ver caso de' : 'View case study for'} ${project.title}`}>{es ? 'Ver caso' : 'Case study'} <ArrowUpRight size={14} /></button>
-        </div>
-      </div>
-    </article>
-  )
+  const t = {
+    es: {
+      label: "05 // INGENIERÍA & CASOS DE ESTUDIO",
+      title: "PROYECTOS DESTACADOS",
+      viewBtn: "Ver Arquitectura",
+      pointsTitle: "PUNTOS CLAVE DE ARQUITECTURA:",
+      techTitle: "TECNOLOGÍAS EMPLEADAS:",
+      closeModal: "CERRAR INSPECTOR",
+    },
+    en: {
+      label: "05 // ENGINEERING & CASE STUDIES",
+      title: "FEATURED PROJECTS",
+      viewBtn: "View Architecture",
+      pointsTitle: "ARCHITECTURAL HIGHLIGHTS:",
+      techTitle: "TECHNOLOGIES EMPLOYED:",
+      closeModal: "CLOSE INSPECTOR",
+    },
+  }[lang]
 
-  return <section id="projects" className="section">
-    <div className="container">
-      <span className="section-label">02 // {es ? 'PROYECTOS SELECCIONADOS' : 'SELECTED WORK'}</span>
-      <div className="section-heading"><h2 className="display-title">{es ? 'Ideas que llevé al código.' : 'Ideas I brought to code.'}</h2><p className="body-text">{es ? 'Aplicaciones web, móvil y herramientas que conectan ambos mundos. Explora el contexto y las decisiones detrás de cada proyecto.' : 'Web apps, mobile apps, and tools that connect both worlds. Explore the context and decisions behind each project.'}</p></div>
-      <div className="projects-grid">{featured.map(renderProject)}</div>
-      <details className="more-projects"><summary>{es ? 'Más exploraciones: hardware, CAD y automatización' : 'More explorations: hardware, CAD, and automation'} (3)</summary><div className="projects-grid">{otherProjects.map((project, index) => renderProject(project, index + 3))}</div></details>
-    </div>
-    <AccessibleDialog open={selectedProject !== null} onClose={() => setSelectedProject(null)} labelledBy="project-dialog-title">
-      {selectedProject && <div className="project-dialog-body">
-        <div className="dialog-heading"><div><span className="section-label">{es ? 'CASO DE PROYECTO' : 'PROJECT CASE STUDY'}</span><h2 id="project-dialog-title">{selectedProject.title}</h2></div><button className="icon-button" onClick={() => setSelectedProject(null)} aria-label={es ? 'Cerrar caso de proyecto' : 'Close case study'} autoFocus><X size={20} /></button></div>
-        {selectedProject.image && <><img className="project-dialog-image" src={selectedProject.image} alt={`${selectedProject.title} — ${previewLabel(selectedProject).toLowerCase()}`} /><p className="project-focus">{previewLabel(selectedProject)}</p></>}
-        <h3>{es ? 'CONTEXTO Y ENFOQUE' : 'CONTEXT & APPROACH'}</h3>
-        <p className="body-text">{es ? selectedProject.detailEs : selectedProject.detailEn}</p>
-        <h3>{es ? 'DECISIONES Y DESARROLLO' : 'DECISIONS & DEVELOPMENT'}</h3>
-        <ul>{(es ? selectedProject.keyPointsEs : selectedProject.keyPointsEn).map(point => <li key={point}>{point}</li>)}</ul>
-        <div className="project-tags">{selectedProject.tags.map(tag => <span className="mono-tag" key={tag}>{tag}</span>)}</div>
-        <div className="project-actions">{selectedProject.link && <a className="text-link" href={selectedProject.link} target="_blank" rel="noreferrer">{es ? 'Abrir demo' : 'Open demo'} ↗</a>}{selectedProject.github && <a className="text-link" href={selectedProject.github} target="_blank" rel="noreferrer">{es ? 'Ver repositorio' : 'View repository'} ↗</a>}<button onClick={() => setSelectedProject(null)}>{es ? 'Cerrar' : 'Close'}</button></div>
-      </div>}
-    </AccessibleDialog>
-  </section>
+  return (
+    <section id="projects" className="section">
+      <div className="container">
+        <span className="section-label">{t.label}</span>
+        <h2 className="display-title" style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
+          {t.title}
+        </h2>
+
+        {/* Bento Projects Grid */}
+        <div className="bento-grid">
+          {projects.map((p, i) => {
+            const isLarge = i < 2
+            return (
+              <Bento3DTilt
+                key={p.id}
+                className={isLarge ? 'col-span-6' : 'col-span-4'}
+                style={{ justifyContent: 'space-between', minHeight: '360px' }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span className="ndot" style={{ fontSize: '1.1rem', color: 'var(--red)' }}>
+                        PROJ_{p.num}
+                      </span>
+                      {p.icon}
+                    </div>
+                    {p.badge && (
+                      <span className={`mono-tag ${p.badgeRed ? 'mono-tag-red' : ''}`} style={{ fontSize: '0.62rem' }}>
+                        {p.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="card-title" style={{ fontSize: '1.35rem', marginBottom: '0.3rem' }}>
+                    {p.title}
+                  </h3>
+                  <div className="ndot" style={{ fontSize: '0.68rem', color: 'var(--gray-400)', marginBottom: '0.9rem' }}>
+                    {lang === 'es' ? p.subtitleEs : p.subtitleEn}
+                  </div>
+
+                  <p className="body-text" style={{ fontSize: '0.88rem', marginBottom: '1.2rem', lineHeight: 1.6 }}>
+                    {lang === 'es' ? p.descEs : p.descEn}
+                  </p>
+                </div>
+
+                <div>
+                  {/* Tags */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '1.2rem' }}>
+                    {p.tags.map((tag) => (
+                      <span key={tag} className="mono-tag" style={{ fontSize: '0.6rem', padding: '0.25rem 0.5rem' }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '0.8rem' }}>
+                    <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                      {p.link && (
+                        <a
+                          href={p.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="ndot"
+                          style={{ fontSize: '0.72rem', color: 'var(--white)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
+                          <ExternalLink size={12} color="var(--red)" /> LIVE
+                        </a>
+                      )}
+                      {p.github && (
+                        <a
+                          href={p.github}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="ndot"
+                          style={{ fontSize: '0.72rem', color: 'var(--gray-400)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                        >
+                          <GithubIcon size={12} /> GITHUB
+                        </a>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => setSelectedProject(p)}
+                      className="ndot"
+                      style={{ background: 'transparent', border: 'none', color: 'var(--red)', fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}
+                    >
+                      {t.viewBtn} <ArrowUpRight size={13} />
+                    </button>
+                  </div>
+                </div>
+              </Bento3DTilt>
+            )
+          })}
+        </div>
+
+        {/* Modal for Deep Technical Architecture */}
+        <>
+          {selectedProject && (
+            <AccessibleDialog open onClose={() => setSelectedProject(null)} labelledBy="project-title">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedProject(null)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 500,
+                background: 'rgba(0, 0, 0, 0.88)',
+                backdropFilter: 'blur(12px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '1rem',
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0.95, y: 15 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.95, y: 15 }}
+                className="bento-card bento-card-active"
+                onClick={(e) => e.stopPropagation()}
+                style={{ maxWidth: '680px', width: '100%', maxHeight: 'calc(100dvh - 2rem)', overflowY: 'auto', padding: '2.2rem' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <span className="ndot" style={{ color: 'var(--red)', fontSize: '1.1rem' }}>
+                    PROJ_{selectedProject.num} // ARCHITECTURE_INSPECTOR
+                  </span>
+                  <button
+                    onClick={() => setSelectedProject(null)}
+                    className="mono-tag"
+                    style={{ cursor: 'pointer', background: 'transparent' }}
+                    aria-label="Cerrar inspector de proyecto"
+                  >
+                    [ CLOSE ]
+                  </button>
+                </div>
+
+                <h3 id="project-title" className="card-title" style={{ fontSize: '1.6rem', marginBottom: '0.3rem' }}>
+                  {selectedProject.title}
+                </h3>
+                <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-400)', marginBottom: '1.2rem' }}>
+                  {lang === 'es' ? selectedProject.subtitleEs : selectedProject.subtitleEn}
+                </div>
+
+                <p className="body-text" style={{ color: 'var(--white)', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.7 }}>
+                  {lang === 'es' ? selectedProject.detailEs : selectedProject.detailEn}
+                </p>
+
+                {/* Architectural Highlights */}
+                <div style={{ marginBottom: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '12px', padding: '1.2rem' }}>
+                  <div className="ndot" style={{ fontSize: '0.75rem', color: 'var(--red)', marginBottom: '0.8rem' }}>
+                    {t.pointsTitle}
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {(lang === 'es' ? selectedProject.keyPointsEs : selectedProject.keyPointsEn).map((point, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem' }}>
+                        <CheckCircle2 size={15} color="var(--red)" style={{ marginTop: '3px', flexShrink: 0 }} />
+                        <span className="body-text" style={{ fontSize: '0.85rem', color: 'var(--gray-200)' }}>
+                          {point}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tech Pills */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--gray-500)', marginBottom: '0.5rem' }}>
+                    {t.techTitle}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                    {selectedProject.tags.map((tag) => (
+                      <span key={tag} className="mono-tag mono-tag-red" style={{ fontSize: '0.65rem' }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action Row */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1.2rem' }}>
+                  <div style={{ display: 'flex', gap: '1rem' }}>
+                    {selectedProject.link && (
+                      <a
+                        href={selectedProject.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-bento btn-bento-primary"
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                      >
+                        <ExternalLink size={13} /> LIVE DEMO
+                      </a>
+                    )}
+                    {selectedProject.github && (
+                      <a
+                        href={selectedProject.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn-bento btn-bento-outline"
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                      >
+                        <GithubIcon size={13} /> REPOSITORY
+                      </a>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedProject(null)}
+                    className="btn-bento btn-bento-outline"
+                    style={{ padding: '0.5rem 1rem', fontSize: '0.75rem' }}
+                  >
+                    {t.closeModal}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+            </AccessibleDialog>
+          )}
+        </>
+      </div>
+    </section>
+  )
 }

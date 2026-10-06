@@ -8,7 +8,8 @@
     "build": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "check:preview": "node scripts/check-preview.mjs"
+    "check:preview": "node scripts/check-preview.mjs",
+    "test:pool": "node --test scripts/pool-physics.test.mjs"
   },
   "dependencies": {
     "@types/three": "^0.185.3",

@@ -13,10 +13,10 @@ export default function Events({ lang = 'es' }: EventsProps) {
       roleEs: "Founder & CPO (Chief Product Officer)",
       roleEn: "Founder & CPO (Chief Product Officer)",
       loc: "Matamoros, Tamaulipas",
-      descEs: "Build Pa’l Norte conecta talento, tecnología y comunidad para impulsar proyectos desde el norte de México. Como founder y CPO, mi enfoque está en entender necesidades, definir prioridades y acompañar el desarrollo de productos con el equipo. También he participado en la organización del Hackathon Vol. 1 y en el diseño de la identidad de la comunidad.",
-      descEn: "Build Pa’l Norte connects talent, technology, and community to help projects grow from northern Mexico. As founder and CPO, I focus on understanding needs, setting priorities, and helping the team develop products. I have also contributed to organizing Hackathon Vol. 1 and designing the community’s visual identity.",
-      badge: "PRODUCTO & COMUNIDAD",
-      badgeEn: "PRODUCT & COMMUNITY",
+      descEs: "Build Pa’l Norte conecta talento, tecnología y comunidad para impulsar proyectos desde el norte de México. Como founder y CPO, me enfoco en entender necesidades, definir prioridades y acompañar el desarrollo de productos con el equipo. También he participado en la organización del Hackathon Vol. 1 y en la identidad visual de la comunidad.",
+      descEn: "Build Pa’l Norte connects talent, technology, and community to help projects grow from northern Mexico. As founder and CPO, I focus on understanding needs, setting priorities, and helping the team develop products. I also contributed to organizing Hackathon Vol. 1 and the community’s visual identity.",
+      badge: "COMUNIDAD & HACKATHON",
+      badgeEn: "COMMUNITY & HACKATHON",
       icon: <Users size={20} color="var(--red)" />,
       link: "https://linktr.ee/buildpalnorte",
       highlight: true,
@@ -101,15 +101,15 @@ export default function Events({ lang = 'es' }: EventsProps) {
 
   const t = {
     es: {
-      label: "05 // IMPACTO, LIDERAZGO & COMPETENCIAS",
-      title: "Producto, equipo y comunidad.",
+      label: "06 // IMPACTO, LIDERAZGO & COMPETENCIAS",
+      title: "LIDERAZGO & TRAYECTORIA",
       sec1Title: "LIDERAZGO COMUNITARIO & EMPRENDIMIENTO",
       sec2Title: "COMPETENCIAS & PARTICIPACIÓN ACADÉMICA",
       liveSite: "SITIO OFICIAL ↗",
     },
     en: {
-      label: "05 // IMPACT, LEADERSHIP & COMPETITIONS",
-      title: "Product, team, and community.",
+      label: "06 // IMPACT, LEADERSHIP & COMPETITIONS",
+      title: "LEADERSHIP & TRACK RECORD",
       sec1Title: "COMMUNITY LEADERSHIP & VENTURES",
       sec2Title: "COMPETITIVE PROGRAMMING & ACADEMICS",
       liveSite: "OFFICIAL LINK ↗",
@@ -188,8 +188,8 @@ export default function Events({ lang = 'es' }: EventsProps) {
           </div>
         </div>
 
-        {/* Academic history remains available on demand. */}
-        <details className="more-projects"><summary>{lang === 'es' ? 'Competencias, formación y voluntariado' : 'Competitions, education, and volunteering'}</summary><div>
+        {/* Section 2: Competitive Programming & Academic Involvement */}
+        <div>
           <div className="ndot" style={{ fontSize: '0.85rem', color: 'var(--gray-300)', marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--white)' }} />
             {t.sec2Title}
@@ -237,7 +237,7 @@ export default function Events({ lang = 'es' }: EventsProps) {
               )
             })}
           </div>
-        </div></details>
+        </div>
       </div>
     </section>
   )

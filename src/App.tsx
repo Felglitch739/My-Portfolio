@@ -1,53 +1,102 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
-import { MotionConfig } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, useScroll, useSpring, useMotionValue, MotionConfig } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import AboutMe from './components/AboutMe'
 import TechStack from './components/TechStack'
 import Projects from './components/Projects'
 import Events from './components/Events'
+import HumanSide from './components/HumanSide'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import CyberTerminal from './components/CyberTerminal'
 
-const CyberTerminal = lazy(() => import('./components/CyberTerminal'))
-const HumanSide = lazy(() => import('./components/HumanSide'))
+import Scroll3DWorld from './components/Scroll3DWorld'
+import Floating3DElements from './components/Floating3DElements'
 
 export default function App() {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false)
-  const [labOpen, setLabOpen] = useState(false)
   const [lang, setLang] = useState<'es' | 'en'>('es')
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX)
+      mouseY.set(e.clientY)
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [mouseX, mouseY])
 
   useEffect(() => { document.documentElement.lang = lang }, [lang])
 
+  const { scrollYProgress } = useScroll()
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  })
+
   return (
     <MotionConfig reducedMotion="user">
-      <a className="skip-link" href="#main">{lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
-      <div className="mesh-gradient-bg" aria-hidden="true" />
+      {/* Strict Red Scroll Progress Bar */}
+      <motion.div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 2,
+          background: 'var(--red)',
+          transformOrigin: '0%',
+          scaleX,
+          zIndex: 9999,
+          boxShadow: '0 0 8px var(--red)',
+        }}
+      />
+
+      {/* Premium Background Layers */}
+      <div className="mesh-gradient-bg" aria-hidden />
+      
+      {/* Cursor Flashlight */}
+      <motion.div
+        className="cursor-flashlight"
+        style={{ x: mouseX, y: mouseY }}
+        transition={{ type: 'tween', ease: 'backOut', duration: 0.15 }}
+      />
+      
+      {/* Heavy Frosted Glass Overlay */}
+      <div className="glass-overlay" aria-hidden />
+
+      {/* Floating 3D Parallax Elements */}
+      <Floating3DElements />
+
+      {/* Navigation */}
       <Navbar onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} setLang={setLang} />
-      <main id="main">
-        <Hero lang={lang} />
-        <Projects lang={lang} />
-        <AboutMe lang={lang} />
-        <TechStack lang={lang} />
-        <Events lang={lang} />
-        <section id="human-side" className="section lab-section">
-          <div className="container">
-            <details className="lab-disclosure" onToggle={e => setLabOpen(e.currentTarget.open)}>
-              <summary>
-                <span className="section-label">06 // LAB</span>
-                <span>{lang === 'es' ? 'Un poco de mí, fuera del código' : 'A little about me, beyond the code'}</span>
-                <span className="body-text">{lang === 'es' ? 'Música, entrenamiento y un experimento de física que puedes jugar.' : 'Music, training, and a physics experiment you can play.'}</span>
-              </summary>
-              {labOpen && <Suspense fallback={<p role="status">{lang === 'es' ? 'Cargando laboratorio…' : 'Loading lab…'}</p>}><HumanSide lang={lang} /></Suspense>}
-            </details>
-          </div>
-        </section>
-        <Contact lang={lang} />
-      </main>
+
+      {/* Main Bento Content with 3D Camera Scroll World */}
+      <Scroll3DWorld>
+        <main style={{ position: 'relative', zIndex: 1 }}>
+          <Hero onOpenTerminal={() => setIsTerminalOpen(true)} lang={lang} />
+          <AboutMe lang={lang} />
+          <TechStack lang={lang} />
+          <Projects lang={lang} />
+          <Events lang={lang} />
+          <HumanSide lang={lang} />
+          <Contact lang={lang} />
+        </main>
+      </Scroll3DWorld>
+
+      {/* Footer */}
       <Footer lang={lang} />
-      {isTerminalOpen && <Suspense fallback={<p role="status" className="loading-notice">{lang === 'es' ? 'Cargando terminal…' : 'Loading terminal…'}</p>}>
-        <CyberTerminal isOpen onClose={() => setIsTerminalOpen(false)} lang={lang} />
-      </Suspense>}
+
+      {/* Draggable Nothing Hardware Terminal Screen */}
+      <CyberTerminal
+        isOpen={isTerminalOpen}
+        onClose={() => setIsTerminalOpen(false)}
+        lang={lang}
+      />
     </MotionConfig>
   )
 }
