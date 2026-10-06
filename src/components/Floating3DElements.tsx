@@ -2,9 +2,6 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 
 export default function Floating3DElements() {
   // Hide on mobile screens to keep phone layout ultra-clean, readable, and lightning fast
-  if (typeof window !== 'undefined' && window.innerWidth < 768) {
-    return null
-  }
 
   const { scrollYProgress } = useScroll()
 

@@ -161,7 +161,7 @@ export default function CircuitCanvas() {
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('scroll', handleScroll)
-      cancelAnimationFrame(animationId)
+      cancelAnimationFrame(animationFrameId)
     }
   }, [])
 

@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import { RotateCcw, Activity, Dumbbell, Music, Gamepad2, Sparkles } from 'lucide-react'
 import Bento3DTilt from './Bento3DTilt'
 
@@ -26,7 +25,7 @@ function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
   const [pottedBalls, setPottedBalls] = useState<Ball[]>([])
   const [scratchMessage, setScratchMessage] = useState(false)
   const [powerPercent, setPowerPercent] = useState(0)
-  const [engineStatus, setEngineStatus] = useState<string>(lang === 'es' ? 'LISTO // ARRASTRA LA BOLA BLANCA' : 'READY // DRAG CUE BALL TO AIM')
+  const [engineStatus, setEngineStatus] = useState<string>('')
 
   const ballsRef = useRef<Ball[]>([])
   const isDraggingRef = useRef(false)
@@ -80,7 +79,8 @@ function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    let animationId: number
+    let animationId = 0
+    let visible = true
     const W = (canvas.width = canvas.offsetWidth || 600)
     const H = (canvas.height = 260)
 
@@ -395,10 +395,22 @@ function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
       animationId = requestAnimationFrame(loop)
     }
 
-    loop()
+    const resume = () => {
+      cancelAnimationFrame(animationId)
+      if (visible && !document.hidden) loop()
+    }
+    const observer = new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting
+      resume()
+    })
+    observer.observe(canvas)
+    document.addEventListener('visibilitychange', resume)
+    resume()
 
     return () => {
       cancelAnimationFrame(animationId)
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', resume)
       canvas.removeEventListener('mousedown', onPointerDown)
       window.removeEventListener('mousemove', onPointerMove)
       window.removeEventListener('mouseup', onPointerUp)
@@ -427,11 +439,11 @@ function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           <span className="ndot" style={{ fontSize: '0.7rem', color: 'var(--red)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <Activity size={13} color="var(--red)" />
-            {engineStatus}
+            {engineStatus || (lang === 'es' ? 'LISTO // ARRASTRA LA BOLA BLANCA' : 'READY // DRAG CUE BALL TO AIM')}
           </span>
           {scratchMessage && (
             <span className="ndot" style={{ fontSize: '0.68rem', color: 'var(--red)', animation: 'pulse 1s infinite' }}>
-              [ ¡FALTA! BOLA BLANCA REPOSICIONADA ]
+              {lang === 'es' ? '[ ¡FALTA! BOLA BLANCA REPOSICIONADA ]' : '[ SCRATCH! CUE BALL REPOSITIONED ]'}
             </span>
           )}
         </div>
@@ -466,7 +478,7 @@ function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
               onClick={resetGame}
               className="mono-tag mono-tag-red"
               style={{ cursor: 'pointer', fontSize: '0.65rem', padding: '0.3rem 0.6rem' }}
-              title="Reiniciar mesa"
+              title={lang === 'es' ? 'Reiniciar mesa' : 'Reset table'}
             >
               <RotateCcw size={11} /> RE-RACK
             </button>
@@ -487,7 +499,7 @@ function BilliardsHardwareCanvas({ lang = 'es' }: { lang: 'es' | 'en' }) {
           touchAction: 'none',
         }}
       >
-        <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', cursor: 'crosshair' }} />
+        <canvas ref={canvasRef} aria-label={lang === 'es' ? 'Simulador de billar: arrastra desde la bola blanca' : 'Billiards simulator: drag from the cue ball'} style={{ display: 'block', width: '100%', height: '100%', cursor: 'crosshair' }} />
 
         <div className="ndot" style={{ position: 'absolute', top: 12, left: 16, fontSize: '0.65rem', color: 'rgba(255, 255, 255, 0.6)', pointerEvents: 'none' }}>
           PHYSICS LAB // 2D COLLISION & VECTOR ENGINE
@@ -507,7 +519,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
       title: "FUERA DE LA PANTALLA & FÍSICA INTERACTIVA",
       intro: "La ingeniería no termina en el backend: se refleja en la disciplina física, la música y la pasión por construir modelos interactivos tangibles.",
       card1Title: "DISCIPLINA DE ENTRENAMIENTO",
-      card1Desc: "Entrenamiento constante de fuerza enfocado en progresiones Push-Pull-Legs (PPL). La misma disciplina que rige el rendimiento físico aplica a la arquitectura de software sin atajos.",
+      card1Desc: "Entrenamiento constante de fuerza enfocado en progresiones Push-Pull-Legs (PPL). Es una forma de mantenerme constante y de desconectarme un rato de la pantalla.",
       card2Title: "MÚSICA & GUITARRA ACÚSTICA",
       card2Desc: "Exploración de progresiones armónicas y composición en guitarra acústica. El balance creativo ideal entre lógica matemática y expresión sonora.",
       card3Title: "GAMING & TUNING DE SERVIDORES",
@@ -520,7 +532,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
       title: "BEYOND THE SCREEN & INTERACTIVE PHYSICS",
       intro: "Engineering extends beyond server backends: it manifests in physical discipline, music, and the drive to build tangible interactive simulations.",
       card1Title: "WEIGHTLIFTING DISCIPLINE",
-      card1Desc: "Consistent strength training rooted in Push-Pull-Legs (PPL) splits. The same dedication that governs physical output applies to robust, zero-compromise software engineering.",
+      card1Desc: "Consistent strength training rooted in Push-Pull-Legs (PPL) splits. A way to stay consistent and spend some time away from the screen.",
       card2Title: "MUSIC & ACOUSTIC GUITAR",
       card2Desc: "Harmonic progressions and songwriting on acoustic guitar. The ideal creative balance connecting mathematical cadence and sonic expression.",
       card3Title: "GAMING & SERVER TUNING",
@@ -531,7 +543,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
   }[lang]
 
   return (
-    <section id="human-side" className="section">
+    <section id="lab-content" className="section">
       <div className="container">
         <span className="section-label">{t.label}</span>
         <h2 className="display-title" style={{ fontSize: '2.5rem', marginBottom: '0.6rem' }}>
@@ -546,7 +558,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
           <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <span className="mono-tag mono-tag-red">DISCIPLINA // PPL</span>
+                <span className="mono-tag mono-tag-red">{lang === 'es' ? 'DISCIPLINA // PPL' : 'DISCIPLINE // PPL'}</span>
                 <Dumbbell size={18} color="var(--red)" />
               </div>
               <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.6rem' }}>
@@ -562,7 +574,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
           <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <span className="mono-tag">CREATIVIDAD // SONIDO</span>
+                <span className="mono-tag">{lang === 'es' ? 'CREATIVIDAD // SONIDO' : 'CREATIVITY // SOUND'}</span>
                 <Music size={18} color="var(--white)" />
               </div>
               <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.6rem' }}>
@@ -578,7 +590,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
           <Bento3DTilt className="col-span-4" style={{ justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <span className="mono-tag">TÁCTICA // JVM & C++</span>
+                <span className="mono-tag">{lang === 'es' ? 'TÁCTICA // JVM & C++' : 'TACTICS // JVM & C++'}</span>
                 <Gamepad2 size={18} color="var(--white)" />
               </div>
               <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '0.6rem' }}>
@@ -603,7 +615,7 @@ export default function HumanSide({ lang = 'es' }: HumanSideProps) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.6rem' }}>
               <div>
                 <div className="ndot" style={{ fontSize: '0.72rem', color: 'var(--red)', marginBottom: '0.2rem' }}>
-                  EXPERIMENTO // SIMULACIÓN DE FÍSICA VECTORIAL
+                  {lang === 'es' ? 'EXPERIMENTO // FÍSICA VECTORIAL' : 'EXPERIMENT // VECTOR PHYSICS'}
                 </div>
                 <h3 className="card-title" style={{ fontSize: '1.25rem' }}>
                   {t.labTitle}

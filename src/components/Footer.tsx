@@ -1,48 +1,8 @@
-interface FooterProps {
-  lang?: 'es' | 'en'
-}
-
-export default function Footer({ lang = 'es' }: FooterProps) {
-  const currentYear = new Date().getFullYear()
-
-  return (
-    <footer
-      style={{
-        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-        background: '#050505',
-        padding: '2.5rem 0',
-        position: 'relative',
-        zIndex: 1,
-      }}
-    >
-      <div
-        className="container"
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div>
-          <div className="ndot" style={{ fontSize: '0.9rem', color: 'var(--white)' }}>
-            FÉLIX E. MARTÍNEZ FLORES
-          </div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--gray-500)', marginTop: '0.2rem' }}>
-            Software Engineer | Full-Stack & Mobile Developer | Hardware & Embedded Systems • felixmf.lat
-          </div>
-        </div>
-
-        <div className="ndot" style={{ fontSize: '0.75rem', color: 'var(--red)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--red)' }} />
-          SYSTEM_STATUS: 🟢 OPERATIONAL
-        </div>
-
-        <div className="ndot" style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
-          © {currentYear} FMF. ALL RIGHTS RESERVED.
-        </div>
-      </div>
-    </footer>
-  )
+export default function Footer({ lang = 'es' }: { lang?: 'es' | 'en' }) {
+  const es = lang === 'es'
+  return <footer className="site-footer"><div className="container footer-inner">
+    <div><a className="nav-brand" href="#hero">FMF /</a><p className="body-text">{es ? 'Software, hardware y comunidad.' : 'Software, hardware & community.'}</p></div>
+    <a className="text-link" href="#human-side">{es ? 'Explorar el laboratorio' : 'Explore the lab'} ↗</a>
+    <p>© {new Date().getFullYear()} Félix Martínez</p>
+  </div></footer>
 }

@@ -1,200 +1,70 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Mail, Send, MapPin, GraduationCap, CheckCircle2, XCircle, Loader2, Copy, Check } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Copy, Send } from 'lucide-react'
 
-const ACCESS_KEY = "1a2bcea0-20e8-4243-855d-bce0531ef148"
+const ACCESS_KEY = '1a2bcea0-20e8-4243-855d-bce0531ef148'
 
-const GithubIcon = ({ size = 18 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.02c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A4.8 4.8 0 0 0 9 18v4"></path>
-  </svg>
-)
-
-interface ContactProps {
-  lang?: 'es' | 'en'
-}
-
-export default function Contact({ lang = 'es' }: ContactProps) {
+export default function Contact({ lang = 'es' }: { lang?: 'es' | 'en' }) {
+  const es = lang === 'es'
+  const email = 'felix.martinez08@utrgv.edu'
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [copied, setCopied] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  useEffect(() => () => clearTimeout(copyTimer.current), [])
 
-  const email = "felix.martinez08@utrgv.edu"
-
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(email)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setSubmitStatus('idle')
-
-    const formData = new FormData(e.currentTarget)
-    formData.append("access_key", ACCESS_KEY)
-
+  const copyEmail = async () => {
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData
-      })
-      const data = await res.json()
-
-      if (data.success) {
-        setSubmitStatus('success')
-        ;(e.target as HTMLFormElement).reset()
-      } else {
-        setSubmitStatus('error')
-      }
-    } catch (err) {
-      setSubmitStatus('error')
-    } finally {
-      setIsSubmitting(false)
-    }
+      await navigator.clipboard.writeText(email)
+      setCopyStatus('success')
+    } catch { setCopyStatus('error') }
+    clearTimeout(copyTimer.current)
+    copyTimer.current = setTimeout(() => setCopyStatus('idle'), 3000)
   }
 
-  const t = {
-    es: {
-      label: "08 // CONTACT & COMMUNICATION",
-      title: "HABLEMOS DE PROYECTOS",
-      infoTitle: "INFORMACIÓN DIRECTA",
-      eduLabel: "EDUCACIÓN",
-      locationLabel: "UBICACIÓN",
-      emailLabel: "CORREO UNIVERSITARIO",
-      socialLabel: "RE DES & CÓDIGO",
-      formTitle: "ENVIAR MENSAJE DIRECTO",
-      namePlaceholder: "Tu nombre o empresa",
-      emailPlaceholder: "tu@email.com",
-      msgPlaceholder: "Detalles del proyecto o vacante...",
-      submitBtn: "ENVIAR MENSAJE",
-      successMsg: "¡Mensaje enviado con éxito!",
-      errorMsg: "Error al enviar. Intenta por correo directo.",
-    },
-    en: {
-      label: "08 // CONTACT & COMMUNICATION",
-      title: "LET'S TALK PROJECTS",
-      infoTitle: "DIRECT INFORMATION",
-      eduLabel: "EDUCATION",
-      locationLabel: "LOCATION",
-      emailLabel: "UNIVERSITY EMAIL",
-      socialLabel: "SOCIALS & CODE",
-      formTitle: "SEND DIRECT MESSAGE",
-      namePlaceholder: "Your name or company",
-      emailPlaceholder: "you@company.com",
-      msgPlaceholder: "Details about the project or role...",
-      submitBtn: "SEND MESSAGE",
-      successMsg: "Message sent successfully!",
-      errorMsg: "Error sending message. Try direct email.",
-    }
-  }[lang]
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (isSubmitting) return
+    const form = e.currentTarget
+    const data = new FormData(form)
+    if (data.get('botcheck')) return
+    data.append('access_key', ACCESS_KEY)
+    setIsSubmitting(true)
+    setStatus('idle')
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data, signal: AbortSignal.timeout(15000) })
+      const result = await response.json()
+      if (!response.ok || !result.success) throw new Error('Submission failed')
+      setStatus('success')
+      form.reset()
+    } catch { setStatus('error') }
+    finally { setIsSubmitting(false) }
+  }
 
-  return (
-    <section id="contact" className="section">
-      <div className="container">
-        <span className="section-label">{t.label}</span>
-        <h2 className="display-title" style={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
-          {t.title}
-        </h2>
-
-        <div className="bento-grid">
-          {/* Info Bento Card (col-span-5) */}
-          <div className="bento-card col-span-6">
-            <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>
-              {t.infoTitle}
-            </h3>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              <div>
-                <div className="ndot" style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{t.eduLabel}</div>
-                <div style={{ color: 'var(--white)', fontWeight: 600, fontSize: '0.95rem', marginTop: '0.2rem' }}>
-                  UTRGV (Computer Science)
-                </div>
-                <div style={{ color: 'var(--gray-400)', fontSize: '0.8rem', marginTop: '0.1rem' }}>
-                  Preparatoria RFM (Matamoros)
-                </div>
-              </div>
-
-              <div>
-                <div className="ndot" style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{t.locationLabel}</div>
-                <div style={{ color: 'var(--white)', fontWeight: 600, fontSize: '0.95rem', marginTop: '0.2rem' }}>
-                  Brownsville, TX / Matamoros, Tamps.
-                </div>
-              </div>
-
-              <div>
-                <div className="ndot" style={{ fontSize: '0.7rem', color: 'var(--gray-500)' }}>{t.emailLabel}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.2rem' }}>
-                  <span className="ndot" style={{ color: 'var(--red)', fontSize: '0.9rem' }}>{email}</span>
-                  <button
-                    onClick={handleCopyEmail}
-                    className="mono-tag"
-                    style={{ cursor: 'pointer', background: 'transparent' }}
-                    aria-label={copied ? "Correo copiado al portapapeles" : "Copiar correo electrónico"}
-                    title="Copiar correo electrónico"
-                  >
-                    {copied ? <Check size={12} color="var(--red)" /> : <Copy size={12} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1.2rem', marginTop: '2rem' }}>
-              <a
-                href="https://github.com/Felglitch739"
-                target="_blank"
-                rel="noreferrer"
-                className="btn-bento btn-bento-outline"
-                style={{ width: '100%' }}
-              >
-                <GithubIcon /> GITHUB.COM/FELGLITCH739
-              </a>
-            </div>
-          </div>
-
-          {/* Form Bento Card (col-span-7) */}
-          <div className="bento-card col-span-6">
-            <h3 className="card-title" style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>
-              {t.formTitle}
-            </h3>
-
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input type="text" name="name" required placeholder={t.namePlaceholder} className="bento-input" />
-              <input type="email" name="email" required placeholder={t.emailPlaceholder} className="bento-input" />
-              <textarea name="message" required rows={4} placeholder={t.msgPlaceholder} className="bento-input" style={{ resize: 'none' }} />
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn-bento btn-bento-primary"
-                style={{ width: '100%', marginTop: '0.5rem' }}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" /> ENVIANDO...
-                  </>
-                ) : (
-                  <>
-                    <Send size={16} /> {t.submitBtn}
-                  </>
-                )}
-              </button>
-
-              {submitStatus === 'success' && (
-                <div className="ndot" style={{ color: 'var(--white)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
-                  <CheckCircle2 size={14} color="var(--red)" /> {t.successMsg}
-                </div>
-              )}
-              {submitStatus === 'error' && (
-                <div className="ndot" style={{ color: 'var(--red)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.4rem', marginTop: '0.5rem' }}>
-                  <XCircle size={14} /> {t.errorMsg}
-                </div>
-              )}
-            </form>
-          </div>
+  return <section id="contact" className="section">
+    <div className="container">
+      <span className="section-label">07 // {es ? 'CONTACTO' : 'CONTACT'}</span>
+      <div className="section-heading"><h2 className="display-title">{es ? '¿Construimos algo?' : 'Let’s build something.'}</h2><p className="body-text">{es ? 'Para conversar sobre un proyecto, una oportunidad o una idea. Puedes escribirme directamente.' : 'For a project, an opportunity, or an idea. You can reach me directly.'}</p></div>
+      <div className="bento-grid">
+        <div className="bento-card col-span-6">
+          <h3 className="card-title" style={{marginBottom:24}}>{es ? 'Hablemos' : 'Let’s talk'}</h3>
+          <div className="contact-copy-row"><a className="contact-email" href={`mailto:${email}`}>{email}</a><button type="button" className="icon-button" onClick={copyEmail} aria-label={es ? 'Copiar correo' : 'Copy email'}><Copy size={16} /></button></div>
+          <p className="form-status" role="status">{copyStatus === 'success' ? (es ? 'Correo copiado.' : 'Email copied.') : copyStatus === 'error' ? (es ? 'No se pudo copiar. Puedes usar el enlace de correo.' : 'Could not copy. You can use the email link.') : ''}</p>
+          <p className="contact-meta">Computer Science @ UTRGV<br />Brownsville, TX / Matamoros, Tamps.</p>
+          <p className="body-text">Founder & CPO · Build Pa’l Norte</p>
+          <div className="contact-links"><a className="text-link" href="https://github.com/Felglitch739" target="_blank" rel="noreferrer">GitHub ↗</a><a className="text-link" href="/Felix_Martinez_Resume.pdf" target="_blank" rel="noreferrer">{es ? 'Ver CV' : 'View resume'} ↗</a></div>
+        </div>
+        <div className="bento-card col-span-6">
+          <h3 className="card-title" style={{marginBottom:24}}>{es ? 'Déjame un mensaje' : 'Leave me a message'}</h3>
+          <form className="contact-form" onSubmit={submit} aria-busy={isSubmitting}>
+            <label>{es ? 'Nombre' : 'Name'}<input name="name" autoComplete="name" required maxLength={150} className="bento-input" placeholder={es ? 'Tu nombre o empresa' : 'Your name or company'} /></label>
+            <label>{es ? 'Correo electrónico' : 'Email'}<input type="email" name="email" autoComplete="email" required maxLength={254} className="bento-input" placeholder="you@example.com" /></label>
+            <label>{es ? 'Mensaje' : 'Message'}<textarea name="message" required minLength={10} maxLength={5000} rows={4} className="bento-input" placeholder={es ? 'Cuéntame un poco sobre tu idea…' : 'Tell me a little about your idea…'} /></label>
+            <input type="checkbox" name="botcheck" className="honeypot" tabIndex={-1} aria-hidden="true" />
+            <button className="btn-bento btn-bento-primary" disabled={isSubmitting}><Send size={16} />{isSubmitting ? (es ? 'Enviando…' : 'Sending…') : (es ? 'Enviar mensaje' : 'Send message')}</button>
+            <p className="form-status" role="status">{status === 'success' ? (es ? 'Formulario enviado. Gracias por escribirme.' : 'Form submitted. Thank you for reaching out.') : status === 'error' ? (es ? 'No se pudo enviar. Puedes escribirme por correo directo.' : 'Could not send. You can email me directly.') : ''}</p>
+          </form>
         </div>
       </div>
-    </section>
-  )
+    </div>
+  </section>
 }

@@ -7,7 +7,9 @@ export default function Hardware3DChip() {
     const container = containerRef.current
     if (!container) return
 
-    let animationId: number
+    let animationId = 0
+    let visible = true
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
     let width = container.offsetWidth || 300
     let height = container.offsetHeight || 260
 
@@ -81,19 +83,19 @@ export default function Hardware3DChip() {
     const project = (x: number, y: number, z: number, rx = angleX, ry = angleY, rz = angleZ) => {
       // 3D Rotations
       // Y-axis
-      let x1 = x * Math.cos(ry) + z * Math.sin(ry)
-      let y1 = y
-      let z1 = -x * Math.sin(ry) + z * Math.cos(ry)
+      const x1 = x * Math.cos(ry) + z * Math.sin(ry)
+      const y1 = y
+      const z1 = -x * Math.sin(ry) + z * Math.cos(ry)
 
       // X-axis
-      let x2 = x1
-      let y2 = y1 * Math.cos(rx) - z1 * Math.sin(rx)
-      let z2 = y1 * Math.sin(rx) + z1 * Math.cos(rx)
+      const x2 = x1
+      const y2 = y1 * Math.cos(rx) - z1 * Math.sin(rx)
+      const z2 = y1 * Math.sin(rx) + z1 * Math.cos(rx)
 
       // Z-axis
-      let x3 = x2 * Math.cos(rz) - y2 * Math.sin(rz)
-      let y3 = x2 * Math.sin(rz) + y2 * Math.cos(rz)
-      let z3 = z2
+      const x3 = x2 * Math.cos(rz) - y2 * Math.sin(rz)
+      const y3 = x2 * Math.sin(rz) + y2 * Math.cos(rz)
+      const z3 = z2
 
       const fov = 220
       const dist = 3.2
@@ -172,15 +174,27 @@ export default function Hardware3DChip() {
         ctx.fill()
       })
 
-      animationId = requestAnimationFrame(render)
+      if (!reducedMotion.matches) animationId = requestAnimationFrame(render)
     }
 
-    render()
+    const resume = () => {
+      cancelAnimationFrame(animationId)
+      if (visible && !document.hidden) render()
+    }
+    const observer = new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting
+      resume()
+    })
+    observer.observe(container)
+    document.addEventListener('visibilitychange', resume)
+    reducedMotion.addEventListener('change', resume)
+    resume()
 
     const handleResize = () => {
       if (!container) return
       width = canvas.width = container.offsetWidth || 300
       height = canvas.height = container.offsetHeight || 260
+      resume()
     }
 
     window.addEventListener('resize', handleResize)
@@ -189,6 +203,9 @@ export default function Hardware3DChip() {
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('resize', handleResize)
       cancelAnimationFrame(animationId)
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', resume)
+      reducedMotion.removeEventListener('change', resume)
     }
   }, [])
 
