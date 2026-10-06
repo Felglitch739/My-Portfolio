@@ -73,7 +73,7 @@ body {
 .mesh-gradient-bg {
   position: fixed;
   inset: 0;
-  background: 
+  background:
     radial-gradient(circle at 15% 50%, rgba(20, 20, 25, 1), transparent 50%),
     radial-gradient(circle at 85% 30%, rgba(15, 15, 18, 1), transparent 50%);
   background-color: var(--black);

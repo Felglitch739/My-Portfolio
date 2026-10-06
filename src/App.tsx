@@ -58,14 +58,14 @@ export default function App() {
 
       {/* Premium Background Layers */}
       <div className="mesh-gradient-bg" aria-hidden />
-      
+
       {/* Cursor Flashlight */}
       <motion.div
         className="cursor-flashlight"
         style={{ x: mouseX, y: mouseY }}
         transition={{ type: 'tween', ease: 'backOut', duration: 0.15 }}
       />
-      
+
       {/* Heavy Frosted Glass Overlay */}
       <div className="glass-overlay" aria-hidden />
 

@@ -31,7 +31,7 @@ export default function Bento3DTilt({
     const rect = cardRef.current.getBoundingClientRect()
     const width = rect.width
     const height = rect.height
-    
+
     // Relative coordinates (-0.5 to 0.5)
     const mouseX = (e.clientX - rect.left) / width - 0.5
     const mouseY = (e.clientY - rect.top) / height - 0.5
